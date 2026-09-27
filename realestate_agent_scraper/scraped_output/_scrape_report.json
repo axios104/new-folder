@@ -1,0 +1,8 @@
+[
+  {
+    "suburb": "Darwin City, Northern Territory 0800",
+    "profiles_found": 0,
+    "records_scraped": 0,
+    "error": "browser_error: \n                ---------------------\n                Failed to connect to browser\n                ---------------------\n                One of the causes could be when you are running as root.\n                In that case you need to pass no_sandbox=True \n                "
+  }
+]

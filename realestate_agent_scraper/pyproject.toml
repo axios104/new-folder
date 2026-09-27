@@ -1,0 +1,23 @@
+[project]
+name = "realestate-agent-scraper"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Abhinav", email = "abhinavsharma00410@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "nodriver>=0.50.3",
+    "openpyxl>=3.1.0",
+    "pandas>=2.0.0",
+    "playwright>=1.44.0",
+    "selenium>=4.49.0",
+]
+
+[project.scripts]
+realestate-agent-scraper = "realestate_agent_scraper:main"
+
+[build-system]
+requires = ["uv_build>=0.12.18,<0.13.0"]
+build-backend = "uv_build"

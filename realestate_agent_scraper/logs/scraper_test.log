@@ -1,0 +1,62 @@
+2026-09-27 23:33:15,799 [INFO] scraper.test: TEST MODE: Running for exactly 1 region: 'Darwin City, Northern Territory 0800'
+2026-09-27 23:33:15,804 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-27 23:33:15,810 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=53449
+2026-09-27 23:33:28,957 [CRITICAL] scraper.pipeline: Browser pipeline failed: 
+                ---------------------
+                Failed to connect to browser
+                ---------------------
+                One of the causes could be when you are running as root.
+                In that case you need to pass no_sandbox=True 
+                
+Traceback (most recent call last):
+  File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\pipeline.py", line 112, in _scrape_suburbs_async
+    browser = await create_browser(
+              ^^^^^^^^^^^^^^^^^^^^^
+        headless=headless,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\automation\browser.py", line 26, in create_browser
+    browser = await nd.start(
+              ^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.venv\Lib\site-packages\nodriver\core\util.py", line 103, in start
+    return await Browser.create(config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.venv\Lib\site-packages\nodriver\core\browser.py", line 95, in create
+    await instance.start()
+  File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.venv\Lib\site-packages\nodriver\core\browser.py", line 382, in start
+    raise Exception(
+    ...<9 lines>...
+    )
+Exception: 
+                ---------------------
+                Failed to connect to browser
+                ---------------------
+                One of the causes could be when you are running as root.
+                In that case you need to pass no_sandbox=True 
+                
+2026-09-27 23:33:28,973 [INFO] scraper.test: Scraping finished/interrupted: 0 record(s) gathered
+2026-09-27 23:33:28,975 [WARNING] scraper.test: No records scraped — nothing written.
