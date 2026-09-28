@@ -1,157 +1,60 @@
 # Realestate.com.au Agent Scraper
 
-Two interconnected subtools that turn a list of suburbs into agent contact
-records, in the exact same format your `recruitment_formatter` tool produces:
-
-- **`automation/`** — drives the browser: goes to the search page, types the
-  suburb, clicks the right autocomplete suggestion, opens the results list,
-  and clicks through to each agent's profile page (this is the click-path
-  you described — the "endpoint" is reaching the profile page where contact
-  info lives).
-- **`scraper/`** — once a profile page is open, reads every field off it
-  (name, job title, agency, phone, rating, properties sold, etc.).
-
-`pipeline.py` connects the two and writes output using the **same schema
-and writer code** as `recruitment_formatter` (imported directly, not
-copied), so scraped data and manually-collected data always end up in one
-consistent format, ready for the same destination folder / Zoho push.
-
-## ⚠️ Before you run this at volume
-
-realestate.com.au runs **Kasada bot-detection**, an active anti-automation
-service. This tool applies standard, legitimate mitigations (headful
-browser, real user-agent, randomized human-like delays — see `config.py`),
-but no tool can honestly guarantee it won't get blocked or rate-limited.
-Please also check realestate.com.au's Terms of Service regarding automated
-access before running this against their site at scale. Go slow, especially
-at first.
+Scrapes agent profiles for Australian suburbs from a JSON, text, CSV, or Excel
+input list. The scraper processes one unfinished suburb per run by default,
+creates a separate workbook for each suburb, and resumes unfinished work when
+you run the same command again.
 
 ## Setup
 
-```bash
-pip install -r requirements.txt
-playwright install chromium
-```
-
-**Required folder layout** — this tool imports `recruitment_formatter`'s
-schema/writers directly, so the two projects must sit side by side:
-
-```
-Desktop/
-├── recruitment_formatter/
-└── realestate_agent_scraper/
-```
-
-## Getting real selectors (important — do this before a real run)
-
-The extraction is built to work two ways:
-1. **Text-pattern matching** (regex, in `config.py` → `TEXT_PATTERNS`) —
-   already filled in and works out of the box for phone numbers, ratings,
-   "properties sold", median price/days — no setup needed. This is the
-   primary strategy because sites like this often use auto-generated CSS
-   class names that change on every deploy, making hardcoded selectors
-   fragile.
-2. **Exact selectors** (`config.py` → `SELECTORS`) — currently all `None`.
-   Filling these in makes the click-path (search box, autocomplete,
-   pagination) actually work, since there's no reliable text-pattern
-   fallback for "which element do I click."
-
-**To fill in `SELECTORS`:** open the live site in Chrome, right-click the
-element → Inspect → right-click the highlighted HTML in DevTools → Copy →
-Copy selector (or outerHTML for me to turn into a selector). Prefer
-`[data-testid="..."]` attributes over class names if you see them — they're
-far more stable. Paste what you find for each `SELECTORS` key and I'll wire
-it in, or edit `config.py` yourself; every key has a comment showing the
-expected format.
-
-Until `SELECTORS["agent_result_card"]` is filled in, the results-page
-collector falls back to a generic scan for any link containing `/agent/` —
-functional but less precise than a real selector.
-
-## Usage (PowerShell)
-
-Open PowerShell in the `realestate_agent_scraper` directory. The JSON input
-`aus_postcode.json` and the sibling `recruitment_formatter` folder are already
-included in the supplied project layout.
+Open PowerShell in this folder and install the runtime requirements once:
 
 ```powershell
 cd C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper
-```
-
-If you have a project virtual environment, activate it and install dependencies
-once. From a fresh checkout, create one first. `requirements.txt` contains the
-runtime packages; `openpyxl` is needed for Excel output.
-
-```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-Run a small initial batch (the default limit is five suburbs):
+The repository's `aus_postcode.json` has the 2,641-entry Australia suburb list.
+If you are using the copy at the parent project folder, pass `..\aus_postcode.json`
+as the input path instead.
+
+## Scrape a suburb by postcode
+
+Give the four-digit postcode and the folder where you want the workbook and
+resume files saved:
 
 ```powershell
-python main.py .\aus_postcode.json C:\Users\ASUS\Desktop\scraped_output excel
+python main.py 0800 C:\Users\ASUS\Desktop\scraped_output
 ```
 
-To process every suburb in the JSON file, explicitly remove the default safety
-limit with `--limit 0`:
+If the postcode maps to multiple suburbs, the scraper processes those matching
+entries and creates one workbook for each. If a run is interrupted, run the
+same command again. The scraper restores
+profile records from its local journal, rechecks the suburb's paginated results,
+and skips profiles already saved.
 
-```powershell
-python main.py .\aus_postcode.json C:\Users\ASUS\Desktop\scraped_output excel --limit 0
-```
+The required arguments are the four-digit postcode and the output folder you
+choose. The JSON input defaults to the Australia postcode file; use `--input`
+only to select a different copy. Excel is the default format; `--format json`
+is available when needed. `--max-agents` sets a temporary per-suburb test cap,
+and `--headless` hides the browser window.
 
-Arguments are positional in this order: input suburb file, output directory,
-then output format (`excel` or `json`). The optional `--limit N` sets the number
-of suburbs (0 means all); `--headless` runs Chrome without a visible window;
-`--merge-name NAME` changes the output filename stem (default `scraped_data`).
-Excel output is saved as `<output directory>\scraped_data.xlsx` and checkpoints
-replace that file as the scrape progresses. Press Ctrl+C to stop and save the
-records collected so far.
-```
+## Files and resume tracking
 
-Output:
-- `scraped_output/scraped_data.xlsx` (or `.json`) — all scraped records,
-  same columns/keys as `recruitment_formatter`'s output.
-- `scraped_output/_scrape_report.json` — per-suburb count of profiles found
-  and records scraped, plus any errors (same auditability pattern as the
-  formatter tool's `_run_summary.json`).
-- `logs/scraper.log` — full run log.
+The output folder contains a separate workbook per suburb, for example
+`C:\Users\ASUS\Desktop\scraped_output\darwin_city_0800.xlsx`. The workbook is
+refreshed every ten profiles, when a suburb finishes, and on Ctrl+C. A JSONL
+journal records each profile as soon as it is scraped so a forced close can
+recover it on the next run.
 
-## Feeding scraped output into the rest of your pipeline
+`_scrape_progress.json` tracks each suburb's status, profile count, failures,
+and workbook filename. `.checkpoints` contains the per-suburb journals. Completed
+suburbs are skipped automatically; interrupted or partially failed suburbs
+remain eligible to resume. Suburb and postcode are kept in separate workbook
+columns.
 
-Because the output uses the identical schema, you can drop
-`scraped_data.xlsx` straight into `recruitment_formatter`'s destination
-folder alongside employee-collected files, or run it directly through
-`recruitment_formatter`'s `zoho` mode:
-
-```bash
-cd ../recruitment_formatter
-python main.py ../realestate_agent_scraper/scraped_output ./clean zoho
-```
-
-## Tuning
-
-- `config.MIN_ACTION_DELAY_MS` / `MAX_ACTION_DELAY_MS` — pacing between
-  clicks/typing. Don't lower these casually.
-- `config.MIN_PROFILE_DELAY_S` / `MAX_PROFILE_DELAY_S` — pause between
-  visiting agent profiles.
-- `config.MAX_AGENTS_PER_SUBURB` — cap per suburb (`None` = no cap).
-- `config.MAX_RESULT_PAGES` — how many result pages to page through per
-  suburb.
-
-## Project layout
-
-```
-realestate_agent_scraper/
-├── main.py                  # CLI entry point
-├── config.py                # URLs, SELECTORS, TEXT_PATTERNS, timing
-├── suburb_loader.py         # reads suburbs.txt / .xlsx / .csv
-├── pipeline.py               # connects automation + scraper, writes output
-├── automation/
-│   ├── browser.py            # Playwright session w/ anti-detection settings
-│   └── navigator.py          # search -> click through -> profile URLs
-├── scraper/
-│   └── extractor.py          # reads fields off a loaded profile page
-└── requirements.txt
-```
+The scraper uses a visible Chrome window by default and applies deliberate
+delays between profile visits. Check the website's terms before scraping and
+avoid running an unnecessarily large batch unattended.

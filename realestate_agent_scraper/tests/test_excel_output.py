@@ -8,7 +8,23 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT.parent / "recruitment_formatter"))
 
-from pipeline import write_output  # noqa: E402
+from pipeline import _clean_record, _schema_columns, write_output  # noqa: E402
+
+
+def test_shared_formatter_schema_and_cleaners_are_used():
+    from formatter.config import SCHEMA
+
+    assert _schema_columns() == [(spec.key, spec.output_name) for spec in SCHEMA]
+    cleaned = _clean_record({
+        "years_experience": "33",
+        "rating": "4.9",
+        "postcode": "0800",
+        "agency_url": "www.realestate.com.au/agency/example-ABCD",
+    })
+    assert cleaned["years_experience"] == 33
+    assert cleaned["rating"] == 4.9
+    assert cleaned["postcode"] == "0800"
+    assert cleaned["agency_url"].startswith("https://")
 
 
 def test_excel_writes_to_requested_directory():
@@ -73,6 +89,7 @@ def test_empty_checkpoint_still_writes_headers():
 
 
 if __name__ == "__main__":
+    test_shared_formatter_schema_and_cleaners_are_used()
     test_excel_writes_to_requested_directory()
     test_missing_fields_do_not_crash()
     test_empty_checkpoint_still_writes_headers()

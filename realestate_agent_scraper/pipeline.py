@@ -40,6 +40,7 @@ from scraper.html_fields import split_suburb_and_postcode
 logger = logging.getLogger("scraper.pipeline")
 
 CheckpointFn = Callable[[list[dict], list[dict]], None]
+RecordFn = Callable[[str, dict], None]
 
 
 async def _human_pause() -> None:
@@ -86,15 +87,17 @@ async def _scrape_suburbs_async(
     records: list[dict] | None = None,
     report: list[dict] | None = None,
     on_checkpoint: CheckpointFn | None = None,
+    on_record: RecordFn | None = None,
     max_agents: int | None = None,
 ) -> tuple[list[dict], list[dict]]:
     all_records: list[dict] = records if records is not None else []
     report_rows: list[dict] = report if report is not None else []
-    seen_urls: set[str] = {
-        str(row.get("profile_url", "")).rstrip("/").lower()
-        for row in all_records
-        if row.get("profile_url")
-    }
+    seen_urls_by_suburb: dict[str, set[str]] = {}
+    for row in all_records:
+        query = str(row.get("_suburb_query", ""))
+        url = str(row.get("profile_url", "")).rstrip("/").lower()
+        if query and url:
+            seen_urls_by_suburb.setdefault(query, set()).add(url)
 
     browser = None
     page = None
@@ -125,38 +128,48 @@ async def _scrape_suburbs_async(
                 "profiles_found": 0,
                 "pages_scraped": 0,
                 "records_scraped": 0,
+                "profiles_failed": 0,
+                "status": "in_progress",
                 "error": None,
             }
+            seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
 
             try:
                 logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
                 ok = await search_suburb(page, suburb)
                 if not ok:
                     entry["error"] = "search_failed"
+                    entry["status"] = "failed"
                     logger.warning("Search failed for suburb: %s", suburb)
                     report_rows.append(entry)
                     checkpoint(f"search_failed:{suburb_name}")
                     continue
 
-                profile_urls = await collect_agent_profile_urls(page, suburb) or []
+                profile_urls = await collect_agent_profile_urls(
+                    page,
+                    suburb,
+                    on_page=lambda page_no: entry.__setitem__("pages_scraped", page_no),
+                ) or []
                 entry["profiles_found"] = len(profile_urls)
                 logger.info("Found %d agent profile(s) for '%s'.", len(profile_urls), suburb)
 
+                remaining_urls = [
+                    url for url in profile_urls
+                    if url.rstrip("/").lower() not in seen_urls
+                ]
                 cap = _visit_cap(max_agents)
-                if cap and len(profile_urls) > cap:
+                capped = bool(cap and len(remaining_urls) > cap)
+                if capped:
                     logger.info(
                         "Visiting first %d of %d collected profile(s) for '%s' (max-agents cap)",
                         cap,
-                        len(profile_urls),
+                        len(remaining_urls),
                         suburb,
                     )
-                    profile_urls = profile_urls[:cap]
+                    remaining_urls = remaining_urls[:cap]
 
-                for url in profile_urls:
+                for url in remaining_urls:
                     key = url.rstrip("/").lower()
-                    if key in seen_urls:
-                        logger.info("Skipping duplicate profile: %s", url)
-                        continue
                     try:
                         logger.info("Opening agent profile: %s", url)
                         await page.get(url)
@@ -164,15 +177,23 @@ async def _scrape_suburbs_async(
                         raw = await extract_agent_record(page, url, suburb_hint=suburb)
                         if not raw:
                             logger.warning("No record extracted from: %s", url)
+                            entry["profiles_failed"] += 1
                             continue
                         if not raw.get("suburb"):
                             raw["suburb"] = suburb_name
                         if not raw.get("postcode"):
                             raw["postcode"] = postcode
+                        raw["_suburb_query"] = suburb
                         cleaned = _clean_record(raw)
                         all_records.append(cleaned)
                         seen_urls.add(key)
                         entry["records_scraped"] += 1
+                        if on_record:
+                            try:
+                                on_record(suburb, cleaned)
+                            except Exception as exc:  # noqa: BLE001
+                                entry["profiles_failed"] += 1
+                                logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
                         logger.info(
                             "Scraped: %s (%s / %s) — %s",
                             cleaned.get("name", "?"),
@@ -186,16 +207,21 @@ async def _scrape_suburbs_async(
                         logger.info("Stopping scraper gracefully...")
                         break
                     except Exception as exc:  # noqa: BLE001
+                        entry["profiles_failed"] += 1
                         logger.error("Failed to scrape %s: %s", url, exc, exc_info=True)
                     await _human_pause()
 
                 if interrupted:
+                    entry["status"] = "interrupted"
                     report_rows.append(entry)
                     checkpoint("keyboard_interrupt")
                     break
 
+                entry["status"] = "partial" if entry["profiles_failed"] or capped else "completed"
+
             except KeyboardInterrupt:
                 interrupted = True
+                entry["status"] = "interrupted"
                 logger.info("Ctrl+C detected.")
                 logger.info("Stopping scraper gracefully...")
                 report_rows.append(entry)
@@ -204,6 +230,7 @@ async def _scrape_suburbs_async(
             except Exception as exc:  # noqa: BLE001
                 logger.error("Suburb '%s' failed: %s", suburb, exc, exc_info=True)
                 entry["error"] = str(exc)
+                entry["status"] = "failed"
 
             report_rows.append(entry)
             logger.info(
@@ -231,6 +258,8 @@ async def _scrape_suburbs_async(
                         "suburb": suburb,
                         "profiles_found": 0,
                         "records_scraped": 0,
+                        "profiles_failed": 0,
+                        "status": "failed",
                         "error": f"browser_error: {exc}",
                     }
                 )
@@ -256,6 +285,7 @@ def scrape_suburbs(
     records: list[dict] | None = None,
     report: list[dict] | None = None,
     on_checkpoint: CheckpointFn | None = None,
+    on_record: RecordFn | None = None,
     max_agents: int | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """
@@ -274,6 +304,7 @@ def scrape_suburbs(
                 records=records,
                 report=report,
                 on_checkpoint=on_checkpoint,
+                on_record=on_record,
                 max_agents=max_agents,
             )
         )

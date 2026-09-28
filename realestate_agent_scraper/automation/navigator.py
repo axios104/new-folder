@@ -9,6 +9,7 @@ import asyncio
 import logging
 import random
 import re
+from collections.abc import Callable
 
 import nodriver as nd
 
@@ -115,7 +116,11 @@ def _max_pages() -> int | None:
     return int(configured) if configured not in (None, 0) else None
 
 
-async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
+async def collect_agent_profile_urls(
+    page: nd.Tab,
+    suburb: str,
+    on_page: Callable[[int], None] | None = None,
+) -> list[str]:
     """
     From a loaded results page, walk every pagination page and collect unique
     agent profile URLs. Does not assume page 1 contains the full result set.
@@ -170,6 +175,8 @@ async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
             info.has_pagination,
         )
         await _add_from_html(html, str(page_number))
+        if on_page:
+            on_page(page_number)
         visited_page_urls.add((current_url or "").split("#")[0].rstrip("/").lower())
 
         while (max_pages is None or page_number < max_pages) and (
@@ -202,6 +209,8 @@ async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
                 reported_total = info.total_results
             expected_pages = max(expected_pages, info.expected_pages, page_number)
             added = await _add_from_html(html, str(page_number))
+            if on_page:
+                on_page(page_number)
             if added == 0 and not info.next_url and page_number >= info.last_page:
                 logger.info("No new profile URLs on page %d for '%s'; ending pagination", page_number, suburb)
                 break

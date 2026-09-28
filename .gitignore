@@ -4,7 +4,25 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.python-env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.cache/
 .env
+build/
+dist/
+site-packages/
+
+# Local installers and unpacked dependencies
+installers/
+dependencies/
+**/installers/
+**/dependencies/
+**/site-packages/
+node_modules/
 
 # Scraper runtime / browser profiles (do not commit)
 realestate_agent_scraper/.chrome_profile/
@@ -12,6 +30,10 @@ realestate_agent_scraper/.chrome_profile_nd/
 **/.chrome_profile*/
 **/logs/
 **/*.log
+**/debug_output/
+**/.checkpoints/
+**/_scrape_progress.json
+**/scraped_output/
 
 # Local scrape output
 realestate_agent_scraper/scraped_output/
