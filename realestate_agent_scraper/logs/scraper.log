@@ -2365,3 +2365,144 @@ Traceback (most recent call last):
   File "C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.venv\Lib\site-packages\websockets\asyncio\connection.py", line 960, in send_context
     raise self.protocol.close_exc from original_exc
 websockets.exceptions.ConnectionClosedError: no close frame received or sent
+2026-09-28 22:41:47,121 [WARNING] scraper.main: Loaded 2641 suburb(s) but --limit is 1. Processing only the first 1. Pass --limit 0 to process all 2641.
+2026-09-28 22:41:47,123 [INFO] scraper.main: Starting scraper: 1 suburb(s) to process, output -> C:\Users\ASUS\Desktop\scraped_output
+2026-09-28 22:41:47,126 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-28 22:41:47,129 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=50781
+2026-09-28 22:41:48,475 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-09-28 22:41:50,757 [INFO] scraper.pipeline: Browser tab initialized.
+2026-09-28 22:41:50,758 [INFO] scraper.pipeline: === Processing suburb 1/1: Darwin City, Northern Territory 0800 ===
+2026-09-28 22:41:56,613 [INFO] scraper.automation: Navigating to: https://www.realestate.com.au/find-agent/darwin+city-nt-0800/
+2026-09-28 22:42:05,832 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (1158222 chars)
+2026-09-28 22:42:06,216 [INFO] scraper.automation: Page 1: found 24 agent profile URL(s) for 'Darwin City, Northern Territory 0800'
+2026-09-28 22:42:06,225 [INFO] scraper.automation: No pagination for 'Darwin City, Northern Territory 0800' — single page with 24 agent(s)
+2026-09-28 22:42:06,225 [INFO] scraper.automation: Total: 24 agent profile URL(s) collected for suburb 'Darwin City, Northern Territory 0800' across 1 page(s)
+2026-09-28 22:42:06,225 [INFO] scraper.pipeline: Found 24 total agent profile(s) for 'Darwin City, Northern Territory 0800'.
+2026-09-28 22:42:06,225 [INFO] scraper.pipeline:   [1/24] Opening: https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-28 22:42:22,620 [INFO] scraper.pipeline:   Scraped: Emily Sara (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-28 22:42:28,439 [INFO] scraper.pipeline:   [2/24] Opening: https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-28 22:42:43,064 [INFO] scraper.pipeline:   Scraped: Stephanie Otto (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-28 22:42:47,198 [INFO] scraper.pipeline:   [3/24] Opening: https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-28 22:42:58,805 [INFO] scraper.pipeline:   Scraped: Mick Smith (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-28 22:43:02,022 [INFO] scraper.pipeline:   [4/24] Opening: https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-28 22:43:15,740 [INFO] scraper.pipeline:   Scraped: Maria Kathopoulis (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-28 22:43:22,303 [INFO] scraper.pipeline:   [5/24] Opening: https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 22:43:36,618 [INFO] scraper.pipeline:   Scraped: Daniel Harris (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 22:43:39,724 [INFO] scraper.pipeline:   [6/24] Opening: https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-28 22:43:52,211 [INFO] scraper.pipeline:   Scraped: Jen Wardell (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-28 22:43:56,026 [INFO] scraper.pipeline:   [7/24] Opening: https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-28 22:44:11,287 [INFO] scraper.pipeline:   Scraped: Joshua Pucci (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-28 22:52:13,625 [WARNING] scraper.main: Loaded 2641 suburb(s) but --limit is 5 (default safety cap). Processing only the first 5. Pass --limit 0 to process all 2641 once you've verified this works reliably on a small batch.
+2026-09-28 22:52:13,627 [INFO] scraper.main: Loaded 5 suburb(s): ['Darwin City, Northern Territory 0800', 'Jingili, Northern Territory 0810', 'Leanyer, Northern Territory 0812', 'Stuart Park, Northern Territory 0820', 'Rakula, Northern Territory 0822']
+2026-09-28 22:52:13,629 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-28 22:52:13,631 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=52375
+2026-09-28 22:52:14,771 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-09-28 22:52:17,078 [INFO] scraper.pipeline: Browser tab initialized.
+2026-09-28 22:52:17,083 [INFO] scraper.pipeline: Processing suburb: Darwin City, Northern Territory 0800
+2026-09-28 22:52:21,735 [INFO] scraper.automation: Navigating to: https://www.realestate.com.au/find-agent/darwin+city-nt-0800/
+2026-09-28 22:52:28,478 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (1148658 chars)
+2026-09-28 22:52:28,840 [INFO] scraper.automation: Found 24 agent profile URL(s) for suburb 'Darwin City, Northern Territory 0800'
+2026-09-28 22:52:28,841 [INFO] scraper.pipeline: Found 24 agent profile(s) for 'Darwin City, Northern Territory 0800'.
+2026-09-28 22:52:28,841 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-28 22:52:43,039 [INFO] scraper.pipeline: Scraped: Emily Sara (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-28 22:52:48,304 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-28 22:53:00,202 [INFO] scraper.pipeline: Scraped: Stephanie Otto (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-28 22:53:05,545 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-28 22:53:18,185 [INFO] scraper.pipeline: Scraped: Mick Smith (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-28 22:53:24,341 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-28 22:53:38,009 [INFO] scraper.pipeline: Scraped: Maria Kathopoulis (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-28 22:53:43,884 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 22:54:00,286 [INFO] scraper.pipeline: Scraped: Daniel Harris (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 22:54:05,769 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-28 22:54:19,837 [INFO] scraper.pipeline: Scraped: Jen Wardell (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-28 22:54:25,951 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-28 22:54:39,622 [INFO] scraper.pipeline: Scraped: Joshua Pucci (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-28 22:54:44,163 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nicole-wheeler-2840238
+2026-09-28 22:54:59,413 [INFO] scraper.pipeline: Scraped: Nicole Wheeler (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/nicole-wheeler-2840238
+2026-09-28 22:55:04,556 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bec-wescombe-3511576
+2026-09-28 22:55:16,177 [INFO] scraper.pipeline: Scraped: Bec Wescombe (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/bec-wescombe-3511576
+2026-09-28 22:55:21,962 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/darren-hunt-3188700
+2026-09-28 22:55:36,651 [INFO] scraper.pipeline: Scraped: Darren Hunt (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/darren-hunt-3188700
+2026-09-28 22:55:41,688 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/matt-englund-1818990
+2026-09-28 22:55:54,132 [INFO] scraper.pipeline: Scraped: Matt Englund (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/matt-englund-1818990
+2026-09-28 22:55:58,103 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/elissa-riddell-3384684
+2026-09-28 22:56:11,204 [INFO] scraper.pipeline: Scraped: Elissa Riddell (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/elissa-riddell-3384684
+2026-09-28 22:56:18,151 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/khem-gurung-3641524
+2026-09-28 22:56:32,660 [INFO] scraper.pipeline: Scraped: Khem Gurung (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/khem-gurung-3641524
+2026-09-28 22:56:37,920 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rick-trippe-753443
+2026-09-28 22:56:48,675 [INFO] scraper.pipeline: Scraped: Rick Trippe (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/rick-trippe-753443
+2026-09-28 22:56:53,715 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jacob-mckenna-2770950
+2026-09-28 22:57:05,492 [INFO] scraper.pipeline: Scraped: Jacob Mckenna (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/jacob-mckenna-2770950
+2026-09-28 22:57:11,959 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/simon-watts-86446
+2026-09-28 22:57:25,716 [INFO] scraper.pipeline: Scraped: Simon Watts (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/simon-watts-86446
+2026-09-28 22:57:28,842 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bill-cooper-3820112
+2026-09-28 22:57:39,329 [INFO] scraper.pipeline: Scraped: Bill Cooper (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/bill-cooper-3820112
+2026-09-28 22:57:43,170 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/shyam-thapa-2904999
+2026-09-28 22:57:54,385 [INFO] scraper.pipeline: Scraped: Shyam Thapa (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/shyam-thapa-2904999
+2026-09-28 22:57:59,889 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/zayden-lewis-3543444
+2026-09-28 22:58:10,948 [INFO] scraper.pipeline: Scraped: Zayden Lewis (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/zayden-lewis-3543444
+2026-09-28 22:58:17,748 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tim-mackenzie-3701208
+2026-09-28 22:58:30,336 [INFO] scraper.pipeline: Scraped: Tim Mackenzie (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/tim-mackenzie-3701208
+2026-09-28 22:58:36,447 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-28 22:58:51,432 [INFO] scraper.pipeline: Scraped: Sascha Smithett (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-28 22:58:55,878 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/akansh-batta-3767224
+2026-09-28 22:59:08,301 [INFO] scraper.pipeline: Scraped: Akansh Batta (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/akansh-batta-3767224
+2026-09-28 22:59:11,622 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nick-mousellis-2479074
+2026-09-28 22:59:25,299 [INFO] scraper.pipeline: Scraped: Nick Mousellis (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/nick-mousellis-2479074
+2026-09-28 22:59:30,865 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/wayne-smith-2952339
+2026-09-28 22:59:42,880 [INFO] scraper.pipeline: Scraped: Wayne Smith (Darwin City, Northern Territory 0800) — https://www.realestate.com.au/agent/wayne-smith-2952339
+2026-09-28 22:59:47,344 [INFO] scraper.pipeline: Finished suburb 'Darwin City, Northern Territory 0800': 24 profile(s) found, 24 record(s) scraped.
+2026-09-28 22:59:52,670 [INFO] scraper.pipeline: Processing suburb: Jingili, Northern Territory 0810
+2026-09-28 22:59:58,740 [INFO] scraper.automation: Navigating to: https://www.realestate.com.au/find-agent/jingili-nt-0810/
+2026-09-28 23:00:06,330 [INFO] scraper.automation: Page loaded with content for 'Jingili, Northern Territory 0810' (836320 chars)
+2026-09-28 23:00:06,531 [INFO] scraper.automation: Found 20 agent profile URL(s) for suburb 'Jingili, Northern Territory 0810'
+2026-09-28 23:00:06,531 [INFO] scraper.pipeline: Found 20 agent profile(s) for 'Jingili, Northern Territory 0810'.
+2026-09-28 23:00:06,532 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-28 23:00:20,895 [INFO] scraper.pipeline: Scraped: Sascha Smithett (Jingili, Northern Territory 0810) — https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-28 23:00:27,500 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 23:00:43,686 [INFO] scraper.pipeline: Scraped: Daniel Harris (Jingili, Northern Territory 0810) — https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-28 23:00:46,997 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/belinda-kolstad-3689636
+2026-09-28 23:00:50,514 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-09-28 23:00:50,515 [INFO] nodriver.core.browser: terminated browser with pid 4720 successfully
+2026-09-28 23:00:50,517 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-09-28 23:00:50,670 [INFO] nodriver.core.browser: terminated browser with pid 4720 successfully

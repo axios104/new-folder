@@ -21,14 +21,21 @@ def _records_to_output_df(records: list[dict]) -> pd.DataFrame:
 
 def write_excel(records: list[dict], out_path: Path) -> None:
     df = _records_to_output_df(records)
+    if "Post code" in df.columns:
+        df["Post code"] = df["Post code"].map(lambda v: "" if v in ("", None) else str(v))
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Agents")
-        # Auto-fit column widths for usability
         ws = writer.sheets["Agents"]
         for i, col in enumerate(df.columns, start=1):
             max_len = max([len(str(col))] + [len(str(v)) for v in df[col].astype(str)])
             ws.column_dimensions[ws.cell(row=1, column=i).column_letter].width = min(max_len + 2, 60)
+            if col == "Post code":
+                for row in ws.iter_rows(min_row=2, min_col=i, max_col=i):
+                    for cell in row:
+                        if cell.value not in (None, ""):
+                            cell.value = str(cell.value)
+                            cell.number_format = "@"
 
 
 def write_json(records: list[dict], out_path: Path) -> None:

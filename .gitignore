@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Scraper runtime / browser profiles (do not commit)
+realestate_agent_scraper/.chrome_profile/
+realestate_agent_scraper/.chrome_profile_nd/
+**/.chrome_profile*/
+**/logs/
+**/*.log
+
+# Local scrape output
+realestate_agent_scraper/scraped_output/
+realestate_agent_scraper/tests/_tmp_excel_out/
+scraped_output/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/

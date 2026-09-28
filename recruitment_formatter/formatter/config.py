@@ -117,6 +117,14 @@ SCHEMA: tuple[FieldSpec, ...] = (
         aliases=("rating", "star rating", "stars", "agent rating", "score"),
     ),
     FieldSpec(
+        output_name="Reviews", key="reviews", dtype="int",
+        zoho_field="Review_Count",
+        aliases=(
+            "reviews", "review count", "review_count", "number of reviews",
+            "no of reviews", "reviews count",
+        ),
+    ),
+    FieldSpec(
         output_name="properties_sold", key="properties_sold", dtype="int",
         zoho_field="Properties_Sold",
         aliases=(

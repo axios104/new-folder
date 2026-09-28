@@ -1,4 +1,3 @@
-
 """
 Pipeline — connects the automation and scraper subtools (nodriver/async version).
 
@@ -7,40 +6,43 @@ Flow per suburb:
     browser.get()                       -> nd.Tab
     navigator.search_suburb()           -> loads results page
     navigator.collect_agent_profile_urls()
-                                        -> [profile urls]
+                                        -> [profile urls] from ALL pages
     for each url:
         page.get(url)
         extractor.extract_agent_record()
                                         -> raw record
         formatter.cleaners.clean_value() -> cleaned per-field
 
-    all records -> formatter.writers.write_excel / write_json
+    all records -> write_output (Excel/JSON) with checkpoints
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import random
+from collections.abc import Callable
 from pathlib import Path
+
+import pandas as pd
 
 import config
 
 from automation.browser import create_browser
 from automation.navigator import (
-    search_suburb,
     collect_agent_profile_urls,
+    search_suburb,
 )
 from scraper.extractor import extract_agent_record
-
+from scraper.html_fields import split_suburb_and_postcode
 
 logger = logging.getLogger("scraper.pipeline")
 
+CheckpointFn = Callable[[list[dict], list[dict]], None]
+
 
 async def _human_pause() -> None:
-    """
-    Async delay between profile/suburb operations.
-    """
     await asyncio.sleep(
         random.uniform(
             config.MIN_PROFILE_DELAY_S,
@@ -50,251 +52,177 @@ async def _human_pause() -> None:
 
 
 def _clean_record(raw: dict) -> dict:
-    """
-    Runs each field through the same dtype-aware cleaners
-    used by the Excel formatter.
-    """
     try:
         from recruitment_formatter.formatter.config import FIELD_BY_KEY
         from recruitment_formatter.formatter.cleaners import clean_value
 
         cleaned = {}
-
         for key, value in raw.items():
             spec = FIELD_BY_KEY.get(key)
-
             if spec:
-                cleaned[key] = clean_value(
-                    spec.dtype,
-                    value,
-                )
+                cleaned[key] = clean_value(spec.dtype, value)
             else:
                 cleaned[key] = value
-
         return cleaned
-
     except ImportError:
-        logger.debug(
-            "formatter package not available, skipping cleaning"
-        )
+        logger.debug("formatter package not available, skipping cleaning")
         return raw
+
+
+def _visit_cap(max_agents: int | None) -> int | None:
+    if max_agents is not None:
+        return max_agents if max_agents > 0 else None
+    return config.MAX_AGENTS_PER_SUBURB
 
 
 async def _scrape_suburbs_async(
     suburbs: list[str],
     headless: bool = False,
+    *,
+    records: list[dict] | None = None,
+    report: list[dict] | None = None,
+    on_checkpoint: CheckpointFn | None = None,
+    max_agents: int | None = None,
 ) -> tuple[list[dict], list[dict]]:
-    """
-    Internal asynchronous scraping implementation.
-
-    create_browser() returns an nd.Browser.
-
-    The browser is used to obtain an nd.Tab. That tab is then passed
-    to the nodriver-based navigator and extractor.
-    """
-
-    all_records: list[dict] = []
-    report: list[dict] = []
+    all_records: list[dict] = records if records is not None else []
+    report_rows: list[dict] = report if report is not None else []
+    seen_urls: set[str] = {
+        str(row.get("profile_url", "")).rstrip("/").lower()
+        for row in all_records
+        if row.get("profile_url")
+    }
 
     browser = None
     page = None
+    interrupted = False
+
+    def checkpoint(reason: str) -> None:
+        logger.info("Saving checkpoint... (%s, %d record(s))", reason, len(all_records))
+        if on_checkpoint:
+            try:
+                on_checkpoint(all_records, report_rows)
+                logger.info("Checkpoint saved")
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Checkpoint failed: %s", exc, exc_info=True)
 
     try:
-        # ----------------------------------------------------------
-        # Start browser
-        # ----------------------------------------------------------
-
-        logger.info(
-            "Starting nodriver browser (headless=%s)...",
-            headless,
-        )
-
-        browser = await create_browser(
-            headless=headless,
-        )
-
-        logger.info(
-            "Nodriver browser started successfully."
-        )
-
-        # ----------------------------------------------------------
-        # Create/get the browser tab
-        # ----------------------------------------------------------
-
-        page = await browser.get(
-            config.FIND_AGENT_URL
-        )
-
-        logger.info(
-            "Browser tab initialized."
-        )
-
-        # ----------------------------------------------------------
-        # Process suburbs
-        # ----------------------------------------------------------
+        logger.info("Starting nodriver browser (headless=%s)...", headless)
+        browser = await create_browser(headless=headless)
+        logger.info("Nodriver browser started successfully.")
+        page = await browser.get(config.FIND_AGENT_URL)
+        logger.info("Browser tab initialized.")
 
         for suburb in suburbs:
-
+            suburb_name, postcode = split_suburb_and_postcode(suburb)
             entry = {
                 "suburb": suburb,
+                "suburb_name": suburb_name,
+                "postcode": postcode,
                 "profiles_found": 0,
+                "pages_scraped": 0,
                 "records_scraped": 0,
                 "error": None,
             }
 
             try:
-                logger.info(
-                    "Processing suburb: %s",
-                    suburb,
-                )
-
-                # --------------------------------------------------
-                # Navigate to suburb
-                # --------------------------------------------------
-
-                ok = await search_suburb(
-                    page,
-                    suburb,
-                )
-
+                logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
+                ok = await search_suburb(page, suburb)
                 if not ok:
                     entry["error"] = "search_failed"
-
-                    logger.warning(
-                        "Search failed for suburb: %s",
-                        suburb,
-                    )
-
-                    report.append(entry)
+                    logger.warning("Search failed for suburb: %s", suburb)
+                    report_rows.append(entry)
+                    checkpoint(f"search_failed:{suburb_name}")
                     continue
 
-                # --------------------------------------------------
-                # Collect agent profile URLs
-                # --------------------------------------------------
+                profile_urls = await collect_agent_profile_urls(page, suburb) or []
+                entry["profiles_found"] = len(profile_urls)
+                logger.info("Found %d agent profile(s) for '%s'.", len(profile_urls), suburb)
 
-                profile_urls = await collect_agent_profile_urls(
-                    page,
-                    suburb,
-                )
-
-                if profile_urls is None:
-                    profile_urls = []
-
-                entry["profiles_found"] = len(
-                    profile_urls
-                )
-
-                logger.info(
-                    "Found %d agent profile(s) for '%s'.",
-                    len(profile_urls),
-                    suburb,
-                )
-
-                # --------------------------------------------------
-                # Scrape each agent
-                # --------------------------------------------------
+                cap = _visit_cap(max_agents)
+                if cap and len(profile_urls) > cap:
+                    logger.info(
+                        "Visiting first %d of %d collected profile(s) for '%s' (max-agents cap)",
+                        cap,
+                        len(profile_urls),
+                        suburb,
+                    )
+                    profile_urls = profile_urls[:cap]
 
                 for url in profile_urls:
-
+                    key = url.rstrip("/").lower()
+                    if key in seen_urls:
+                        logger.info("Skipping duplicate profile: %s", url)
+                        continue
                     try:
-                        logger.info(
-                            "Opening agent profile: %s",
-                            url,
-                        )
-
-                        # Navigate the existing nodriver tab.
+                        logger.info("Opening agent profile: %s", url)
                         await page.get(url)
-
                         await _human_pause()
-
-                        # Extract the record.
-                        raw = await extract_agent_record(
-                            page,
-                            url,
-                            suburb_hint=suburb,
-                        )
-
+                        raw = await extract_agent_record(page, url, suburb_hint=suburb)
                         if not raw:
-                            logger.warning(
-                                "No record extracted from: %s",
-                                url,
-                            )
+                            logger.warning("No record extracted from: %s", url)
                             continue
-
-                        # Clean record values.
+                        if not raw.get("suburb"):
+                            raw["suburb"] = suburb_name
+                        if not raw.get("postcode"):
+                            raw["postcode"] = postcode
                         cleaned = _clean_record(raw)
-
-                        # Store record.
-                        all_records.append(
-                            cleaned
-                        )
-
+                        all_records.append(cleaned)
+                        seen_urls.add(key)
                         entry["records_scraped"] += 1
-
                         logger.info(
-                            "Scraped: %s (%s) — %s",
+                            "Scraped: %s (%s / %s) — %s",
                             cleaned.get("name", "?"),
-                            suburb,
+                            cleaned.get("suburb", suburb_name),
+                            cleaned.get("postcode", postcode),
                             url,
                         )
-
+                    except KeyboardInterrupt:
+                        interrupted = True
+                        logger.info("Ctrl+C detected.")
+                        logger.info("Stopping scraper gracefully...")
+                        break
                     except Exception as exc:  # noqa: BLE001
-
-                        logger.error(
-                            "Failed to scrape %s: %s",
-                            url,
-                            exc,
-                            exc_info=True,
-                        )
-
-                    # Delay before next profile.
+                        logger.error("Failed to scrape %s: %s", url, exc, exc_info=True)
                     await _human_pause()
 
+                if interrupted:
+                    report_rows.append(entry)
+                    checkpoint("keyboard_interrupt")
+                    break
+
+            except KeyboardInterrupt:
+                interrupted = True
+                logger.info("Ctrl+C detected.")
+                logger.info("Stopping scraper gracefully...")
+                report_rows.append(entry)
+                checkpoint("keyboard_interrupt")
+                break
             except Exception as exc:  # noqa: BLE001
-
-                logger.error(
-                    "Suburb '%s' failed: %s",
-                    suburb,
-                    exc,
-                    exc_info=True,
-                )
-
+                logger.error("Suburb '%s' failed: %s", suburb, exc, exc_info=True)
                 entry["error"] = str(exc)
 
-            # Add suburb result to report.
-            report.append(entry)
-
+            report_rows.append(entry)
             logger.info(
-                "Finished suburb '%s': "
-                "%d profile(s) found, "
-                "%d record(s) scraped.",
+                "Finished suburb '%s': %d profile(s) found, %d record(s) scraped. Total records: %d",
                 suburb,
                 entry["profiles_found"],
                 entry["records_scraped"],
+                len(all_records),
             )
-
-            # Delay before next suburb.
+            checkpoint(f"suburb:{suburb_name}")
             await _human_pause()
 
+    except KeyboardInterrupt:
+        interrupted = True
+        logger.info("Ctrl+C detected.")
+        logger.info("Stopping scraper gracefully...")
+        checkpoint("keyboard_interrupt")
     except Exception as exc:  # noqa: BLE001
-
-        logger.critical(
-            "Browser pipeline failed: %s",
-            exc,
-            exc_info=True,
-        )
-
-        # Record unprocessed suburbs as failed.
-        processed_suburbs = {
-            item["suburb"]
-            for item in report
-        }
-
+        logger.critical("Browser pipeline failed: %s", exc, exc_info=True)
+        processed_suburbs = {item["suburb"] for item in report_rows}
         for suburb in suburbs:
-
             if suburb not in processed_suburbs:
-
-                report.append(
+                report_rows.append(
                     {
                         "suburb": suburb,
                         "profiles_found": 0,
@@ -302,122 +230,135 @@ async def _scrape_suburbs_async(
                         "error": f"browser_error: {exc}",
                     }
                 )
-
+        checkpoint("browser_error")
     finally:
-
-        # ----------------------------------------------------------
-        # Stop browser
-        # ----------------------------------------------------------
-
         if browser is not None:
-
             try:
-                logger.info(
-                    "Stopping nodriver browser..."
-                )
-
+                logger.info("Stopping nodriver browser...")
                 result = browser.stop()
-
-                # Handle versions where stop() is awaitable.
                 if asyncio.iscoroutine(result):
                     await result
-
-                logger.info(
-                    "Nodriver browser stopped."
-                )
-
+                logger.info("Nodriver browser stopped.")
             except Exception as exc:  # noqa: BLE001
+                logger.warning("Error while stopping browser: %s", exc)
 
-                logger.warning(
-                    "Error while stopping browser: %s",
-                    exc,
-                )
-
-    return all_records, report
+    return all_records, report_rows
 
 
 def scrape_suburbs(
     suburbs: list[str],
     headless: bool = False,
+    *,
+    records: list[dict] | None = None,
+    report: list[dict] | None = None,
+    on_checkpoint: CheckpointFn | None = None,
+    max_agents: int | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """
     Public synchronous entry point.
 
-    main.py can continue calling:
-
-        records, report = scrape_suburbs(
-            suburbs,
-            headless=args.headless,
-        )
-
-    The actual scraping work runs asynchronously internally.
+    `records` / `report` are filled in place so Ctrl+C cannot drop in-memory data
+    even if asyncio.run() is interrupted.
     """
-
-    return asyncio.run(
-        _scrape_suburbs_async(
-            suburbs,
-            headless=headless,
+    records = records if records is not None else []
+    report = report if report is not None else []
+    try:
+        return asyncio.run(
+            _scrape_suburbs_async(
+                suburbs,
+                headless=headless,
+                records=records,
+                report=report,
+                on_checkpoint=on_checkpoint,
+                max_agents=max_agents,
+            )
         )
-    )
+    except KeyboardInterrupt:
+        logger.info("Ctrl+C detected.")
+        logger.info("Stopping scraper gracefully...")
+        if on_checkpoint:
+            try:
+                on_checkpoint(records, report)
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Final interrupt checkpoint failed: %s", exc, exc_info=True)
+        return records, report
+
+
+def _schema_columns() -> list[tuple[str, str]]:
+    try:
+        from recruitment_formatter.formatter.config import SCHEMA
+        return [(spec.key, spec.output_name) for spec in SCHEMA]
+    except ImportError:
+        return [
+            ("name", "Name"),
+            ("job_title", "job_title"),
+            ("years_experience", "Years_experience"),
+            ("agency_name", "Agency Name"),
+            ("agent_email", "Email ID of the Agent"),
+            ("suburb", "suburbs"),
+            ("postcode", "Post code"),
+            ("agency_address", "agency_address"),
+            ("phone", "phone"),
+            ("rating", "rating"),
+            ("reviews", "Reviews"),
+            ("properties_sold", "properties_sold"),
+            ("median_sold_price", "median_sold_price"),
+            ("median_days_advertised", "median_days_advertised"),
+            ("profile_url", "profile_url"),
+            ("agency_url", "agency_url"),
+        ]
+
+
+def _records_to_dataframe(records: list[dict]) -> pd.DataFrame:
+    columns = _schema_columns()
+    rows = []
+    for rec in records:
+        rows.append({output: rec.get(key, "") for key, output in columns})
+    return pd.DataFrame(rows, columns=[output for _, output in columns])
 
 
 def write_output(
     records: list[dict],
     destination: Path,
     mode: str,
-    merge_filename: str = "scraped_agents",
+    merge_filename: str = "scraped_data",
 ) -> Path:
     """
-    Writes scraped records using the formatter's writers if available.
+    Writes scraped records to the caller-supplied destination directory.
 
-    Falls back to JSON if the formatter package is unavailable.
+    Excel mode always writes a real .xlsx file (pandas/openpyxl). It does not
+    silently switch to JSON. Missing fields become empty cells.
     """
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=True)
+    stem = merge_filename or "scraped_data"
 
-    destination.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+    if mode == "excel":
+        out_path = destination / f"{stem}.xlsx"
+        tmp_path = destination / f".{stem}.xlsx.tmp"
+        df = _records_to_dataframe(records)
+        try:
+            from recruitment_formatter.formatter.writers import write_excel
+            write_excel(records, tmp_path)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
+            with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
+                df.to_excel(writer, index=False, sheet_name="Agents")
+        if out_path.exists():
+            out_path.unlink()
+        tmp_path.replace(out_path)
+        logger.info("Excel saved to: %s", out_path.resolve())
+        return out_path
 
+    out_path = destination / f"{stem}.json"
     try:
-        from recruitment_formatter.formatter.writers import (
-            write_excel,
-            write_json,
-        )
-
-        if mode == "excel":
-
-            out_path = destination / f"{merge_filename}.xlsx"
-
-            write_excel(
-                records,
-                out_path,
-            )
-
-        else:
-
-            out_path = destination / f"{merge_filename}.json"
-
-            write_json(
-                records,
-                out_path,
-            )
-
-    except ImportError:
-
-        import json
-
-        out_path = destination / f"{merge_filename}.json"
-
+        from recruitment_formatter.formatter.writers import write_json
+        write_json(records, out_path)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Formatter JSON writer unavailable (%s); writing JSON directly", exc)
         out_path.write_text(
-            json.dumps(
-                records,
-                indent=2,
-                ensure_ascii=False,
-            ),
+            json.dumps(records, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-
+    logger.info("JSON saved to: %s", out_path.resolve())
     return out_path
-
-
-

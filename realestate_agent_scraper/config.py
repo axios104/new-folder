@@ -69,6 +69,7 @@ SELECTORS = {
     # regenerate on every deploy and would break silently.
     "reveal_phone_button": 'text="Call"',
     "rating": None,
+    "reviews": None,
     "properties_sold": None,
     "median_sold_price": None,
     "median_days_advertised": None,
@@ -88,8 +89,14 @@ TEXT_PATTERNS = {
         r"|0\d{9}"                               # no-space fallback
         r")"
     ),
+    "years_experience": re.compile(
+        r"(\d+)\s*years?\s+experience", re.IGNORECASE
+    ),
     "rating": re.compile(
         r"([0-5](?:\.\d)?)\s*(?:out of 5|/\s*5|stars?)\b", re.IGNORECASE
+    ),
+    "reviews": re.compile(
+        r"(\d+)\s*reviews?\b", re.IGNORECASE
     ),
     "properties_sold": re.compile(
         r"([\d,]+)\s*(?:properties\s*)?sold\b", re.IGNORECASE
@@ -107,7 +114,7 @@ TEXT_PATTERNS = {
 # TIMING — deliberately conservative/human-like. Do not lower these without
 # a good reason; realestate.com.au runs active bot-detection (Kasada), and
 # fast, uniform request timing is one of the easiest ways to get flagged.
-# ---------------------------------------------------------------------------\
+# ---------------------------------------------------------------------------
 MIN_ACTION_DELAY_MS = 800
 MAX_ACTION_DELAY_MS = 2200
 MIN_PROFILE_DELAY_S = 3.0
@@ -117,5 +124,7 @@ NAVIGATION_TIMEOUT_MS = 30_000
 # Max agent profiles to visit per suburb (safety cap; None = no limit)
 MAX_AGENTS_PER_SUBURB = None
 
-# Max pages of results to page through per suburb
-MAX_RESULT_PAGES = 5
+# Max pages of results to page through per suburb (None = follow until last page)
+MAX_RESULT_PAGES = None
+# Hard stop so a broken next-link cannot loop forever
+ABSOLUTE_MAX_RESULT_PAGES = 200

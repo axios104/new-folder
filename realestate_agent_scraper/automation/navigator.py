@@ -2,7 +2,7 @@
 Navigator — the "automation" subtool (nodriver/async version).
 
 Navigates to find-agent pages using direct URLs and collects agent profile
-links. Uses nodriver's async API.
+links across every pagination page for a suburb.
 """
 from __future__ import annotations
 import asyncio
@@ -13,6 +13,11 @@ import re
 import nodriver as nd
 
 import config
+from scraper.pagination import (
+    build_page_url,
+    extract_agent_profile_urls,
+    parse_pagination,
+)
 
 logger = logging.getLogger("scraper.automation")
 
@@ -43,6 +48,10 @@ def _parse_suburb_string(suburb: str) -> tuple[str, str, str]:
                 state_code = state_full.lower()
         else:
             state_code = config.STATE_CODE_MAP.get(rest.lower(), rest.lower())
+    else:
+        pc = re.search(r"\b(\d{4})\b", suburb)
+        if pc:
+            postcode = pc.group(1)
 
     return suburb_name, state_code, postcode
 
@@ -63,6 +72,16 @@ def _build_find_agent_url(suburb: str) -> str:
         return f"{config.FIND_AGENT_URL}/{slug}/"
 
 
+async def _page_ready(page: nd.Tab, suburb: str, attempts: int = 10) -> bool:
+    for _ in range(attempts):
+        html = await page.get_content()
+        if html and len(html) > 5000:
+            logger.info("Page loaded with content for '%s' (%d chars)", suburb, len(html))
+            return True
+        await asyncio.sleep(2)
+    return False
+
+
 async def search_suburb(page: nd.Tab, suburb: str) -> bool:
     """
     Navigates to the find-agent results page for a suburb.
@@ -77,22 +96,12 @@ async def search_suburb(page: nd.Tab, suburb: str) -> bool:
         url = _build_find_agent_url(suburb)
         logger.info("Navigating to: %s", url)
         await page.get(url)
-
-        # Wait for page to load with real content
         await _human_delay(3000, 5000)
 
-        # Verify the page has actual content (not just Kasada challenge)
-        for attempt in range(10):
-            html = await page.get_content()
-            if len(html) > 5000:
-                logger.info("Page loaded with content for '%s' (%d chars)", suburb, len(html))
-                return True
-            await asyncio.sleep(2)
+        if await _page_ready(page, suburb):
+            return True
 
-        logger.warning(
-            "Page still appears to be blocked for '%s' after waiting",
-            suburb,
-        )
+        logger.warning("Page still appears to be blocked for '%s' after waiting", suburb)
         return False
 
     except Exception as exc:  # noqa: BLE001
@@ -100,30 +109,132 @@ async def search_suburb(page: nd.Tab, suburb: str) -> bool:
         return False
 
 
+def _max_pages() -> int:
+    configured = config.MAX_RESULT_PAGES
+    absolute = getattr(config, "ABSOLUTE_MAX_RESULT_PAGES", 200)
+    if configured in (None, 0):
+        return absolute
+    return min(int(configured), absolute)
+
+
 async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
     """
-    From a loaded results page, extracts agent profile URLs from the HTML.
-    Uses regex on the page source since nodriver's element query may not
-    reliably return href attributes for all links.
+    From a loaded results page, walk every pagination page and collect unique
+    agent profile URLs. Does not assume page 1 contains the full result set.
     """
-    urls: list[str] = []
+    ordered: list[str] = []
+    seen: set[str] = set()
+    visited_page_urls: set[str] = set()
+    page_number = 1
+    reported_total: int | None = None
+    expected_pages = 1
+    max_pages = _max_pages()
+
+    async def _add_from_html(html: str, label: str) -> int:
+        found = extract_agent_profile_urls(html)
+        added = 0
+        for url in found:
+            key = url.rstrip("/").lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            ordered.append(url)
+            added += 1
+        logger.info(
+            "Page %s for '%s': %d profile link(s) on page, %d new, %d unique so far",
+            label,
+            suburb,
+            len(found),
+            added,
+            len(ordered),
+        )
+        return added
 
     try:
         html = await page.get_content()
-        # Extract agent profile URLs from the HTML source directly
-        # Pattern: href="https://www.realestate.com.au/agent/<name>-<id>"
-        matches = re.findall(
-            r'href="(https?://www\.realestate\.com\.au/agent/[\w-]+-\d+)"',
-            html,
+        current_url = ""
+        try:
+            current_url = await page.evaluate("location.href") or ""
+        except Exception:  # noqa: BLE001
+            current_url = _build_find_agent_url(suburb)
+
+        info = parse_pagination(html, current_url)
+        reported_total = info.total_results
+        expected_pages = max(1, info.expected_pages)
+        logger.info(
+            "Pagination for '%s': current_page=%s last_page=%s page_size=%s "
+            "total_results=%s has_pagination=%s",
+            suburb,
+            info.current_page,
+            info.last_page,
+            info.page_size,
+            info.total_results,
+            info.has_pagination,
         )
-        # De-duplicate while preserving order
-        urls = list(dict.fromkeys(matches))
+        await _add_from_html(html, str(page_number))
+        visited_page_urls.add((current_url or "").split("#")[0].rstrip("/").lower())
+
+        while page_number < max_pages and (
+            page_number < expected_pages or bool(info.next_url)
+        ):
+            next_url = info.page_urls.get(page_number + 1) or info.next_url
+            if not next_url:
+                next_url = build_page_url(current_url, page_number + 1)
+            next_key = (next_url or "").split("#")[0].rstrip("/").lower()
+            if not next_url or next_key in visited_page_urls:
+                logger.info("No further pagination URL for '%s' after page %d", suburb, page_number)
+                break
+
+            logger.info("Opening results page %d for '%s': %s", page_number + 1, suburb, next_url)
+            await page.get(next_url)
+            await _human_delay(1500, 3000)
+            if not await _page_ready(page, suburb, attempts=8):
+                logger.warning("Results page %d for '%s' did not load; stopping pagination", page_number + 1, suburb)
+                break
+
+            html = await page.get_content()
+            try:
+                current_url = await page.evaluate("location.href") or next_url
+            except Exception:  # noqa: BLE001
+                current_url = next_url
+            visited_page_urls.add((current_url or next_url).split("#")[0].rstrip("/").lower())
+            page_number += 1
+            info = parse_pagination(html, current_url)
+            if info.total_results:
+                reported_total = info.total_results
+            expected_pages = max(expected_pages, info.expected_pages, page_number)
+            added = await _add_from_html(html, str(page_number))
+            if added == 0 and not info.next_url and page_number >= info.last_page:
+                logger.info("No new profile URLs on page %d for '%s'; ending pagination", page_number, suburb)
+                break
+
+        if expected_pages > page_number and page_number >= max_pages:
+            logger.warning(
+                "Stopped pagination for '%s' at page %d (cap=%d); website indicated ~%s pages",
+                suburb,
+                page_number,
+                max_pages,
+                expected_pages,
+            )
 
     except Exception as exc:  # noqa: BLE001
         logger.error("Failed to collect agent URLs for '%s': %s", suburb, exc)
 
-    if config.MAX_AGENTS_PER_SUBURB and len(urls) > config.MAX_AGENTS_PER_SUBURB:
-        urls = urls[: config.MAX_AGENTS_PER_SUBURB]
+    if reported_total is not None and len(ordered) != reported_total:
+        logger.warning(
+            "Pagination discrepancy for '%s': website reported %s result(s) but "
+            "%d unique agent profile URL(s) were collected across %d page(s).",
+            suburb,
+            reported_total,
+            len(ordered),
+            page_number,
+        )
+    else:
+        logger.info(
+            "Collected %d unique agent profile URL(s) for suburb '%s' across %d page(s)",
+            len(ordered),
+            suburb,
+            page_number,
+        )
 
-    logger.info("Found %d agent profile URL(s) for suburb '%s'", len(urls), suburb)
-    return urls
+    return ordered

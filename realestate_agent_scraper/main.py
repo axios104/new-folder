@@ -18,8 +18,8 @@ Usage:
     python main.py SUBURBS_FILE DESTINATION_DIR MODE [--headless] [--merge-name NAME]
 
 Example:
-    python main.py suburbs.txt ./scraped_output excel
-    python main.py suburbs.xlsx ./scraped_output json --headless
+    python main.py aus_postcode.json C:\\Users\\ASUS\\Desktop\\scraped_output excel
+    python main.py aus_postcode.json C:\\Users\\ASUS\\Desktop\\scraped_output excel --limit 0
 """
 from __future__ import annotations
 import argparse
@@ -67,20 +67,55 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("destination", type=Path, help="Folder to write scraped output into")
     parser.add_argument("mode", choices=("excel", "json"), help="Output format")
     parser.add_argument("--headless", action="store_true", help="Run browser headless (more detectable; off by default)")
-    parser.add_argument("--merge-name", default="scraped_agents", help="Output filename stem (default: scraped_agents)")
+    parser.add_argument("--merge-name", default="scraped_data", help="Output filename stem (default: scraped_data)")
     parser.add_argument(
         "--limit", type=int, default=5,
         help="Max suburbs to process in this run (default: 5, a safe testing size). "
-             "Pass --limit 0 to process the whole list once you've confirmed it works "
-             "reliably on a small batch and have real SELECTORS configured.",
+             "Pass --limit 0 to process the whole list once you've confirmed it works.",
+    )
+    parser.add_argument(
+        "--max-agents", type=int, default=0,
+        help="Optional cap on profile pages visited per suburb after pagination "
+             "URLs are collected. 0 (default) means visit every collected profile.",
     )
     return parser.parse_args()
+
+
+def persist_outputs(
+    records: list[dict],
+    report: list[dict],
+    destination: Path,
+    mode: str,
+    merge_name: str,
+    logger: logging.Logger,
+) -> Path | None:
+    destination.mkdir(parents=True, exist_ok=True)
+    report_path = destination / "_scrape_report.json"
+    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+
+    if not records:
+        logger.warning(
+            "No records scraped yet — Excel/JSON not written. Report: %s",
+            report_path,
+        )
+        return None
+
+    logger.info("Saving %d records collected so far...", len(records))
+    out_path = write_output(records, destination, mode, merge_name)
+    resolved = out_path.resolve()
+    logger.info("Wrote %d record(s) to %s", len(records), resolved)
+    print(f"Excel saved to:\n{resolved}" if mode == "excel" else f"JSON saved to:\n{resolved}")
+    return resolved
 
 
 def main() -> int:
     args = parse_args()
     setup_logging(Path("logs"))
     logger = logging.getLogger("scraper.main")
+
+    args.destination = args.destination.expanduser()
+    args.destination.mkdir(parents=True, exist_ok=True)
+    logger.info("Output directory: %s", args.destination.resolve())
 
     suburbs = load_suburbs(args.suburbs_file)
     if not suburbs:
@@ -98,18 +133,46 @@ def main() -> int:
 
     logger.info("Loaded %d suburb(s): %s%s", len(suburbs), suburbs[:5], " ..." if len(suburbs) > 5 else "")
 
-    records, report = scrape_suburbs(suburbs, headless=args.headless)
-    logger.info("Scraping complete: %d record(s) across %d suburb(s)", len(records), len(suburbs))
+    records: list[dict] = []
+    report: list[dict] = []
+    interrupted = False
 
-    args.destination.mkdir(parents=True, exist_ok=True)
-    (args.destination / "_scrape_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    def on_checkpoint(recs: list[dict], rep: list[dict]) -> None:
+        persist_outputs(recs, rep, args.destination, args.mode, args.merge_name, logger)
+
+    try:
+        records, report = scrape_suburbs(
+            suburbs,
+            headless=args.headless,
+            records=records,
+            report=report,
+            on_checkpoint=on_checkpoint,
+            max_agents=args.max_agents or None,
+        )
+        logger.info("Scraping complete: %d record(s) across %d suburb(s)", len(records), len(suburbs))
+    except KeyboardInterrupt:
+        interrupted = True
+        logger.info("Ctrl+C detected.")
+        logger.info("Stopping scraper gracefully...")
+    finally:
+        out_path = persist_outputs(
+            records, report, args.destination, args.mode, args.merge_name, logger,
+        )
+        if interrupted:
+            print("Ctrl+C detected.")
+            print("Stopping scraper gracefully...")
+            print(f"Saving {len(records)} records collected so far...")
+            if out_path:
+                print("Excel saved to:" if args.mode == "excel" else "JSON saved to:")
+                print(out_path)
+            return 0
 
     if not records:
-        logger.warning("No records scraped — nothing written. Check logs/scraper.log and _scrape_report.json.")
+        logger.warning(
+            "No records scraped — nothing written. Check logs/scraper.log and %s",
+            args.destination / "_scrape_report.json",
+        )
         return 1
-
-    out_path = write_output(records, args.destination, args.mode, args.merge_name)
-    logger.info("Wrote %d record(s) to %s", len(records), out_path)
     return 0
 
 
