@@ -126,5 +126,3 @@ MAX_AGENTS_PER_SUBURB = None
 
 # Max pages of results to page through per suburb (None = follow until last page)
 MAX_RESULT_PAGES = None
-# Hard stop so a broken next-link cannot loop forever
-ABSOLUTE_MAX_RESULT_PAGES = 200

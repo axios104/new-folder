@@ -53,8 +53,12 @@ async def _human_pause() -> None:
 
 def _clean_record(raw: dict) -> dict:
     try:
-        from recruitment_formatter.formatter.config import FIELD_BY_KEY
-        from recruitment_formatter.formatter.cleaners import clean_value
+        try:
+            from formatter.config import FIELD_BY_KEY
+            from formatter.cleaners import clean_value
+        except ImportError:
+            from recruitment_formatter.formatter.config import FIELD_BY_KEY
+            from recruitment_formatter.formatter.cleaners import clean_value
 
         cleaned = {}
         for key, value in raw.items():
@@ -286,7 +290,10 @@ def scrape_suburbs(
 
 def _schema_columns() -> list[tuple[str, str]]:
     try:
-        from recruitment_formatter.formatter.config import SCHEMA
+        try:
+            from formatter.config import SCHEMA
+        except ImportError:
+            from recruitment_formatter.formatter.config import SCHEMA
         return [(spec.key, spec.output_name) for spec in SCHEMA]
     except ImportError:
         return [
@@ -335,24 +342,30 @@ def write_output(
 
     if mode == "excel":
         out_path = destination / f"{stem}.xlsx"
-        tmp_path = destination / f".{stem}.xlsx.tmp"
+        # Keep the final suffix as .xlsx so both pandas and the shared writer
+        # select the correct engine, then atomically replace the prior file.
+        tmp_path = destination / f".{stem}.tmp.xlsx"
         df = _records_to_dataframe(records)
         try:
-            from recruitment_formatter.formatter.writers import write_excel
+            try:
+                from formatter.writers import write_excel
+            except ImportError:
+                from recruitment_formatter.formatter.writers import write_excel
             write_excel(records, tmp_path)
         except Exception as exc:  # noqa: BLE001
             logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
             with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
                 df.to_excel(writer, index=False, sheet_name="Agents")
-        if out_path.exists():
-            out_path.unlink()
         tmp_path.replace(out_path)
         logger.info("Excel saved to: %s", out_path.resolve())
         return out_path
 
     out_path = destination / f"{stem}.json"
     try:
-        from recruitment_formatter.formatter.writers import write_json
+        try:
+            from formatter.writers import write_json
+        except ImportError:
+            from recruitment_formatter.formatter.writers import write_json
         write_json(records, out_path)
     except Exception as exc:  # noqa: BLE001
         logger.warning("Formatter JSON writer unavailable (%s); writing JSON directly", exc)

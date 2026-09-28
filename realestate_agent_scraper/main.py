@@ -68,8 +68,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("mode", choices=("excel", "json"), help="Output format")
     parser.add_argument("--headless", action="store_true", help="Run browser headless (more detectable; off by default)")
     parser.add_argument("--merge-name", default="scraped_data", help="Output filename stem (default: scraped_data)")
+    def non_negative_int(value: str) -> int:
+        parsed = int(value)
+        if parsed < 0:
+            raise argparse.ArgumentTypeError("must be zero or greater")
+        return parsed
+
     parser.add_argument(
-        "--limit", type=int, default=5,
+        "--limit", type=non_negative_int, default=5,
         help="Max suburbs to process in this run (default: 5, a safe testing size). "
              "Pass --limit 0 to process the whole list once you've confirmed it works.",
     )
@@ -92,13 +98,6 @@ def persist_outputs(
     destination.mkdir(parents=True, exist_ok=True)
     report_path = destination / "_scrape_report.json"
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
-
-    if not records:
-        logger.warning(
-            "No records scraped yet — Excel/JSON not written. Report: %s",
-            report_path,
-        )
-        return None
 
     logger.info("Saving %d records collected so far...", len(records))
     out_path = write_output(records, destination, mode, merge_name)

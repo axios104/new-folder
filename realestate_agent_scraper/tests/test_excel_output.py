@@ -60,7 +60,20 @@ def test_missing_fields_do_not_crash():
     print(f"PASS partial excel written to {out}")
 
 
+def test_empty_checkpoint_still_writes_headers():
+    dest = ROOT / "tests" / "_tmp_excel_out"
+    dest.mkdir(parents=True, exist_ok=True)
+    out = write_output([], dest, "excel", "empty_checkpoint")
+    assert out.exists()
+    import pandas as pd
+    df = pd.read_excel(out, dtype=str)
+    assert len(df) == 0
+    assert "Name" in df.columns
+    print(f"PASS empty checkpoint written to {out}")
+
+
 if __name__ == "__main__":
     test_excel_writes_to_requested_directory()
     test_missing_fields_do_not_crash()
+    test_empty_checkpoint_still_writes_headers()
     print("All Requirement 3 Excel unit tests passed.")

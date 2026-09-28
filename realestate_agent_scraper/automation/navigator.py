@@ -109,12 +109,10 @@ async def search_suburb(page: nd.Tab, suburb: str) -> bool:
         return False
 
 
-def _max_pages() -> int:
+def _max_pages() -> int | None:
+    """Return an explicit operator cap, or None to follow site pagination."""
     configured = config.MAX_RESULT_PAGES
-    absolute = getattr(config, "ABSOLUTE_MAX_RESULT_PAGES", 200)
-    if configured in (None, 0):
-        return absolute
-    return min(int(configured), absolute)
+    return int(configured) if configured not in (None, 0) else None
 
 
 async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
@@ -174,7 +172,7 @@ async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
         await _add_from_html(html, str(page_number))
         visited_page_urls.add((current_url or "").split("#")[0].rstrip("/").lower())
 
-        while page_number < max_pages and (
+        while (max_pages is None or page_number < max_pages) and (
             page_number < expected_pages or bool(info.next_url)
         ):
             next_url = info.page_urls.get(page_number + 1) or info.next_url
@@ -208,7 +206,7 @@ async def collect_agent_profile_urls(page: nd.Tab, suburb: str) -> list[str]:
                 logger.info("No new profile URLs on page %d for '%s'; ending pagination", page_number, suburb)
                 break
 
-        if expected_pages > page_number and page_number >= max_pages:
+        if max_pages is not None and expected_pages > page_number and page_number >= max_pages:
             logger.warning(
                 "Stopped pagination for '%s' at page %d (cap=%d); website indicated ~%s pages",
                 suburb,

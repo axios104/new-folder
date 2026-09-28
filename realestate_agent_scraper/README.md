@@ -68,21 +68,50 @@ Until `SELECTORS["agent_result_card"]` is filled in, the results-page
 collector falls back to a generic scan for any link containing `/agent/` —
 functional but less precise than a real selector.
 
-## Usage
+## Usage (PowerShell)
 
-```bash
-# suburbs.txt: one suburb per line
-python main.py suburbs.txt ./scraped_output excel
+Open PowerShell in the `realestate_agent_scraper` directory. The JSON input
+`aus_postcode.json` and the sibling `recruitment_formatter` folder are already
+included in the supplied project layout.
 
-# or from an Excel/CSV column named "suburb"
-python main.py suburbs.xlsx ./scraped_output json
+```powershell
+cd C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper
+```
 
-# headless (faster, but more easily fingerprinted — off by default)
-python main.py suburbs.txt ./scraped_output excel --headless
+If you have a project virtual environment, activate it and install dependencies
+once. From a fresh checkout, create one first. `requirements.txt` contains the
+runtime packages; `openpyxl` is needed for Excel output.
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+Run a small initial batch (the default limit is five suburbs):
+
+```powershell
+python main.py .\aus_postcode.json C:\Users\ASUS\Desktop\scraped_output excel
+```
+
+To process every suburb in the JSON file, explicitly remove the default safety
+limit with `--limit 0`:
+
+```powershell
+python main.py .\aus_postcode.json C:\Users\ASUS\Desktop\scraped_output excel --limit 0
+```
+
+Arguments are positional in this order: input suburb file, output directory,
+then output format (`excel` or `json`). The optional `--limit N` sets the number
+of suburbs (0 means all); `--headless` runs Chrome without a visible window;
+`--merge-name NAME` changes the output filename stem (default `scraped_data`).
+Excel output is saved as `<output directory>\scraped_data.xlsx` and checkpoints
+replace that file as the scrape progresses. Press Ctrl+C to stop and save the
+records collected so far.
 ```
 
 Output:
-- `scraped_output/scraped_agents.xlsx` (or `.json`) — all scraped records,
+- `scraped_output/scraped_data.xlsx` (or `.json`) — all scraped records,
   same columns/keys as `recruitment_formatter`'s output.
 - `scraped_output/_scrape_report.json` — per-suburb count of profiles found
   and records scraped, plus any errors (same auditability pattern as the
@@ -92,7 +121,7 @@ Output:
 ## Feeding scraped output into the rest of your pipeline
 
 Because the output uses the identical schema, you can drop
-`scraped_agents.xlsx` straight into `recruitment_formatter`'s destination
+`scraped_data.xlsx` straight into `recruitment_formatter`'s destination
 folder alongside employee-collected files, or run it directly through
 `recruitment_formatter`'s `zoho` mode:
 
