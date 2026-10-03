@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scraper.html_fields import (  # noqa: E402
+    extract_agency_name_from_page,
     extract_profile_fields_from_html,
     split_suburb_and_postcode,
 )
@@ -97,6 +98,16 @@ def test_does_not_hardcode_example_values():
     assert other["reviews"] == "8"
 
 
+def test_profile_contacts_require_semantic_address_and_mailto_markup():
+    fields = extract_profile_fields_from_html(
+        '<a href="mailto:ada@example.test?subject=Hello">Email</a>'
+        '<address>12 Main Street, Aspley QLD 4034</address>'
+    )
+    assert fields["agent_email"] == "ada@example.test"
+    assert fields["agency_address"] == "12 Main Street, Aspley QLD 4034"
+    assert extract_agency_name_from_page("<h1>Belle Property - Aspley</h1>") == "Belle Property - Aspley"
+
+
 if __name__ == "__main__":
     tests = [
         test_years_experience,
@@ -105,6 +116,7 @@ if __name__ == "__main__":
         test_missing_fields_do_not_raise,
         test_suburb_and_postcode_are_separate,
         test_does_not_hardcode_example_values,
+        test_profile_contacts_require_semantic_address_and_mailto_markup,
     ]
     for fn in tests:
         fn()

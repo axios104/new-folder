@@ -36,7 +36,15 @@ from automation.navigator import (
     search_suburb,
 )
 from scraper.extractor import extract_agent_record
-from scraper.html_fields import extract_team_member_links, split_suburb_and_postcode
+from scraper.html_fields import (
+    agent_profile_identity,
+    clean_agent_name,
+    clean_job_title,
+    extract_agency_name_from_page,
+    extract_profile_fields_from_html,
+    extract_team_member_links,
+    split_suburb_and_postcode,
+)
 from scraper.matching import designation_confidence, matches_designation
 
 logger = logging.getLogger("scraper.pipeline")
@@ -55,9 +63,7 @@ async def _human_pause() -> None:
 
 
 def _record_dedupe_key(row: dict) -> str:
-    profile = str(row.get("profile_url", "")).rstrip("/").lower()
-    parent = str(row.get("primary_agent_url", "")).rstrip("/").lower()
-    return f"{profile}::{parent}" if row.get("record_type") == "Team member" else profile
+    return agent_profile_identity(row.get("profile_url", ""))
 
 
 def _clean_record(raw: dict) -> dict:
@@ -150,6 +156,7 @@ async def _scrape_suburbs_async(
                 "error": None,
             }
             seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
+            agency_details: dict[str, dict[str, str]] = {}
             visited_agencies: set[str] = set()
             query_row_count = sum(row.get("_suburb_query") == suburb for row in all_records)
             row_limit_reached = bool(max_rows and query_row_count >= max_rows)
@@ -200,11 +207,12 @@ async def _scrape_suburbs_async(
                     on_page=lambda page_no: entry.__setitem__("pages_scraped", page_no),
                 ) or []
                 entry["profiles_found"] = len(profile_urls)
+                candidate_primary_ids = {agent_profile_identity(candidate) for candidate in profile_urls}
                 logger.info("Found %d agent profile(s) for '%s'.", len(profile_urls), suburb)
 
                 remaining_urls = [
                     url for url in profile_urls
-                    if deep_search or url.rstrip("/").lower() not in seen_urls
+                    if deep_search or agent_profile_identity(url) not in seen_urls
                 ]
                 cap = _visit_cap(max_agents)
                 capped = bool(cap and len(remaining_urls) > cap)
@@ -221,7 +229,7 @@ async def _scrape_suburbs_async(
                     if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
                         row_limit_reached = True
                         break
-                    key = url.rstrip("/").lower()
+                    key = agent_profile_identity(url)
                     try:
                         logger.info("Opening agent profile: %s", url)
                         await page.get(url)
@@ -231,6 +239,18 @@ async def _scrape_suburbs_async(
                             logger.warning("No record extracted from: %s", url)
                             entry["profiles_failed"] += 1
                             continue
+                        raw_name = clean_agent_name(str(raw.get("name") or ""), url)
+                        if not raw_name:
+                            logger.warning("Could not extract a clean agent name from %s", url)
+                            entry["profiles_failed"] += 1
+                            continue
+                        raw["name"] = raw_name
+                        raw["job_title"] = clean_job_title(str(raw.get("job_title") or ""))
+                        raw_agency_url = str(raw.get("agency_url") or "").rstrip("/").lower()
+                        known_agency = agency_details.get(raw_agency_url, {})
+                        for field in ("agency_name", "agency_address"):
+                            if not raw.get(field) and known_agency.get(field):
+                                raw[field] = known_agency[field]
                         if not raw.get("suburb"):
                             raw["suburb"] = suburb_name
                         if not raw.get("postcode"):
@@ -253,7 +273,15 @@ async def _scrape_suburbs_async(
                         raw["primary_agent_url"] = url
                         raw["designation_confidence"] = "" if all_designations else confidence
                         cleaned = _clean_record(raw)
-                        if key not in seen_urls:
+                        existing_index = next(
+                            (
+                                index for index, existing in enumerate(all_records)
+                                if existing.get("_suburb_query") == suburb
+                                and _record_dedupe_key(existing) == key
+                            ),
+                            None,
+                        )
+                        if existing_index is None:
                             all_records.append(cleaned)
                             seen_urls.add(key)
                             entry["records_scraped"] += 1
@@ -263,6 +291,19 @@ async def _scrape_suburbs_async(
                                 except Exception as exc:  # noqa: BLE001
                                     entry["profiles_failed"] += 1
                                     logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
+                        elif (
+                            all_records[existing_index].get("record_type") == "Team member"
+                            or deep_search
+                        ):
+                            # Prefer a freshly scraped search-result row when
+                            # promoting a team record or resuming deep-search.
+                            all_records[existing_index] = cleaned
+                            if on_record:
+                                try:
+                                    on_record(suburb, cleaned)
+                                except Exception as exc:  # noqa: BLE001
+                                    entry["profiles_failed"] += 1
+                                    logger.error("Could not persist promoted profile %s: %s", url, exc, exc_info=True)
                         agency_url = str(cleaned.get("agency_url") or "").strip()
                         agency_key = agency_url.rstrip("/").lower()
                         if deep_search and agency_url and agency_key not in visited_agencies and not (
@@ -277,20 +318,34 @@ async def _scrape_suburbs_async(
                                 await page.get(agency_url)
                                 await _human_pause()
                                 agency_html = await page.get_content()
+                                agency_profile_fields = extract_profile_fields_from_html(agency_html)
+                                agency_details[agency_key] = {
+                                    "agency_name": extract_agency_name_from_page(agency_html)
+                                    or agency_profile_fields.get("agency_name", ""),
+                                    "agency_address": agency_profile_fields.get("agency_address", ""),
+                                }
+                                for field in ("agency_name", "agency_address"):
+                                    if not cleaned.get(field) and agency_details[agency_key].get(field):
+                                        cleaned[field] = agency_details[agency_key][field]
+                                if existing_index is not None:
+                                    all_records[existing_index] = cleaned
+                                if on_record and (cleaned.get("agency_name") or cleaned.get("agency_address")):
+                                    try:
+                                        on_record(suburb, cleaned)
+                                    except Exception as exc:  # noqa: BLE001
+                                        logger.warning("Could not persist agency details for %s: %s", url, exc)
                                 team_links = extract_team_member_links(agency_html)
                                 logger.info("Found %d team member link(s) for %s", len(team_links), cleaned.get("name", url))
                                 for member in team_links:
                                     if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
                                         row_limit_reached = True
                                         break
-                                    if member.profile_url.rstrip("/").lower() == url.rstrip("/").lower():
+                                    member_id = agent_profile_identity(member.profile_url)
+                                    if member_id == key or member_id in seen_urls:
                                         continue
                                     # A company roster is represented once in
                                     # the workbook and grouped beneath the first
                                     # matching primary agent for that company.
-                                    team_row_key = f"{member.profile_url.rstrip('/').lower()}::{url.rstrip('/').lower()}"
-                                    if team_row_key in seen_urls:
-                                        continue
                                     try:
                                         await page.get(member.profile_url)
                                         await _human_pause()
@@ -298,15 +353,45 @@ async def _scrape_suburbs_async(
                                         if not team_raw:
                                             entry["profiles_failed"] += 1
                                             continue
-                                        team_raw["name"] = team_raw.get("name") or member.name
+                                        team_name = clean_agent_name(
+                                            str(team_raw.get("name") or ""), member.profile_url
+                                        )
+                                        team_raw["name"] = team_name or clean_agent_name(
+                                            member.name, member.profile_url
+                                        )
+                                        if not team_raw["name"]:
+                                            logger.warning(
+                                                "Skipping team profile with no reliable name: %s",
+                                                member.profile_url,
+                                            )
+                                            entry["profiles_failed"] += 1
+                                            continue
+                                        team_raw["job_title"] = clean_job_title(
+                                            str(team_raw.get("job_title") or "")
+                                        ) or member.job_title
+                                        for field in ("agency_name", "agency_address"):
+                                            if not team_raw.get(field) and agency_details[agency_key].get(field):
+                                                team_raw[field] = agency_details[agency_key][field]
+                                        for field in ("rating", "reviews", "properties_sold", "median_sold_price"):
+                                            if getattr(member, field):
+                                                team_raw[field] = getattr(member, field)
+                                        all_designations = designation.strip().lower() in {"all", "*", "any"}
+                                        if member_id in candidate_primary_ids and (
+                                            all_designations
+                                            or matches_designation(str(team_raw.get("job_title", "")), designation)
+                                        ):
+                                            # Keep one row when a team member
+                                            # is also a qualifying search result.
+                                            continue
                                         team_raw["_suburb_query"] = suburb
                                         team_raw["record_type"] = "Team member"
+                                        team_raw["profile_url"] = member.profile_url
                                         team_raw["primary_agent"] = cleaned.get("name", "")
                                         team_raw["primary_agent_url"] = url
                                         team_raw["designation_confidence"] = ""
                                         team_cleaned = _clean_record(team_raw)
                                         all_records.append(team_cleaned)
-                                        seen_urls.add(team_row_key)
+                                        seen_urls.add(member_id)
                                         entry["records_scraped"] += 1
                                         if on_record:
                                             on_record(suburb, team_cleaned)
@@ -497,12 +582,15 @@ def _records_to_dataframe(records: list[dict]) -> pd.DataFrame:
         ("primary_agent_url", "Primary agent profile"),
         ("designation_confidence", "Designation confidence"),
     )
+    output_columns = [output for _, output in columns] + [output for _, output in relationship_fields]
+    if len(output_columns) != len(set(output_columns)):
+        raise ValueError("The Excel output schema contains duplicate column names")
     rows = []
     for rec in records:
         row = {output: rec.get(key, "") for key, output in columns}
         row.update({output: rec.get(key, "") for key, output in relationship_fields})
         rows.append(row)
-    return pd.DataFrame(rows, columns=[output for _, output in columns] + [output for _, output in relationship_fields])
+    return pd.DataFrame(rows, columns=output_columns)
 
 
 def write_output(
@@ -528,43 +616,20 @@ def write_output(
         tmp_path = destination / f".{stem}.tmp.xlsx"
         df = _records_to_dataframe(records)
         has_relationship_data = any(record.get("record_type") for record in records)
-        formatter_written = False
-        try:
-            try:
-                from formatter.writers import write_excel
-            except ImportError:
-                from recruitment_formatter.formatter.writers import write_excel
-            if has_relationship_data:
-                with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
-                    df.to_excel(writer, index=False, sheet_name="Agents")
-            else:
-                write_excel(records, tmp_path)
-            formatter_written = True
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
+        if has_relationship_data:
             with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
                 df.to_excel(writer, index=False, sheet_name="Agents")
-        if has_relationship_data and formatter_written:
-            from openpyxl import load_workbook
-
-            workbook = load_workbook(tmp_path)
-            worksheet = workbook["Agents"]
-            extra_columns = (
-                ("record_type", "Record type"),
-                ("primary_agent", "Primary agent"),
-                ("primary_agent_url", "Primary agent profile"),
-                ("designation_confidence", "Designation confidence"),
-            )
-            first_extra = worksheet.max_column + 1
-            for offset, (_, heading) in enumerate(extra_columns):
-                column = first_extra + offset
-                worksheet.cell(row=1, column=column, value=heading)
-                for row_number, record in enumerate(records, start=2):
-                    worksheet.cell(row=row_number, column=column, value=record.get(extra_columns[offset][0], ""))
-                letter = worksheet.cell(row=1, column=column).column_letter
-                max_width = max([len(heading)] + [len(str(record.get(extra_columns[offset][0], ""))) for record in records])
-                worksheet.column_dimensions[letter].width = min(max_width + 2, 60)
-            workbook.save(tmp_path)
+        else:
+            try:
+                try:
+                    from formatter.writers import write_excel
+                except ImportError:
+                    from recruitment_formatter.formatter.writers import write_excel
+                write_excel(records, tmp_path)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
+                with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
+                    df.to_excel(writer, index=False, sheet_name="Agents")
         tmp_path.replace(out_path)
         logger.info("Excel saved to: %s", out_path.resolve())
         return out_path

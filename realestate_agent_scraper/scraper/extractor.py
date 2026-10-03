@@ -13,7 +13,13 @@ import re
 import nodriver as nd
 
 import config
-from scraper.html_fields import extract_profile_fields_from_html, split_suburb_and_postcode
+from scraper.html_fields import (
+    clean_agent_name,
+    clean_job_title,
+    clean_years_experience,
+    extract_profile_fields_from_html,
+    split_suburb_and_postcode,
+)
 
 logger = logging.getLogger("scraper.extractor")
 
@@ -32,14 +38,23 @@ _OPTIONAL_FIELDS = {
 _DOM_EXTRACT_JS = r"""
 (() => {
   const result = {
+    name: "",
     years_experience: "",
     agency_name: "",
     agency_url: "",
     rating: "",
     reviews: "",
-    job_title: ""
+    job_title: "",
+    agent_email: "",
+    agency_address: ""
   };
   const bodyText = document.body ? (document.body.innerText || "") : "";
+  const nameNode = document.querySelector('[data-testid*="agent-name" i], [class*="AgentName"], main h1, h1');
+  if (nameNode) result.name = (nameNode.innerText || nameNode.textContent || "").trim();
+  const emailLink = document.querySelector('a[href^="mailto:"]');
+  if (emailLink) result.agent_email = (emailLink.getAttribute("href") || "").replace(/^mailto:/i, "").split("?")[0];
+  const addressNode = document.querySelector('address, [itemprop="streetAddress"], [data-testid*="agency-address" i]');
+  if (addressNode) result.agency_address = (addressNode.innerText || addressNode.textContent || "").trim();
   const titleNode = document.querySelector('[data-testid*="job-title" i], [data-testid*="agent-title" i], [class*="JobTitle"], [class*="jobTitle"], [class*="AgentTitle"]');
   if (titleNode) result.job_title = (titleNode.innerText || titleNode.textContent || "").trim();
   if (!result.job_title) {
@@ -181,18 +196,24 @@ async def extract_agent_record(page: nd.Tab, profile_url: str, suburb_hint: str 
         _fill_if_empty(record, key, value)
 
     for key, value in (await _dom_fields(page)).items():
+        if key == "name":
+            value = clean_agent_name(str(value or ""), profile_url)
+        elif key == "job_title":
+            value = clean_job_title(str(value or ""))
         _fill_if_empty(record, key, value)
 
     _fill_if_empty(record, "years_experience", _text_by_pattern(body_text, "years_experience"))
     _fill_if_empty(record, "rating", _text_by_pattern(body_text, "rating"))
     _fill_if_empty(record, "reviews", _text_by_pattern(body_text, "reviews"))
 
-    url_match = re.search(r"/agent/([\w-]+)-\d+$", profile_url)
-    if url_match and not record["name"]:
-        name_slug = url_match.group(1)
-        record["name"] = name_slug.replace("-", " ").title()
-
     _extract_from_json(html, record)
+
+    # Years experience is a human count. Reject award years and other values
+    # accidentally surfaced by embedded page data.
+    record["years_experience"] = clean_years_experience(record.get("years_experience"))
+
+    if not record["name"]:
+        record["name"] = clean_agent_name("", profile_url)
 
     missing = [k for k, v in record.items() if v == "" and k not in _OPTIONAL_FIELDS]
     if missing:
@@ -226,7 +247,7 @@ def _extract_from_json(html: str, record: dict) -> None:
                 for json_match in re.finditer(r'\{[^{}]*"salespersonId"[^{}]*\}', script_content):
                     data = json.loads(json_match.group(0))
                     if data.get("name") and not record["name"]:
-                        record["name"] = data["name"]
+                        record["name"] = clean_agent_name(str(data["name"]), record.get("profile_url", ""))
                     break
             except (json.JSONDecodeError, KeyError):
                 pass
@@ -238,8 +259,10 @@ def _walk_json_for_agent(obj, record: dict, depth: int = 0) -> None:
         return
     if isinstance(obj, dict):
         if "salespersonId" in obj or "agentName" in obj or "agencyName" in obj or "jobTitle" in obj:
-            if obj.get("name"):
-                _fill_if_empty(record, "name", obj.get("name"))
+            if obj.get("name") and not record.get("name"):
+                name = clean_agent_name(str(obj.get("name")), record.get("profile_url", ""))
+                if name:
+                    record["name"] = name
             if obj.get("jobTitle"):
                 _fill_if_empty(record, "job_title", obj.get("jobTitle"))
             if obj.get("agencyName"):

@@ -28,7 +28,7 @@ class DeepPage(FakePage):
     async def get_content(self):
         return (
             '<div id="TeamMembers">'
-            '<a href="/agent/member-2">Team Member One</a>'
+            '<a href="/agent/1">Primary in team roster</a>'
             '<a href="/agent/member-3">Team Member Two</a>'
             '</div>'
         )
@@ -164,12 +164,13 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
         )
 
     assert [row["record_type"] for row in records] == [
-        "Primary agent", "Team member", "Team member", "Primary agent"
+        "Primary agent", "Team member", "Primary agent"
     ]
-    assert all(row["primary_agent"] == "Primary" for row in records[1:3])
-    assert all(row["primary_agent_url"].endswith("primary-1") for row in records[1:3])
-    assert all(row["designation_confidence"] == "" for row in records[1:3])
+    assert records[1]["primary_agent"] == "Primary"
+    assert records[1]["primary_agent_url"].endswith("primary-1")
+    assert records[1]["designation_confidence"] == ""
     assert len(saved) == 3
+    assert len({pipeline._record_dedupe_key(row) for row in records}) == len(records)
     assert sum("/agency/" in url for url in page.visited_urls) == 1
     assert report[0]["status"] == "completed"
 

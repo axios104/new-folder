@@ -171,7 +171,9 @@ def main() -> int:
 
     def on_record(query_key: str, record: dict) -> None:
         store.append_record(query_key, record)
-        count = int(store.suburbs.get(query_key, {}).get("records_scraped", 0)) + 1
+        count = len(_records_for(records, query_key))
+        if args.max_rows:
+            count = min(count, args.max_rows)
         if count % 10 == 0:
             path = _save_query(store, records, query_key, logger, args.max_rows)
             store.update(query_key, status="in_progress", records_scraped=count, output_file=path.name)

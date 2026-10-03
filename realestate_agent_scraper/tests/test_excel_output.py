@@ -67,6 +67,8 @@ def test_excel_writes_to_requested_directory():
     assert "Post code" in df.columns
     assert "Record type" in df.columns
     assert "Primary agent" in df.columns
+    assert df.columns.is_unique
+    assert len(df.columns) == len(_schema_columns()) + 4
     assert df.iloc[0]["Record type"] == "Primary agent"
     assert df.iloc[0]["Primary agent"] == "Ada Agent"
     assert str(df.iloc[0]["suburbs"]) == "Darwin City"
