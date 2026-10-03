@@ -21,7 +21,9 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import random
+import tempfile
 from collections.abc import Callable
 from pathlib import Path
 
@@ -158,6 +160,7 @@ async def _scrape_suburbs_async(
             seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
             agency_details: dict[str, dict[str, str]] = {}
             visited_agencies: set[str] = set()
+            completed_agencies: dict[str, bool] = {}
             query_row_count = sum(row.get("_suburb_query") == suburb for row in all_records)
             row_limit_reached = bool(max_rows and query_row_count >= max_rows)
 
@@ -210,9 +213,17 @@ async def _scrape_suburbs_async(
                 candidate_primary_ids = {agent_profile_identity(candidate) for candidate in profile_urls}
                 logger.info("Found %d agent profile(s) for '%s'.", len(profile_urls), suburb)
 
+                completed_primary_ids = {
+                    agent_profile_identity(row.get("profile_url", ""))
+                    for row in all_records
+                    if row.get("_suburb_query") == suburb
+                    and row.get("record_type") != "Team member"
+                    and row.get("_deep_search_complete")
+                }
                 remaining_urls = [
                     url for url in profile_urls
-                    if deep_search or agent_profile_identity(url) not in seen_urls
+                    if agent_profile_identity(url) not in completed_primary_ids
+                    and (deep_search or agent_profile_identity(url) not in seen_urls)
                 ]
                 cap = _visit_cap(max_agents)
                 capped = bool(cap and len(remaining_urls) > cap)
@@ -306,6 +317,7 @@ async def _scrape_suburbs_async(
                                     logger.error("Could not persist promoted profile %s: %s", url, exc, exc_info=True)
                         agency_url = str(cleaned.get("agency_url") or "").strip()
                         agency_key = agency_url.rstrip("/").lower()
+                        agency_complete = deep_search and not agency_url
                         if deep_search and agency_url and agency_key not in visited_agencies and not (
                             max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows
                         ):
@@ -314,6 +326,7 @@ async def _scrape_suburbs_async(
                             # duplicating its entire roster under every agent
                             # and consuming the workbook row limit with copies.
                             visited_agencies.add(agency_key)
+                            agency_complete = False
                             try:
                                 await page.get(agency_url)
                                 await _human_pause()
@@ -336,9 +349,11 @@ async def _scrape_suburbs_async(
                                         logger.warning("Could not persist agency details for %s: %s", url, exc)
                                 team_links = extract_team_member_links(agency_html)
                                 logger.info("Found %d team member link(s) for %s", len(team_links), cleaned.get("name", url))
+                                agency_complete = True
                                 for member in team_links:
                                     if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
                                         row_limit_reached = True
+                                        agency_complete = False
                                         break
                                     member_id = agent_profile_identity(member.profile_url)
                                     if member_id == key or member_id in seen_urls:
@@ -352,6 +367,7 @@ async def _scrape_suburbs_async(
                                         team_raw = await extract_agent_record(page, member.profile_url, suburb_hint=location_text)
                                         if not team_raw:
                                             entry["profiles_failed"] += 1
+                                            agency_complete = False
                                             continue
                                         team_name = clean_agent_name(
                                             str(team_raw.get("name") or ""), member.profile_url
@@ -365,6 +381,7 @@ async def _scrape_suburbs_async(
                                                 member.profile_url,
                                             )
                                             entry["profiles_failed"] += 1
+                                            agency_complete = False
                                             continue
                                         team_raw["job_title"] = clean_job_title(
                                             str(team_raw.get("job_title") or "")
@@ -397,10 +414,37 @@ async def _scrape_suburbs_async(
                                             on_record(suburb, team_cleaned)
                                     except Exception as team_exc:  # noqa: BLE001
                                         entry["profiles_failed"] += 1
+                                        agency_complete = False
                                         logger.warning("Failed team member %s: %s", member.profile_url, team_exc)
+                                completed_agencies[agency_key] = agency_complete
                             except Exception as agency_exc:  # noqa: BLE001
                                 entry["profiles_failed"] += 1
+                                completed_agencies[agency_key] = False
                                 logger.warning("Could not read agency team for %s: %s", url, agency_exc)
+                        elif deep_search and agency_url and agency_key in completed_agencies:
+                            agency_complete = completed_agencies[agency_key]
+                        if deep_search and agency_complete:
+                            # Persist that this primary's company roster was
+                            # fully examined. Resume can then skip its profile
+                            # while retrying any agency crawl interrupted partway.
+                            cleaned["_deep_search_complete"] = True
+                            completed_index = existing_index
+                            if completed_index is None:
+                                completed_index = next(
+                                    (
+                                        index for index, existing in enumerate(all_records)
+                                        if existing.get("_suburb_query") == suburb
+                                        and _record_dedupe_key(existing) == key
+                                    ),
+                                    None,
+                                )
+                            if completed_index is not None:
+                                all_records[completed_index]["_deep_search_complete"] = True
+                            if on_record:
+                                try:
+                                    on_record(suburb, cleaned)
+                                except Exception as exc:  # noqa: BLE001
+                                    logger.error("Could not persist deep-search completion for %s: %s", url, exc)
                         if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
                             row_limit_reached = True
                         logger.info(
@@ -611,26 +655,37 @@ def write_output(
 
     if mode == "excel":
         out_path = destination / f"{stem}.xlsx"
-        # Keep the final suffix as .xlsx so both pandas and the shared writer
-        # select the correct engine, then atomically replace the prior file.
-        tmp_path = destination / f".{stem}.tmp.xlsx"
-        df = _records_to_dataframe(records)
-        has_relationship_data = any(record.get("record_type") for record in records)
-        if has_relationship_data:
-            with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
-                df.to_excel(writer, index=False, sheet_name="Agents")
-        else:
-            try:
-                try:
-                    from formatter.writers import write_excel
-                except ImportError:
-                    from recruitment_formatter.formatter.writers import write_excel
-                write_excel(records, tmp_path)
-            except Exception as exc:  # noqa: BLE001
-                logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
+        # Use a unique temporary workbook so stale/concurrent saves cannot
+        # collide. Keep the .xlsx suffix for pandas and the shared formatter.
+        descriptor, tmp_name = tempfile.mkstemp(prefix=f".{stem}.", suffix=".tmp.xlsx", dir=destination)
+        os.close(descriptor)
+        tmp_path = Path(tmp_name)
+        try:
+            df = _records_to_dataframe(records)
+            has_relationship_data = any(record.get("record_type") for record in records)
+            if has_relationship_data:
                 with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
                     df.to_excel(writer, index=False, sheet_name="Agents")
-        tmp_path.replace(out_path)
+            else:
+                try:
+                    try:
+                        from formatter.writers import write_excel
+                    except ImportError:
+                        from recruitment_formatter.formatter.writers import write_excel
+                    write_excel(records, tmp_path)
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
+                    with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
+                        df.to_excel(writer, index=False, sheet_name="Agents")
+            try:
+                tmp_path.replace(out_path)
+            except PermissionError as exc:
+                raise PermissionError(
+                    f"Cannot update {out_path}: the workbook may be open in Excel or locked by another program. "
+                    "Close it and run python main.py again; saved scrape checkpoints will be resumed."
+                ) from exc
+        finally:
+            tmp_path.unlink(missing_ok=True)
         logger.info("Excel saved to: %s", out_path.resolve())
         return out_path
 

@@ -43,6 +43,10 @@ def _location(value: str) -> str:
 _DEFAULT_SETTINGS_FILE = _THIS_DIR / "scraper_settings.json"
 
 
+class WorkbookLockedError(RuntimeError):
+    """Raised when a workbook cannot be safely replaced on Windows."""
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Find agents by location and designation; optionally include their agency team members.",
@@ -115,7 +119,10 @@ def _save_query(
     subset = _records_for(records, query_key)
     if max_rows:
         subset = subset[:max_rows]
-    path = write_output(subset, store.destination, "excel", store.filename_stem(query_key))
+    try:
+        path = write_output(subset, store.destination, "excel", store.filename_stem(query_key))
+    except PermissionError as exc:
+        raise WorkbookLockedError(str(exc)) from exc
     logger.info("Saved workbook with %d row(s): %s", len(subset), path.resolve())
     return path
 
@@ -159,15 +166,19 @@ def main() -> int:
         return 0
 
     records: list[dict] = []
-    for key in pending:
-        recovered = store.load_records(key, limit=args.max_rows or None)
-        for row in recovered:
-            row.setdefault("_suburb_query", key)
-        records.extend(recovered)
-        if recovered:
-            path = _save_query(store, records, key, logger, args.max_rows)
-            store.update(key, status="in_progress", records_scraped=len(recovered), output_file=path.name)
-            logger.info("Resuming %s with %d saved row(s).", query_to_location[key], len(recovered))
+    try:
+        for key in pending:
+            recovered = store.load_records(key, limit=args.max_rows or None)
+            for row in recovered:
+                row.setdefault("_suburb_query", key)
+            records.extend(recovered)
+            if recovered:
+                path = _save_query(store, records, key, logger, args.max_rows)
+                store.update(key, status="in_progress", records_scraped=len(recovered), output_file=path.name)
+                logger.info("Resuming %s with %d saved row(s).", query_to_location[key], len(recovered))
+    except WorkbookLockedError as exc:
+        logger.error("%s Saved checkpoint data is intact; close the workbook and rerun python main.py to resume.", exc)
+        return 2
 
     def on_record(query_key: str, record: dict) -> None:
         store.append_record(query_key, record)
@@ -223,11 +234,27 @@ def main() -> int:
     except KeyboardInterrupt:
         logger.info("Ctrl+C detected. Saving collected rows and checkpoints.")
         for key in pending:
-            path = _save_query(store, records, key, logger, args.max_rows)
             count = len(_records_for(records, key))
             if args.max_rows:
                 count = min(count, args.max_rows)
-            store.update(key, status="interrupted", records_scraped=count, output_file=path.name)
+            try:
+                path = _save_query(store, records, key, logger, args.max_rows)
+                store.update(key, status="interrupted", records_scraped=count, output_file=path.name)
+            except WorkbookLockedError as exc:
+                logger.error(
+                    "%s The journal is saved; close the workbook and rerun python main.py to resume.",
+                    exc,
+                )
+                store.update(key, status="interrupted", records_scraped=count, last_error=str(exc))
+                return 2
+    except WorkbookLockedError as exc:
+        logger.error("%s Checkpoint data is intact; close the workbook and rerun python main.py.", exc)
+        for key in pending:
+            count = len(_records_for(records, key))
+            if args.max_rows:
+                count = min(count, args.max_rows)
+            store.update(key, status="partial", records_scraped=count, last_error=str(exc))
+        return 2
 
     for key in pending:
         logger.info("Progress for %s: %s; workbook: %s", query_to_location[key], store.status(key), store.output_path(key).resolve())

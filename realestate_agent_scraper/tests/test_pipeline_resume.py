@@ -169,10 +169,54 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
     assert records[1]["primary_agent"] == "Primary"
     assert records[1]["primary_agent_url"].endswith("primary-1")
     assert records[1]["designation_confidence"] == ""
-    assert len(saved) == 3
+    assert len({row["profile_url"] for row in saved}) == 3
     assert len({pipeline._record_dedupe_key(row) for row in records}) == len(records)
+    assert records[0]["_deep_search_complete"] is True
     assert sum("/agency/" in url for url in page.visited_urls) == 1
     assert report[0]["status"] == "completed"
+
+
+def test_deep_search_skips_primary_whose_team_was_checkpointed_complete():
+    query = "Darwin City | all | deep-search"
+    completed = {
+        "name": "Already Scraped",
+        "profile_url": "https://example.test/agent/already-1",
+        "suburb": "Darwin City",
+        "_suburb_query": query,
+        "record_type": "Primary agent",
+        "_deep_search_complete": True,
+    }
+    page = DeepPage()
+
+    async def collect(_page, _location, on_page=None):
+        if on_page:
+            on_page(1)
+        return [completed["profile_url"]]
+
+    async def unexpected_extract(*_args, **_kwargs):
+        raise AssertionError("A completed primary agent must be skipped on resume")
+
+    with (
+        patch.object(pipeline, "create_browser", new=lambda **_kwargs: _async_value(DeepBrowser(page))),
+        patch.object(pipeline, "search_location", new=_search_location_ok),
+        patch.object(pipeline, "collect_agent_profile_urls", new=collect),
+        patch.object(pipeline, "extract_agent_record", new=unexpected_extract),
+        patch.object(pipeline, "_human_pause", new=_no_wait),
+    ):
+        records, report = asyncio.run(
+            pipeline._scrape_suburbs_async(
+                [query],
+                records=[completed],
+                use_location_search=True,
+                search_terms={query: "Darwin City"},
+                designation="all",
+                deep_search=True,
+            )
+        )
+
+    assert records == [completed]
+    assert report[0]["status"] == "completed"
+    assert page.visited_urls == []
 
 
 def test_all_designations_still_respects_max_rows():
@@ -213,5 +257,6 @@ async def _search_location_ok(_page, _location):
 if __name__ == "__main__":
     test_resume_dedupes_within_each_suburb_only()
     test_deep_search_groups_team_members_under_matching_primary_agent()
+    test_deep_search_skips_primary_whose_team_was_checkpointed_complete()
     test_all_designations_still_respects_max_rows()
     print("Pipeline resume test passed.")

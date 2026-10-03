@@ -18,7 +18,12 @@ def test_journal_restores_and_deduplicates_profiles():
         suburb = "Darwin City, Northern Territory 0800"
         store.register([suburb])
         store.update(suburb, status="in_progress")
-        first = {"profile_url": "https://example.test/agent/one", "name": "One"}
+        first = {
+            "profile_url": "https://example.test/agent/one",
+            "name": "One",
+            "record_type": "Primary agent",
+            "_deep_search_complete": True,
+        }
         store.append_record(suburb, first)
         store.append_record(suburb, first)
 

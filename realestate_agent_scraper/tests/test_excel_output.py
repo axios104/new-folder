@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -98,9 +99,28 @@ def test_empty_checkpoint_still_writes_headers():
     print(f"PASS empty checkpoint written to {out}")
 
 
+def test_locked_workbook_preserves_old_file_and_cleans_temporary_file():
+    dest = ROOT / "tests" / "_tmp_excel_out"
+    dest.mkdir(parents=True, exist_ok=True)
+    out = dest / "locked.xlsx"
+    out.write_bytes(b"existing workbook")
+    try:
+        with patch.object(Path, "replace", side_effect=PermissionError("Access is denied")):
+            write_output([{"name": "Ada Agent", "record_type": "Primary agent"}], dest, "excel", "locked")
+    except PermissionError as exc:
+        assert "Close it" in str(exc)
+        assert "checkpoints will be resumed" in str(exc)
+    else:
+        raise AssertionError("A locked workbook should report a helpful PermissionError")
+
+    assert out.read_bytes() == b"existing workbook"
+    assert not list(dest.glob(".locked.*.tmp.xlsx"))
+
+
 if __name__ == "__main__":
     test_shared_formatter_schema_and_cleaners_are_used()
     test_excel_writes_to_requested_directory()
     test_missing_fields_do_not_crash()
     test_empty_checkpoint_still_writes_headers()
+    test_locked_workbook_preserves_old_file_and_cleans_temporary_file()
     print("All Requirement 3 Excel unit tests passed.")

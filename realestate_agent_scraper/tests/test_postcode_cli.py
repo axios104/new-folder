@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -33,7 +34,8 @@ def test_settings_file_supplies_defaults_for_bare_command():
     assert args.location == "4034"
     assert args.designation == "all"
     assert args.mode == "deep-search"
-    assert args.output.name == "scraped_output"
+    configured_output = json.loads((ROOT / "scraper_settings.json").read_text(encoding="utf-8"))["output_folder"]
+    assert args.output == Path(configured_output)
     assert args.max_agents == 0
 
 
