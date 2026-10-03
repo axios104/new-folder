@@ -9,6 +9,7 @@ from __future__ import annotations
 import html as html_lib
 import re
 from urllib.parse import urljoin
+from dataclasses import dataclass
 
 from config import BASE_URL
 
@@ -53,6 +54,23 @@ _JSON_YEARS_RE = re.compile(
     r'"(?:yearsExperience|yearsOfExperience|experienceYears)"\s*:\s*"?(\d+)"?',
     re.IGNORECASE,
 )
+
+_TEAM_SECTION_RE = re.compile(
+    r'<(?:div|section)\b[^>]*\bid=["\']TeamMembers["\'][^>]*>(.*?)</(?:div|section)>',
+    re.IGNORECASE | re.DOTALL,
+)
+_TEAM_AGENT_LINK_RE = re.compile(
+    r'<a\b[^>]*href=["\']([^"\']*/agent/[^"\'?#]+)[^"\']*["\'][^>]*>(.*?)</a>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+@dataclass(frozen=True)
+class TeamMemberLink:
+    """A team-member profile advertised by a realestate.com.au agency page."""
+
+    name: str
+    profile_url: str
 
 
 def _visible_text(fragment: str) -> str:
@@ -139,6 +157,40 @@ def extract_profile_fields_from_html(html: str) -> dict[str, str]:
         "rating": rating,
         "reviews": reviews,
     }
+
+
+def extract_team_member_links(html: str) -> list[TeamMemberLink]:
+    """Extract unique agent profile links from the agency's ``About the team`` card.
+
+    The card's styled class names are generated, but its ``TeamMembers`` id is
+    semantic and stable.  This parser deliberately only accepts links nested in
+    that card, preventing unrelated agent links elsewhere on the agency page
+    from being reported as team members.
+    """
+    source = html or ""
+    start = re.search(r'<(?:div|section)\b[^>]*\bid=["\']TeamMembers["\'][^>]*>', source, re.I)
+    if not start:
+        return []
+
+    # HTML is not generally regular, but this page's team card is a bounded
+    # section. Scan from its opening tag until the next major page section so
+    # nested grid divs do not cause a premature match.
+    tail = source[start.end():]
+    end = re.search(r'<(?:div|section)\b[^>]*\bid=["\'](?:CustomerReviews|Listings|SoldProperties)["\']', tail, re.I)
+    fragment = tail[:end.start()] if end else tail
+    members: list[TeamMemberLink] = []
+    seen: set[str] = set()
+    for match in _TEAM_AGENT_LINK_RE.finditer(fragment):
+        url = _absolute_url(match.group(1))
+        key = url.rstrip("/").lower()
+        if key in seen:
+            continue
+        name = _visible_text(match.group(2))
+        if not name:
+            continue
+        seen.add(key)
+        members.append(TeamMemberLink(name=name, profile_url=url))
+    return members
 
 
 def split_suburb_and_postcode(suburb_hint: str) -> tuple[str, str]:

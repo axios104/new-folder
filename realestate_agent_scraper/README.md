@@ -1,13 +1,13 @@
 # Realestate.com.au Agent Scraper
 
-Scrapes agent profiles for Australian suburbs from a JSON, text, CSV, or Excel
-input list. The scraper processes one unfinished suburb per run by default,
-creates a separate workbook for each suburb, and resumes unfinished work when
-you run the same command again.
+Search by an Australian location or postcode, filter primary agents by job
+designation, and optionally include each matching agency's **About the team**
+members. Search results are paginated fully. Each location/designation/mode
+combination gets its own Excel workbook and resumable progress journal.
 
 ## Setup
 
-Open PowerShell in this folder and install the runtime requirements once:
+Open PowerShell in this folder and install the runtime requirements:
 
 ```powershell
 cd C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper
@@ -16,45 +16,46 @@ py -3.13 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-The repository's `aus_postcode.json` has the 2,641-entry Australia suburb list.
-If you are using the copy at the parent project folder, pass `..\aus_postcode.json`
-as the input path instead.
-
-## Scrape a suburb by postcode
-
-Give the four-digit postcode and the folder where you want the workbook and
-resume files saved:
+## Run a search
 
 ```powershell
-python main.py 0800 C:\Users\ASUS\Desktop\scraped_output
+python main.py "0800" "Sales Agent" area-specific C:\Users\ASUS\Desktop\scraped_output
 ```
 
-If the postcode maps to multiple suburbs, the scraper processes those matching
-entries and creates one workbook for each. If a run is interrupted, run the
-same command again. The scraper restores
-profile records from its local journal, rechecks the suburb's paginated results,
-and skips profiles already saved.
+For agency team members as well:
 
-The required arguments are the four-digit postcode and the output folder you
-choose. The JSON input defaults to the Australia postcode file; use `--input`
-only to select a different copy. Excel is the default format; `--format json`
-is available when needed. `--max-agents` sets a temporary per-suburb test cap,
-and `--headless` hides the browser window.
+```powershell
+python main.py "Darwin City" "Sales Agent" deep-search C:\Users\ASUS\Desktop\scraped_output
+```
 
-## Files and resume tracking
+Arguments are `LOCATION DESIGNATION MODE OUTPUT_FOLDER`. `LOCATION` may be a
+four-digit postcode from `aus_postcode.json` or text entered in the website's
+location search. Postcodes expand to matching Australian locality names from
+the supplied JSON. The scraper selects the first displayed location
+recommendation. `DESIGNATION` is compared with each profile's extracted job
+title; only titles with at least 85% lexical confidence are included as primary
+agents. `area-specific` includes those primary agents. `deep-search` additionally
+opens each primary agent's realestate.com.au agency page and extracts the agent
+links from its semantic `TeamMembers` section. Team rows are grouped beneath
+their primary agent using the `Primary agent` columns.
 
-The output folder contains a separate workbook per suburb, for example
-`C:\Users\ASUS\Desktop\scraped_output\darwin_city_0800.xlsx`. The workbook is
-refreshed every ten profiles, when a suburb finishes, and on Ctrl+C. A JSONL
-journal records each profile as soon as it is scraped so a forced close can
-recover it on the next run.
+The last argument is the folder you choose for output. For the first example,
+the workbook is saved as:
 
-`_scrape_progress.json` tracks each suburb's status, profile count, failures,
-and workbook filename. `.checkpoints` contains the per-suburb journals. Completed
-suburbs are skipped automatically; interrupted or partially failed suburbs
-remain eligible to resume. Suburb and postcode are kept in separate workbook
-columns.
+```text
+C:\Users\ASUS\Desktop\scraped_output\darwin_city_northern_territory_0800_sales_agent_area_specific.xlsx
+```
 
-The scraper uses a visible Chrome window by default and applies deliberate
-delays between profile visits. Check the website's terms before scraping and
-avoid running an unnecessarily large batch unattended.
+The workbook is refreshed after every ten saved rows, on completion, and on
+Ctrl+C. The same command resumes the same location/designation/mode search.
+Different location/designation/mode searches in the same output folder create
+different workbooks. `.checkpoints` contains append-only profile journals and
+`_scrape_progress.json` records page, profile, failure, and completion counts.
+
+Optional flags: `--input PATH` selects another Australian postcode JSON;
+`--headless` runs Chrome invisibly; `--max-agents N` caps primary profiles for
+a small trial (omit it for all results). Excel is the output format.
+
+The scraper uses deliberate delays. Check the website's terms and applicable
+rules before scraping, and run a small location first to confirm the extracted
+title and team data match your use case.

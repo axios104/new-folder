@@ -36,9 +36,19 @@ _DOM_EXTRACT_JS = r"""
     agency_name: "",
     agency_url: "",
     rating: "",
-    reviews: ""
+    reviews: "",
+    job_title: ""
   };
   const bodyText = document.body ? (document.body.innerText || "") : "";
+  const titleNode = document.querySelector('[data-testid*="job-title" i], [data-testid*="agent-title" i], [class*="JobTitle"], [class*="jobTitle"], [class*="AgentTitle"]');
+  if (titleNode) result.job_title = (titleNode.innerText || titleNode.textContent || "").trim();
+  if (!result.job_title) {
+    const heading = document.querySelector('main h1, h1');
+    const next = heading && (heading.nextElementSibling || heading.parentElement?.nextElementSibling);
+    if (next && /agent|sales|property|leasing|auction|consultant|manager/i.test(next.innerText || '')) {
+      result.job_title = (next.innerText || '').trim();
+    }
+  }
   const yearsMatch = bodyText.match(/(\d+)\s*years?\s+experience/i);
   if (yearsMatch) result.years_experience = yearsMatch[1];
 
@@ -227,7 +237,7 @@ def _walk_json_for_agent(obj, record: dict, depth: int = 0) -> None:
     if depth > 10:
         return
     if isinstance(obj, dict):
-        if "salespersonId" in obj or "agentName" in obj or "agencyName" in obj:
+        if "salespersonId" in obj or "agentName" in obj or "agencyName" in obj or "jobTitle" in obj:
             if obj.get("name"):
                 _fill_if_empty(record, "name", obj.get("name"))
             if obj.get("jobTitle"):

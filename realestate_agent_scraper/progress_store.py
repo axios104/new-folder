@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import logging
 import os
 import re
@@ -34,6 +35,12 @@ class ProgressStore:
 
     @staticmethod
     def filename_stem(suburb: str) -> str:
+        if " | " in suburb:
+            stem = re.sub(r"[^a-z0-9]+", "_", suburb.lower()).strip("_") or "search"
+            if len(stem) > 120:
+                suffix = hashlib.sha1(suburb.encode("utf-8")).hexdigest()[:8]
+                stem = f"{stem[:110].rstrip('_')}_{suffix}"
+            return stem
         name, postcode = split_suburb_and_postcode(suburb)
         stem = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") or "suburb"
         if postcode:
@@ -106,6 +113,8 @@ class ProgressStore:
                 if not isinstance(record, dict):
                     continue
                 url = str(record.get("profile_url", "")).rstrip("/").lower()
+                if record.get("record_type") == "Team member":
+                    url += "::" + str(record.get("primary_agent_url", "")).rstrip("/").lower()
                 if url and url in seen:
                     continue
                 if url:

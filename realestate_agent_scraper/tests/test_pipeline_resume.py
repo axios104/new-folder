@@ -17,12 +17,25 @@ class FakePage:
         return self
 
 
+class DeepPage(FakePage):
+    async def get_content(self):
+        return '<div id="TeamMembers"><a href="/agent/member-2">Team Member</a></div>'
+
+
 class FakeBrowser:
     async def get(self, _url):
         return FakePage()
 
     async def stop(self):
         return None
+
+
+class DeepBrowser(FakeBrowser):
+    def __init__(self, page):
+        self.page = page
+
+    async def get(self, _url):
+        return self.page
 
 
 async def _no_wait():
@@ -83,6 +96,53 @@ def test_resume_dedupes_within_each_suburb_only():
     assert events[-1] == (4, 2)
 
 
+def test_deep_search_groups_team_members_under_matching_primary_agent():
+    page = DeepPage()
+    saved = []
+
+    async def create_browser(**_kwargs):
+        return DeepBrowser(page)
+
+    async def collect(_page, _location, on_page=None):
+        if on_page:
+            on_page(1)
+        return ["https://example.test/agent/primary-1"]
+
+    async def extract(_page, url, suburb_hint=""):
+        return {
+            "name": "Primary" if "primary" in url else "Team Member",
+            "profile_url": url,
+            "job_title": "Sales Agent",
+            "agency_url": "https://www.realestate.com.au/agency/example-ABCD",
+            "suburb": suburb_hint,
+        }
+
+    with (
+        patch.object(pipeline, "create_browser", new=create_browser),
+        patch.object(pipeline, "search_location", new=_search_ok),
+        patch.object(pipeline, "collect_agent_profile_urls", new=collect),
+        patch.object(pipeline, "extract_agent_record", new=extract),
+        patch.object(pipeline, "_human_pause", new=_no_wait),
+    ):
+        records, report = asyncio.run(
+            pipeline._scrape_suburbs_async(
+                ["Darwin City | Sales Agent | deep-search"],
+                use_location_search=True,
+                search_terms={"Darwin City | Sales Agent | deep-search": "Darwin City"},
+                designation="Sales Agent",
+                deep_search=True,
+                on_record=lambda _key, row: saved.append(row),
+            )
+        )
+
+    assert [row["record_type"] for row in records] == ["Primary agent", "Team member"]
+    assert records[1]["primary_agent"] == "Primary"
+    assert records[1]["primary_agent_url"].endswith("primary-1")
+    assert records[1]["designation_confidence"] == ""
+    assert len(saved) == 2
+    assert report[0]["status"] == "completed"
+
+
 async def _async_value(value):
     return value
 
@@ -93,4 +153,5 @@ async def _search_ok(_page, _suburb):
 
 if __name__ == "__main__":
     test_resume_dedupes_within_each_suburb_only()
+    test_deep_search_groups_team_members_under_matching_primary_agent()
     print("Pipeline resume test passed.")

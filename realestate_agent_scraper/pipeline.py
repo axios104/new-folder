@@ -32,10 +32,12 @@ import config
 from automation.browser import create_browser
 from automation.navigator import (
     collect_agent_profile_urls,
+    search_location,
     search_suburb,
 )
 from scraper.extractor import extract_agent_record
-from scraper.html_fields import split_suburb_and_postcode
+from scraper.html_fields import extract_team_member_links, split_suburb_and_postcode
+from scraper.matching import designation_confidence
 
 logger = logging.getLogger("scraper.pipeline")
 
@@ -50,6 +52,12 @@ async def _human_pause() -> None:
             config.MAX_PROFILE_DELAY_S,
         )
     )
+
+
+def _record_dedupe_key(row: dict) -> str:
+    profile = str(row.get("profile_url", "")).rstrip("/").lower()
+    parent = str(row.get("primary_agent_url", "")).rstrip("/").lower()
+    return f"{profile}::{parent}" if row.get("record_type") == "Team member" else profile
 
 
 def _clean_record(raw: dict) -> dict:
@@ -89,13 +97,17 @@ async def _scrape_suburbs_async(
     on_checkpoint: CheckpointFn | None = None,
     on_record: RecordFn | None = None,
     max_agents: int | None = None,
+    designation: str = "",
+    deep_search: bool = False,
+    use_location_search: bool = False,
+    search_terms: dict[str, str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     all_records: list[dict] = records if records is not None else []
     report_rows: list[dict] = report if report is not None else []
     seen_urls_by_suburb: dict[str, set[str]] = {}
     for row in all_records:
         query = str(row.get("_suburb_query", ""))
-        url = str(row.get("profile_url", "")).rstrip("/").lower()
+        url = _record_dedupe_key(row)
         if query and url:
             seen_urls_by_suburb.setdefault(query, set()).add(url)
 
@@ -120,7 +132,10 @@ async def _scrape_suburbs_async(
         logger.info("Browser tab initialized.")
 
         for suburb in suburbs:
-            suburb_name, postcode = split_suburb_and_postcode(suburb)
+            location_text = (search_terms or {}).get(suburb, suburb)
+            suburb_name, postcode = split_suburb_and_postcode(location_text)
+            if use_location_search and not suburb_name:
+                suburb_name = location_text
             entry = {
                 "suburb": suburb,
                 "suburb_name": suburb_name,
@@ -136,7 +151,7 @@ async def _scrape_suburbs_async(
 
             try:
                 logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
-                ok = await search_suburb(page, suburb)
+                ok = await (search_location(page, location_text) if use_location_search else search_suburb(page, suburb))
                 if not ok:
                     entry["error"] = "search_failed"
                     entry["status"] = "failed"
@@ -183,7 +198,20 @@ async def _scrape_suburbs_async(
                             raw["suburb"] = suburb_name
                         if not raw.get("postcode"):
                             raw["postcode"] = postcode
+                        confidence = designation_confidence(str(raw.get("job_title", "")), designation)
+                        if designation and confidence < 0.85:
+                            logger.info(
+                                "Skipping %s: designation %r confidence %.0f%% is below 85%%",
+                                raw.get("name") or url,
+                                raw.get("job_title", ""),
+                                confidence * 100,
+                            )
+                            continue
                         raw["_suburb_query"] = suburb
+                        raw["record_type"] = "Primary agent"
+                        raw["primary_agent"] = raw.get("name", "")
+                        raw["primary_agent_url"] = url
+                        raw["designation_confidence"] = confidence
                         cleaned = _clean_record(raw)
                         all_records.append(cleaned)
                         seen_urls.add(key)
@@ -194,6 +222,44 @@ async def _scrape_suburbs_async(
                             except Exception as exc:  # noqa: BLE001
                                 entry["profiles_failed"] += 1
                                 logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
+                        if deep_search and cleaned.get("agency_url"):
+                            try:
+                                await page.get(cleaned["agency_url"])
+                                await _human_pause()
+                                agency_html = await page.get_content()
+                                team_links = extract_team_member_links(agency_html)
+                                logger.info("Found %d team member link(s) for %s", len(team_links), cleaned.get("name", url))
+                                for member in team_links:
+                                    if member.profile_url.rstrip("/").lower() == url.rstrip("/").lower():
+                                        continue
+                                    team_row_key = f"{member.profile_url.rstrip('/').lower()}::{url.rstrip('/').lower()}"
+                                    if team_row_key in seen_urls:
+                                        continue
+                                    try:
+                                        await page.get(member.profile_url)
+                                        await _human_pause()
+                                        team_raw = await extract_agent_record(page, member.profile_url, suburb_hint=suburb)
+                                        if not team_raw:
+                                            entry["profiles_failed"] += 1
+                                            continue
+                                        team_raw["name"] = team_raw.get("name") or member.name
+                                        team_raw["_suburb_query"] = suburb
+                                        team_raw["record_type"] = "Team member"
+                                        team_raw["primary_agent"] = cleaned.get("name", "")
+                                        team_raw["primary_agent_url"] = url
+                                        team_raw["designation_confidence"] = ""
+                                        team_cleaned = _clean_record(team_raw)
+                                        all_records.append(team_cleaned)
+                                        seen_urls.add(team_row_key)
+                                        entry["records_scraped"] += 1
+                                        if on_record:
+                                            on_record(suburb, team_cleaned)
+                                    except Exception as team_exc:  # noqa: BLE001
+                                        entry["profiles_failed"] += 1
+                                        logger.warning("Failed team member %s: %s", member.profile_url, team_exc)
+                            except Exception as agency_exc:  # noqa: BLE001
+                                entry["profiles_failed"] += 1
+                                logger.warning("Could not read agency team for %s: %s", url, agency_exc)
                         logger.info(
                             "Scraped: %s (%s / %s) — %s",
                             cleaned.get("name", "?"),
@@ -287,6 +353,10 @@ def scrape_suburbs(
     on_checkpoint: CheckpointFn | None = None,
     on_record: RecordFn | None = None,
     max_agents: int | None = None,
+    designation: str = "",
+    deep_search: bool = False,
+    use_location_search: bool = False,
+    search_terms: dict[str, str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """
     Public synchronous entry point.
@@ -306,6 +376,10 @@ def scrape_suburbs(
                 on_checkpoint=on_checkpoint,
                 on_record=on_record,
                 max_agents=max_agents,
+                designation=designation,
+                deep_search=deep_search,
+                use_location_search=use_location_search,
+                search_terms=search_terms,
             )
         )
     except KeyboardInterrupt:
@@ -349,10 +423,18 @@ def _schema_columns() -> list[tuple[str, str]]:
 
 def _records_to_dataframe(records: list[dict]) -> pd.DataFrame:
     columns = _schema_columns()
+    relationship_fields = (
+        ("record_type", "Record type"),
+        ("primary_agent", "Primary agent"),
+        ("primary_agent_url", "Primary agent profile"),
+        ("designation_confidence", "Designation confidence"),
+    )
     rows = []
     for rec in records:
-        rows.append({output: rec.get(key, "") for key, output in columns})
-    return pd.DataFrame(rows, columns=[output for _, output in columns])
+        row = {output: rec.get(key, "") for key, output in columns}
+        row.update({output: rec.get(key, "") for key, output in relationship_fields})
+        rows.append(row)
+    return pd.DataFrame(rows, columns=[output for _, output in columns] + [output for _, output in relationship_fields])
 
 
 def write_output(
@@ -377,16 +459,44 @@ def write_output(
         # select the correct engine, then atomically replace the prior file.
         tmp_path = destination / f".{stem}.tmp.xlsx"
         df = _records_to_dataframe(records)
+        has_relationship_data = any(record.get("record_type") for record in records)
+        formatter_written = False
         try:
             try:
                 from formatter.writers import write_excel
             except ImportError:
                 from recruitment_formatter.formatter.writers import write_excel
-            write_excel(records, tmp_path)
+            if has_relationship_data:
+                with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
+                    df.to_excel(writer, index=False, sheet_name="Agents")
+            else:
+                write_excel(records, tmp_path)
+            formatter_written = True
         except Exception as exc:  # noqa: BLE001
             logger.warning("Formatter Excel writer unavailable (%s); using pandas/openpyxl fallback", exc)
             with pd.ExcelWriter(tmp_path, engine="openpyxl") as writer:
                 df.to_excel(writer, index=False, sheet_name="Agents")
+        if has_relationship_data and formatter_written:
+            from openpyxl import load_workbook
+
+            workbook = load_workbook(tmp_path)
+            worksheet = workbook["Agents"]
+            extra_columns = (
+                ("record_type", "Record type"),
+                ("primary_agent", "Primary agent"),
+                ("primary_agent_url", "Primary agent profile"),
+                ("designation_confidence", "Designation confidence"),
+            )
+            first_extra = worksheet.max_column + 1
+            for offset, (_, heading) in enumerate(extra_columns):
+                column = first_extra + offset
+                worksheet.cell(row=1, column=column, value=heading)
+                for row_number, record in enumerate(records, start=2):
+                    worksheet.cell(row=row_number, column=column, value=record.get(extra_columns[offset][0], ""))
+                letter = worksheet.cell(row=1, column=column).column_letter
+                max_width = max([len(heading)] + [len(str(record.get(extra_columns[offset][0], ""))) for record in records])
+                worksheet.column_dimensions[letter].width = min(max_width + 2, 60)
+            workbook.save(tmp_path)
         tmp_path.replace(out_path)
         logger.info("Excel saved to: %s", out_path.resolve())
         return out_path

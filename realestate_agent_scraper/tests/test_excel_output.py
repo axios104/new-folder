@@ -41,6 +41,10 @@ def test_excel_writes_to_requested_directory():
             "reviews": "22",
             "agency_url": "https://www.realestate.com.au/agency/smart-real-estate-casuarina-CBOKDJ",
             "profile_url": "https://www.realestate.com.au/agent/ada-agent-1",
+            "record_type": "Primary agent",
+            "primary_agent": "Ada Agent",
+            "primary_agent_url": "https://www.realestate.com.au/agent/ada-agent-1",
+            "designation_confidence": 1.0,
         },
         {
             "name": "No Extras",
@@ -61,6 +65,10 @@ def test_excel_writes_to_requested_directory():
     assert "Reviews" in df.columns
     assert "suburbs" in df.columns
     assert "Post code" in df.columns
+    assert "Record type" in df.columns
+    assert "Primary agent" in df.columns
+    assert df.iloc[0]["Record type"] == "Primary agent"
+    assert df.iloc[0]["Primary agent"] == "Ada Agent"
     assert str(df.iloc[0]["suburbs"]) == "Darwin City"
     postcode = str(df.iloc[0]["Post code"]).replace(".0", "")
     assert postcode in {"0800", "800"}

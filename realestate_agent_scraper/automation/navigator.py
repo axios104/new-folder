@@ -6,6 +6,7 @@ links across every pagination page for a suburb.
 """
 from __future__ import annotations
 import asyncio
+import json
 import logging
 import random
 import re
@@ -104,11 +105,79 @@ async def search_suburb(page: nd.Tab, suburb: str) -> bool:
 
         logger.warning("Page still appears to be blocked for '%s' after waiting", suburb)
         return False
-
     except Exception as exc:  # noqa: BLE001
         logger.error("Search failed for suburb '%s': %s", suburb, exc)
         return False
 
+
+async def search_location(page: nd.Tab, location: str) -> bool:
+    """Search the find-agent page and choose the first location suggestion.
+
+    Uses accessible input metadata and suggestion roles instead of hashed CSS
+    selectors so minor visual redesigns are less likely to break the flow.
+    """
+    try:
+        await page.get(config.FIND_AGENT_URL)
+        if not await _page_ready(page, "find-agent location search", attempts=8):
+            logger.warning("Find-agent search page did not load before searching %r", location)
+            return False
+        await _human_delay(1000, 1800)
+        query = json.dumps(location)
+        opened = await page.evaluate(f"""(() => {{
+          const visible = el => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+          const button = [...document.querySelectorAll('button,[role="button"]')].find(el =>
+            visible(el) && (/search|location|area/i.test((el.getAttribute('aria-label') || '') + ' ' + (el.innerText || '')) ||
+              el.querySelector('svg[class*="SearchIcon"],svg[class*="Search"]')));
+          if (button) button.click();
+          return !!button;
+        }})()""")
+        await _human_delay(500, 900)
+        filled = await page.evaluate(f"""(() => {{
+          const visible = el => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+          const inputs = [...document.querySelectorAll('input:not([type=hidden]), [role=combobox]')].filter(visible);
+          const input = inputs.find(el => /location|suburb|area|where|search/i.test(
+            (el.getAttribute('placeholder') || '') + ' ' + (el.getAttribute('aria-label') || '') + ' ' + (el.getAttribute('name') || '')
+          )) || inputs[0];
+          if (!input) return false;
+          const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+          if (setter && input instanceof HTMLInputElement) setter.call(input, {query});
+          else input.textContent = {query};
+          input.dispatchEvent(new Event('input', {{bubbles:true}}));
+          input.dispatchEvent(new Event('change', {{bubbles:true}}));
+          return true;
+        }})()""")
+        if not filled:
+            logger.warning("Could not find a visible location search input for %r (search opened=%s)", location, opened)
+            return False
+        selected = False
+        for _ in range(8):
+            selected = await page.evaluate("""(() => {
+          const visible = el => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+          const options = [...document.querySelectorAll('[role="option"], [role="listbox"] a, [role="listbox"] button, [class*="suggest"] a, [class*="Suggestion"] a, [class*="suggest"] button, [class*="Suggestion"] button, [class*="suggest"] li')]
+            .filter(el => visible(el) && (el.innerText || '').trim() && !el.closest('header'));
+          const first = options[0];
+          if (first) { first.click(); return true; }
+          return false;
+        })()""")
+            if selected:
+                break
+            await _human_delay(400, 650)
+        if not selected:
+            selected = bool(await page.evaluate("""(() => {
+              const input = document.querySelector('input[role="combobox"], input[aria-autocomplete]');
+              if (!input) return false;
+              input.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowDown', bubbles:true}));
+              input.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', bubbles:true}));
+              return true;
+            })()"""))
+        if not selected:
+            logger.warning("No location recommendation appeared for %r", location)
+            return False
+        await _human_delay(1800, 2800)
+        return await _page_ready(page, location, attempts=8)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Location search failed for %r: %s", location, exc)
+        return False
 
 def _max_pages() -> int | None:
     """Return an explicit operator cap, or None to follow site pagination."""
