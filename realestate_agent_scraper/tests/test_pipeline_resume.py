@@ -18,8 +18,20 @@ class FakePage:
 
 
 class DeepPage(FakePage):
+    def __init__(self):
+        self.visited_urls = []
+
+    async def get(self, url):
+        self.visited_urls.append(url)
+        return self
+
     async def get_content(self):
-        return '<div id="TeamMembers"><a href="/agent/member-2">Team Member</a></div>'
+        return (
+            '<div id="TeamMembers">'
+            '<a href="/agent/member-2">Team Member One</a>'
+            '<a href="/agent/member-3">Team Member Two</a>'
+            '</div>'
+        )
 
 
 class FakeBrowser:
@@ -99,6 +111,18 @@ def test_resume_dedupes_within_each_suburb_only():
 def test_deep_search_groups_team_members_under_matching_primary_agent():
     page = DeepPage()
     saved = []
+    query = "Darwin City | Sales Agent | deep-search"
+    recovered_primary = {
+        "name": "Primary",
+        "profile_url": "https://example.test/agent/primary-1",
+        "job_title": "Sales Agent",
+        "agency_url": "https://www.realestate.com.au/agency/example-ABCD",
+        "suburb": "Darwin City",
+        "_suburb_query": query,
+        "record_type": "Primary agent",
+        "primary_agent": "Primary",
+        "primary_agent_url": "https://example.test/agent/primary-1",
+    }
 
     async def create_browser(**_kwargs):
         return DeepBrowser(page)
@@ -106,7 +130,10 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
     async def collect(_page, _location, on_page=None):
         if on_page:
             on_page(1)
-        return ["https://example.test/agent/primary-1"]
+        return [
+            "https://example.test/agent/primary-1",
+            "https://example.test/agent/primary-2",
+        ]
 
     async def extract(_page, url, suburb_hint=""):
         return {
@@ -126,20 +153,24 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
     ):
         records, report = asyncio.run(
             pipeline._scrape_suburbs_async(
-                ["Darwin City | Sales Agent | deep-search"],
+                [query],
+                records=[recovered_primary],
                 use_location_search=True,
-                search_terms={"Darwin City | Sales Agent | deep-search": "Darwin City"},
+                search_terms={query: "Darwin City"},
                 designation="Sales Agent",
                 deep_search=True,
                 on_record=lambda _key, row: saved.append(row),
             )
         )
 
-    assert [row["record_type"] for row in records] == ["Primary agent", "Team member"]
-    assert records[1]["primary_agent"] == "Primary"
-    assert records[1]["primary_agent_url"].endswith("primary-1")
-    assert records[1]["designation_confidence"] == ""
-    assert len(saved) == 2
+    assert [row["record_type"] for row in records] == [
+        "Primary agent", "Team member", "Team member", "Primary agent"
+    ]
+    assert all(row["primary_agent"] == "Primary" for row in records[1:3])
+    assert all(row["primary_agent_url"].endswith("primary-1") for row in records[1:3])
+    assert all(row["designation_confidence"] == "" for row in records[1:3])
+    assert len(saved) == 3
+    assert sum("/agency/" in url for url in page.visited_urls) == 1
     assert report[0]["status"] == "completed"
 
 

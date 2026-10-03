@@ -150,6 +150,7 @@ async def _scrape_suburbs_async(
                 "error": None,
             }
             seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
+            visited_agencies: set[str] = set()
             query_row_count = sum(row.get("_suburb_query") == suburb for row in all_records)
             row_limit_reached = bool(max_rows and query_row_count >= max_rows)
 
@@ -203,7 +204,7 @@ async def _scrape_suburbs_async(
 
                 remaining_urls = [
                     url for url in profile_urls
-                    if url.rstrip("/").lower() not in seen_urls
+                    if deep_search or url.rstrip("/").lower() not in seen_urls
                 ]
                 cap = _visit_cap(max_agents)
                 capped = bool(cap and len(remaining_urls) > cap)
@@ -252,20 +253,28 @@ async def _scrape_suburbs_async(
                         raw["primary_agent_url"] = url
                         raw["designation_confidence"] = "" if all_designations else confidence
                         cleaned = _clean_record(raw)
-                        all_records.append(cleaned)
-                        seen_urls.add(key)
-                        entry["records_scraped"] += 1
-                        if on_record:
-                            try:
-                                on_record(suburb, cleaned)
-                            except Exception as exc:  # noqa: BLE001
-                                entry["profiles_failed"] += 1
-                                logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
-                        if deep_search and cleaned.get("agency_url") and not (
+                        if key not in seen_urls:
+                            all_records.append(cleaned)
+                            seen_urls.add(key)
+                            entry["records_scraped"] += 1
+                            if on_record:
+                                try:
+                                    on_record(suburb, cleaned)
+                                except Exception as exc:  # noqa: BLE001
+                                    entry["profiles_failed"] += 1
+                                    logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
+                        agency_url = str(cleaned.get("agency_url") or "").strip()
+                        agency_key = agency_url.rstrip("/").lower()
+                        if deep_search and agency_url and agency_key not in visited_agencies and not (
                             max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows
                         ):
+                            # Several selected agents can belong to the same
+                            # office. Crawl each company team once, instead of
+                            # duplicating its entire roster under every agent
+                            # and consuming the workbook row limit with copies.
+                            visited_agencies.add(agency_key)
                             try:
-                                await page.get(cleaned["agency_url"])
+                                await page.get(agency_url)
                                 await _human_pause()
                                 agency_html = await page.get_content()
                                 team_links = extract_team_member_links(agency_html)
@@ -276,6 +285,9 @@ async def _scrape_suburbs_async(
                                         break
                                     if member.profile_url.rstrip("/").lower() == url.rstrip("/").lower():
                                         continue
+                                    # A company roster is represented once in
+                                    # the workbook and grouped beneath the first
+                                    # matching primary agent for that company.
                                     team_row_key = f"{member.profile_url.rstrip('/').lower()}::{url.rstrip('/').lower()}"
                                     if team_row_key in seen_urls:
                                         continue

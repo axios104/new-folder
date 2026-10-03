@@ -25,6 +25,12 @@ for unlimited rows). The cap includes team members. Postcode input is entered un
 suggestion is selected. The JSON supplies a fallback if the website does not
 expose a selectable suggestion.
 
+In `deep-search` mode, the scraper visits the company page for each distinct
+agency represented by the matching agents and collects its team roster once.
+When resuming, it revisits known agent profiles to finish any company team
+rosters that were not saved yet. The configured row cap still applies to the
+combined workbook, so larger searches can stop at that limit.
+
 Then the regular command is just:
 
 ```powershell
