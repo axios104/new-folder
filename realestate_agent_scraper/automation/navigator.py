@@ -84,6 +84,17 @@ async def _page_ready(page: nd.Tab, suburb: str, attempts: int = 10) -> bool:
     return False
 
 
+def _normalise_suggestion_label(label: str) -> str:
+    """Normalize a displayed label such as ``Aspley QLD 4034``."""
+    value = re.sub(r"\s*\n\s*", ", ", (label or "")).strip()
+    return re.sub(
+        r"\s+(NSW|VIC|QLD|SA|WA|TAS|NT|ACT)\s+(\d{4})$",
+        r", \1 \2",
+        value,
+        flags=re.IGNORECASE,
+    )
+
+
 async def search_suburb(page: nd.Tab, suburb: str) -> bool:
     """
     Navigates to the find-agent results page for a suburb.
@@ -110,7 +121,7 @@ async def search_suburb(page: nd.Tab, suburb: str) -> bool:
         return False
 
 
-async def search_location(page: nd.Tab, location: str) -> bool:
+async def search_location(page: nd.Tab, location: str) -> str | None:
     """Search the find-agent page and choose the first location suggestion.
 
     Uses accessible input metadata and suggestion roles instead of hashed CSS
@@ -149,32 +160,37 @@ async def search_location(page: nd.Tab, location: str) -> bool:
         if not filled:
             logger.warning("Could not find a visible location search input for %r (search opened=%s)", location, opened)
             return False
-        selected = False
+        selected_location = ""
         for _ in range(8):
-            selected = await page.evaluate("""(() => {
+            selected_location = await page.evaluate("""(() => {
           const visible = el => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
           const options = [...document.querySelectorAll('[role="option"], [role="listbox"] a, [role="listbox"] button, [class*="suggest"] a, [class*="Suggestion"] a, [class*="suggest"] button, [class*="Suggestion"] button, [class*="suggest"] li')]
             .filter(el => visible(el) && (el.innerText || '').trim() && !el.closest('header'));
           const first = options[0];
-          if (first) { first.click(); return true; }
-          return false;
+          if (first) { const label = (first.innerText || '').replace(/\\s*\\n\\s*/g, ', ').trim(); first.click(); return label; }
+          return '';
         })()""")
-            if selected:
+            if isinstance(selected_location, str) and selected_location.strip():
+                selected_location = _normalise_suggestion_label(selected_location)
                 break
             await _human_delay(400, 650)
-        if not selected:
-            selected = bool(await page.evaluate("""(() => {
+        if not selected_location:
+            keyboard_selected = bool(await page.evaluate("""(() => {
               const input = document.querySelector('input[role="combobox"], input[aria-autocomplete]');
               if (!input) return false;
               input.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowDown', bubbles:true}));
               input.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', bubbles:true}));
               return true;
             })()"""))
-        if not selected:
+            if keyboard_selected:
+                selected_location = location
+        if not selected_location:
             logger.warning("No location recommendation appeared for %r", location)
-            return False
+            return None
         await _human_delay(1800, 2800)
-        return await _page_ready(page, location, attempts=8)
+        if not await _page_ready(page, location, attempts=8):
+            return None
+        return selected_location
     except Exception as exc:  # noqa: BLE001
         logger.error("Location search failed for %r: %s", location, exc)
         return False

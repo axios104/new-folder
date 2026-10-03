@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import re
 import sys
@@ -39,18 +40,57 @@ def _location(value: str) -> str:
     return value
 
 
+_DEFAULT_SETTINGS_FILE = _THIS_DIR / "scraper_settings.json"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Find agents by location and designation; optionally include their agency team members.",
     )
-    parser.add_argument("location", type=_location, help="Australian postcode or location search phrase")
-    parser.add_argument("designation", help="Primary-agent title to match, or 'all' to include every title")
-    parser.add_argument("mode", choices=("area-specific", "deep-search"), help="Whether to include agency team members")
-    parser.add_argument("output", type=Path, help="Folder where Excel and resumable progress files are saved")
-    parser.add_argument("--input", type=Path, default=_DEFAULT_POSTCODE_FILE, help="Australia postcode JSON used when LOCATION is a four-digit postcode")
-    parser.add_argument("--headless", action="store_true", help="Run Chrome without a visible window")
-    parser.add_argument("--max-agents", type=int, default=0, help="Optional test cap for primary profiles; 0 means no cap")
-    return parser.parse_args()
+    parser.add_argument("location", nargs="?", help="Optional override for configured location")
+    parser.add_argument("designation", nargs="?", help="Optional override for configured designation")
+    parser.add_argument("mode", nargs="?", choices=("area-specific", "deep-search"), help="Optional mode override")
+    parser.add_argument("output", nargs="?", type=Path, help="Optional output-folder override")
+    parser.add_argument("--config", type=Path, default=_DEFAULT_SETTINGS_FILE, help="Settings JSON file (default: scraper_settings.json)")
+    parser.add_argument("--input", type=Path, help="Override the postcode JSON path")
+    parser.add_argument("--headless", action="store_true", help="Override settings to run Chrome without a visible window")
+    parser.add_argument("--max-agents", type=int, help="Override the configured profile cap; 0 means no cap")
+    args = parser.parse_args()
+    settings_path = args.config.expanduser().resolve()
+    try:
+        settings = json.loads(settings_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        parser.error(f"cannot load settings file {settings_path}: {exc}")
+    if not isinstance(settings, dict):
+        parser.error(f"settings file must contain a JSON object: {settings_path}")
+
+    def from_settings(cli_value, key: str, fallback=None):
+        return cli_value if cli_value is not None else settings.get(key, fallback)
+
+    args.location = from_settings(args.location, "location")
+    args.designation = from_settings(args.designation, "designation")
+    args.mode = from_settings(args.mode, "mode")
+    output_value = from_settings(args.output, "output_folder")
+    input_value = from_settings(args.input, "postcode_json", str(_DEFAULT_POSTCODE_FILE))
+    if not args.location or not str(args.location).strip():
+        parser.error("set 'location' in the settings file or provide it as a positional argument")
+    if not args.designation or not str(args.designation).strip():
+        parser.error("set 'designation' in the settings file or provide it as a positional argument")
+    if args.mode not in {"area-specific", "deep-search"}:
+        parser.error("settings 'mode' must be 'area-specific' or 'deep-search'")
+    if not output_value:
+        parser.error("set 'output_folder' in the settings file or provide it as a positional argument")
+
+    def configured_path(value) -> Path:
+        path = Path(value).expanduser()
+        return path if path.is_absolute() else settings_path.parent / path
+
+    args.location = _location(str(args.location))
+    args.input = configured_path(input_value)
+    args.output = configured_path(output_value)
+    args.headless = bool(args.headless or settings.get("headless", False))
+    args.max_agents = args.max_agents if args.max_agents is not None else int(settings.get("max_agents", 0))
+    return args
 
 
 def _query_key(location: str, designation: str, mode: str) -> str:
@@ -68,12 +108,20 @@ def _save_query(store: ProgressStore, records: list[dict], query_key: str, logge
 
 
 def _locations_for_input(location: str, input_file: Path) -> list[str]:
-    """Expand an exact Australian postcode to its locality names when possible."""
+    """Keep postcode input intact so the website can choose its first suggestion."""
+    if re.fullmatch(r"\d{4}", location):
+        # Read the supplied list as a fallback/validation source, but do not
+        # replace the postcode with its first JSON locality: postcode mappings
+        # can be incomplete or ordered differently from the website's results.
+        load_suburbs(input_file)
+    return [location]
+
+
+def _postcode_fallback(location: str, input_file: Path) -> str | None:
     if not re.fullmatch(r"\d{4}", location):
-        return [location]
-    suburbs = load_suburbs(input_file)
-    matches = [row for row in suburbs if split_suburb_and_postcode(row)[1] == location]
-    return matches or [location]
+        return None
+    matches = [row for row in load_suburbs(input_file) if split_suburb_and_postcode(row)[1] == location]
+    return matches[0] if matches else None
 
 
 def main() -> int:
@@ -84,6 +132,7 @@ def main() -> int:
     destination.mkdir(parents=True, exist_ok=True)
     try:
         locations = _locations_for_input(args.location, args.input)
+        fallback_location = _postcode_fallback(args.location, args.input)
     except (OSError, ValueError) as exc:
         logger.error("Could not read postcode list %s: %s", args.input, exc)
         return 2
@@ -142,6 +191,7 @@ def main() -> int:
             deep_search=args.mode == "deep-search",
             use_location_search=True,
             search_terms={key: query_to_location[key] for key in pending},
+            fallback_terms={key: fallback_location for key in pending if fallback_location},
         )
         for key in pending:
             count = len(_records_for(records, key))

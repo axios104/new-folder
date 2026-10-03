@@ -101,6 +101,7 @@ async def _scrape_suburbs_async(
     deep_search: bool = False,
     use_location_search: bool = False,
     search_terms: dict[str, str] | None = None,
+    fallback_terms: dict[str, str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     all_records: list[dict] = records if records is not None else []
     report_rows: list[dict] = report if report is not None else []
@@ -151,7 +152,28 @@ async def _scrape_suburbs_async(
 
             try:
                 logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
-                ok = await (search_location(page, location_text) if use_location_search else search_suburb(page, suburb))
+                if use_location_search:
+                    selected_location = await search_location(page, location_text)
+                    if selected_location:
+                        logger.info("Selected first website location suggestion: %s", selected_location)
+                        location_text = selected_location
+                        suburb_name, postcode = split_suburb_and_postcode(location_text)
+                        if not suburb_name:
+                            suburb_name = location_text
+                        ok = True
+                    elif suburb in (fallback_terms or {}):
+                        location_text = fallback_terms[suburb]
+                        logger.warning(
+                            "No selectable website suggestion found for %r; falling back to postcode JSON entry %r",
+                            (search_terms or {}).get(suburb, suburb),
+                            location_text,
+                        )
+                        suburb_name, postcode = split_suburb_and_postcode(location_text)
+                        ok = await search_suburb(page, location_text)
+                    else:
+                        ok = False
+                else:
+                    ok = await search_suburb(page, suburb)
                 if not ok:
                     entry["error"] = "search_failed"
                     entry["status"] = "failed"
@@ -189,7 +211,7 @@ async def _scrape_suburbs_async(
                         logger.info("Opening agent profile: %s", url)
                         await page.get(url)
                         await _human_pause()
-                        raw = await extract_agent_record(page, url, suburb_hint=suburb)
+                        raw = await extract_agent_record(page, url, suburb_hint=location_text)
                         if not raw:
                             logger.warning("No record extracted from: %s", url)
                             entry["profiles_failed"] += 1
@@ -241,7 +263,7 @@ async def _scrape_suburbs_async(
                                     try:
                                         await page.get(member.profile_url)
                                         await _human_pause()
-                                        team_raw = await extract_agent_record(page, member.profile_url, suburb_hint=suburb)
+                                        team_raw = await extract_agent_record(page, member.profile_url, suburb_hint=location_text)
                                         if not team_raw:
                                             entry["profiles_failed"] += 1
                                             continue
@@ -360,6 +382,7 @@ def scrape_suburbs(
     deep_search: bool = False,
     use_location_search: bool = False,
     search_terms: dict[str, str] | None = None,
+    fallback_terms: dict[str, str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """
     Public synchronous entry point.
@@ -383,6 +406,7 @@ def scrape_suburbs(
                 deep_search=deep_search,
                 use_location_search=use_location_search,
                 search_terms=search_terms,
+                fallback_terms=fallback_terms,
             )
         )
     except KeyboardInterrupt:

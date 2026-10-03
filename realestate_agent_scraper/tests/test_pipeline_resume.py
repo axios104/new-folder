@@ -119,7 +119,7 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
 
     with (
         patch.object(pipeline, "create_browser", new=create_browser),
-        patch.object(pipeline, "search_location", new=_search_ok),
+        patch.object(pipeline, "search_location", new=_search_location_ok),
         patch.object(pipeline, "collect_agent_profile_urls", new=collect),
         patch.object(pipeline, "extract_agent_record", new=extract),
         patch.object(pipeline, "_human_pause", new=_no_wait),
@@ -149,6 +149,10 @@ async def _async_value(value):
 
 async def _search_ok(_page, _suburb):
     return True
+
+
+async def _search_location_ok(_page, _location):
+    return "Darwin City, Northern Territory 0800"
 
 
 if __name__ == "__main__":

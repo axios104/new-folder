@@ -1,0 +1,9 @@
+{
+  "location": "4034",
+  "designation": "all",
+  "mode": "deep-search",
+  "output_folder": "C:/Users/ASUS/Desktop/scraped_output",
+  "postcode_json": "../aus_postcode.json",
+  "headless": false,
+  "max_agents": 0
+}

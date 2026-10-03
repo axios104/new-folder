@@ -16,23 +16,30 @@ py -3.13 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-## Run a search
+## Configure and run a search
+
+Edit `scraper_settings.json` to set `location`, `designation`, `mode`, and
+`output_folder`. It also stores the postcode JSON path, `headless`, and
+`max_agents`. Postcode input is entered unchanged so the site's first
+suggestion is selected. The JSON supplies a fallback if the website does not
+expose a selectable suggestion.
+
+Then the regular command is just:
 
 ```powershell
-python main.py "0800" "Sales Agent" area-specific C:\Users\ASUS\Desktop\scraped_output
+python main.py
 ```
 
-For agency team members as well:
+You can instead pass one-off values positionally without editing the JSON:
 
 ```powershell
-python main.py "Darwin City" "Sales Agent" deep-search C:\Users\ASUS\Desktop\scraped_output
+python main.py "4034" "all" deep-search C:\Users\ASUS\Desktop\scraped_output
 ```
 
 Arguments are `LOCATION DESIGNATION MODE OUTPUT_FOLDER`. `LOCATION` may be a
-four-digit postcode from `aus_postcode.json` or text entered in the website's
-location search. Postcodes expand to matching Australian locality names from
-the supplied JSON. The scraper selects the first displayed location
-recommendation. `DESIGNATION` is compared with each profile's extracted job
+four-digit postcode or text entered in the website's location search.
+`DESIGNATION` is
+compared with each profile's extracted job
 title; only titles with at least 85% lexical confidence are included as primary
 agents. Use `all` (or `*`) as the designation to include every profile regardless
 of title. `area-specific` includes those primary agents. `deep-search` additionally
@@ -44,7 +51,7 @@ The last argument is the folder you choose for output. For the first example,
 the workbook is saved as:
 
 ```text
-C:\Users\ASUS\Desktop\scraped_output\darwin_city_northern_territory_0800_sales_agent_area_specific.xlsx
+C:\Users\ASUS\Desktop\scraped_output\4034_all_deep_search.xlsx
 ```
 
 The workbook is refreshed after every ten saved rows, on completion, and on
