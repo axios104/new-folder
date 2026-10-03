@@ -37,7 +37,7 @@ from automation.navigator import (
 )
 from scraper.extractor import extract_agent_record
 from scraper.html_fields import extract_team_member_links, split_suburb_and_postcode
-from scraper.matching import designation_confidence
+from scraper.matching import designation_confidence, matches_designation
 
 logger = logging.getLogger("scraper.pipeline")
 
@@ -198,8 +198,11 @@ async def _scrape_suburbs_async(
                             raw["suburb"] = suburb_name
                         if not raw.get("postcode"):
                             raw["postcode"] = postcode
-                        confidence = designation_confidence(str(raw.get("job_title", "")), designation)
-                        if designation and confidence < 0.85:
+                        all_designations = designation.strip().lower() in {"all", "*", "any"}
+                        confidence = 1.0 if all_designations else designation_confidence(
+                            str(raw.get("job_title", "")), designation
+                        )
+                        if not matches_designation(str(raw.get("job_title", "")), designation):
                             logger.info(
                                 "Skipping %s: designation %r confidence %.0f%% is below 85%%",
                                 raw.get("name") or url,
@@ -211,7 +214,7 @@ async def _scrape_suburbs_async(
                         raw["record_type"] = "Primary agent"
                         raw["primary_agent"] = raw.get("name", "")
                         raw["primary_agent_url"] = url
-                        raw["designation_confidence"] = confidence
+                        raw["designation_confidence"] = "" if all_designations else confidence
                         cleaned = _clean_record(raw)
                         all_records.append(cleaned)
                         seen_urls.add(key)

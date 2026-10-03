@@ -34,7 +34,8 @@ location search. Postcodes expand to matching Australian locality names from
 the supplied JSON. The scraper selects the first displayed location
 recommendation. `DESIGNATION` is compared with each profile's extracted job
 title; only titles with at least 85% lexical confidence are included as primary
-agents. `area-specific` includes those primary agents. `deep-search` additionally
+agents. Use `all` (or `*`) as the designation to include every profile regardless
+of title. `area-specific` includes those primary agents. `deep-search` additionally
 opens each primary agent's realestate.com.au agency page and extracts the agent
 links from its semantic `TeamMembers` section. Team rows are grouped beneath
 their primary agent using the `Primary agent` columns.

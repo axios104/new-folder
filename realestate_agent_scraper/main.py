@@ -44,7 +44,7 @@ def parse_args() -> argparse.Namespace:
         description="Find agents by location and designation; optionally include their agency team members.",
     )
     parser.add_argument("location", type=_location, help="Australian postcode or location search phrase")
-    parser.add_argument("designation", help="Required primary-agent job title/designation")
+    parser.add_argument("designation", help="Primary-agent title to match, or 'all' to include every title")
     parser.add_argument("mode", choices=("area-specific", "deep-search"), help="Whether to include agency team members")
     parser.add_argument("output", type=Path, help="Folder where Excel and resumable progress files are saved")
     parser.add_argument("--input", type=Path, default=_DEFAULT_POSTCODE_FILE, help="Australia postcode JSON used when LOCATION is a four-digit postcode")

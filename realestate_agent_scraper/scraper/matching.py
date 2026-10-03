@@ -27,3 +27,10 @@ def designation_confidence(actual: str, requested: str) -> float:
         return 1.0
     sequence = SequenceMatcher(None, wanted, found).ratio()
     return round(0.7 * coverage + 0.3 * sequence, 4)
+
+
+def matches_designation(actual: str, requested: str, threshold: float = 0.85) -> bool:
+    """Match a requested title, or accept every profile for the `all` option."""
+    if (requested or "").strip().lower() in {"", "all", "*", "any"}:
+        return True
+    return designation_confidence(actual, requested) >= threshold
