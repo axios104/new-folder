@@ -97,7 +97,7 @@ class ProgressStore:
             stream.flush()
             os.fsync(stream.fileno())
 
-    def load_records(self, suburb: str) -> list[dict]:
+    def load_records(self, suburb: str, limit: int | None = None) -> list[dict]:
         path = self.journal_path(suburb)
         if not path.exists():
             return []
@@ -120,7 +120,7 @@ class ProgressStore:
                 if url:
                     seen.add(url)
                 records.append(record)
-        return records
+        return records[:limit] if limit is not None and limit > 0 else records
 
     def record_count(self, suburb: str) -> int:
         return len(self.load_records(suburb))

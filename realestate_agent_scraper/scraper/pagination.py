@@ -1,6 +1,7 @@
 """Parse find-agent (or listing) pagination from HTML without hashed CSS classes."""
 from __future__ import annotations
 
+import html
 import re
 from dataclasses import dataclass, field
 from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
@@ -31,10 +32,33 @@ _LIST_PATH_RE = re.compile(r"/list-(\d+)\b", re.IGNORECASE)
 
 
 def _abs(href: str, current_url: str) -> str:
-    href = href.strip()
+    href = html.unescape(href.strip())
     if href.startswith("//"):
-        return "https:" + href
-    return urljoin(current_url or BASE_URL + "/", href)
+        href = "https:" + href
+    else:
+        href = urljoin(current_url or BASE_URL + "/", href)
+    return _clean_pagination_url(href)
+
+
+def _clean_pagination_url(url: str) -> str:
+    """Drop tracking parameters and duplicated/HTML-escaped pagination junk."""
+    parts = urlsplit(html.unescape(url))
+    # Results are fully determined by their path and page number. The source
+    # attaches campaign parameters that can contain nested escaped query
+    # strings; carrying them forward grows the URL on every pagination step.
+    allowed = {"page", "activesort", "sort"}
+    query: list[tuple[str, str]] = []
+    page_value: str | None = None
+    for key, value in parse_qsl(parts.query, keep_blank_values=True):
+        normal_key = key.strip().lower()
+        if normal_key == "page" and value.isdigit():
+            page_value = value
+        elif normal_key in allowed - {"page"} and not re.search(r"amp|%3b|%26", value, re.I):
+            query.append((key, value))
+    if page_value is not None:
+        query.append(("page", page_value))
+    clean_path = _LIST_PATH_RE.sub(lambda match: f"/list-{match.group(1)}", parts.path)
+    return urlunsplit((parts.scheme, parts.netloc, clean_path, urlencode(query), ""))
 
 
 def _to_int(value: str | None) -> int | None:
@@ -94,6 +118,7 @@ def parse_pagination(html: str, current_url: str = "") -> PaginationInfo:
         if profiles:
             info.total_results = _to_int(profiles.group(1))
 
+    current_url = _clean_pagination_url(current_url) if current_url else ""
     next_match = _NEXT_HREF_RE.search(source)
     if next_match:
         href = next_match.group(1) or next_match.group(2)
@@ -112,7 +137,10 @@ def parse_pagination(html: str, current_url: str = "") -> PaginationInfo:
         href_m = re.search(r"""href=["']([^"']+)["']""", attrs, re.I)
         if label and href_m:
             page_no = int(label.group(1))
-            info.page_urls[page_no] = _abs(href_m.group(1), current_url)
+            # The visible page label is reliable; the href's campaign query
+            # may contain encoded copies of many other pagination links.
+            base_url = current_url or _abs(href_m.group(1), BASE_URL)
+            info.page_urls[page_no] = build_page_url(base_url, page_no)
             info.last_page = max(info.last_page, page_no)
             info.has_pagination = True
 
@@ -127,6 +155,7 @@ def build_page_url(current_url: str, page_number: int) -> str:
     """Best-effort construction of a results-page URL for an arbitrary page."""
     if not current_url:
         return current_url
+    current_url = _clean_pagination_url(current_url)
     if page_number <= 1:
         # Strip page query / list-N when returning to page 1.
         parts = urlsplit(current_url)

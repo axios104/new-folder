@@ -249,6 +249,7 @@ async def collect_agent_profile_urls(
         info = parse_pagination(html, current_url)
         reported_total = info.total_results
         expected_pages = max(1, info.expected_pages)
+        page_count_known = info.last_page > 1 or bool(info.total_results and info.page_size)
         logger.info(
             "Pagination for '%s': current_page=%s last_page=%s page_size=%s "
             "total_results=%s has_pagination=%s",
@@ -265,7 +266,7 @@ async def collect_agent_profile_urls(
         visited_page_urls.add((current_url or "").split("#")[0].rstrip("/").lower())
 
         while (max_pages is None or page_number < max_pages) and (
-            page_number < expected_pages or bool(info.next_url)
+            page_number < expected_pages or (not page_count_known and bool(info.next_url))
         ):
             next_url = info.page_urls.get(page_number + 1) or info.next_url
             if not next_url:
@@ -292,12 +293,14 @@ async def collect_agent_profile_urls(
             info = parse_pagination(html, current_url)
             if info.total_results:
                 reported_total = info.total_results
+            if info.last_page > 1 or (info.total_results and info.page_size):
+                page_count_known = True
             expected_pages = max(expected_pages, info.expected_pages, page_number)
             added = await _add_from_html(html, str(page_number))
             if on_page:
                 on_page(page_number)
-            if added == 0 and not info.next_url and page_number >= info.last_page:
-                logger.info("No new profile URLs on page %d for '%s'; ending pagination", page_number, suburb)
+            if added == 0:
+                logger.warning("Page %d for '%s' contained no new profile URLs; stopping to avoid looping", page_number, suburb)
                 break
 
         if max_pages is not None and expected_pages > page_number and page_number >= max_pages:

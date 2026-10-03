@@ -20,7 +20,8 @@ python -m pip install -r requirements.txt
 
 Edit `scraper_settings.json` to set `location`, `designation`, `mode`, and
 `output_folder`. It also stores the postcode JSON path, `headless`, and
-`max_agents`. Postcode input is entered unchanged so the site's first
+`max_agents`, and `max_rows` (default 200 data rows per workbook; set it to 0
+for unlimited rows). The cap includes team members. Postcode input is entered unchanged so the site's first
 suggestion is selected. The JSON supplies a fallback if the website does not
 expose a selectable suggestion.
 

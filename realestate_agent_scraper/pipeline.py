@@ -102,6 +102,7 @@ async def _scrape_suburbs_async(
     use_location_search: bool = False,
     search_terms: dict[str, str] | None = None,
     fallback_terms: dict[str, str] | None = None,
+    max_rows: int | None = 200,
 ) -> tuple[list[dict], list[dict]]:
     all_records: list[dict] = records if records is not None else []
     report_rows: list[dict] = report if report is not None else []
@@ -149,6 +150,16 @@ async def _scrape_suburbs_async(
                 "error": None,
             }
             seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
+            query_row_count = sum(row.get("_suburb_query") == suburb for row in all_records)
+            row_limit_reached = bool(max_rows and query_row_count >= max_rows)
+
+            if row_limit_reached:
+                entry["status"] = "partial"
+                entry["error"] = f"max_rows_reached:{max_rows}"
+                report_rows.append(entry)
+                logger.info("Row limit %d already reached for %s; not scraping additional profiles.", max_rows, suburb)
+                checkpoint(f"row_limit_reached:{suburb}")
+                continue
 
             try:
                 logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
@@ -206,6 +217,9 @@ async def _scrape_suburbs_async(
                     remaining_urls = remaining_urls[:cap]
 
                 for url in remaining_urls:
+                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
+                        row_limit_reached = True
+                        break
                     key = url.rstrip("/").lower()
                     try:
                         logger.info("Opening agent profile: %s", url)
@@ -247,7 +261,9 @@ async def _scrape_suburbs_async(
                             except Exception as exc:  # noqa: BLE001
                                 entry["profiles_failed"] += 1
                                 logger.error("Could not persist profile checkpoint %s: %s", url, exc, exc_info=True)
-                        if deep_search and cleaned.get("agency_url"):
+                        if deep_search and cleaned.get("agency_url") and not (
+                            max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows
+                        ):
                             try:
                                 await page.get(cleaned["agency_url"])
                                 await _human_pause()
@@ -255,6 +271,9 @@ async def _scrape_suburbs_async(
                                 team_links = extract_team_member_links(agency_html)
                                 logger.info("Found %d team member link(s) for %s", len(team_links), cleaned.get("name", url))
                                 for member in team_links:
+                                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
+                                        row_limit_reached = True
+                                        break
                                     if member.profile_url.rstrip("/").lower() == url.rstrip("/").lower():
                                         continue
                                     team_row_key = f"{member.profile_url.rstrip('/').lower()}::{url.rstrip('/').lower()}"
@@ -285,6 +304,8 @@ async def _scrape_suburbs_async(
                             except Exception as agency_exc:  # noqa: BLE001
                                 entry["profiles_failed"] += 1
                                 logger.warning("Could not read agency team for %s: %s", url, agency_exc)
+                        if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
+                            row_limit_reached = True
                         logger.info(
                             "Scraped: %s (%s / %s) — %s",
                             cleaned.get("name", "?"),
@@ -301,6 +322,8 @@ async def _scrape_suburbs_async(
                         entry["profiles_failed"] += 1
                         logger.error("Failed to scrape %s: %s", url, exc, exc_info=True)
                     await _human_pause()
+                    if row_limit_reached:
+                        break
 
                 if interrupted:
                     entry["status"] = "interrupted"
@@ -308,7 +331,11 @@ async def _scrape_suburbs_async(
                     checkpoint("keyboard_interrupt")
                     break
 
-                entry["status"] = "partial" if entry["profiles_failed"] or capped else "completed"
+                if row_limit_reached:
+                    entry["status"] = "partial"
+                    entry["error"] = f"max_rows_reached:{max_rows}"
+                else:
+                    entry["status"] = "partial" if entry["profiles_failed"] or capped else "completed"
 
             except KeyboardInterrupt:
                 interrupted = True
@@ -383,6 +410,7 @@ def scrape_suburbs(
     use_location_search: bool = False,
     search_terms: dict[str, str] | None = None,
     fallback_terms: dict[str, str] | None = None,
+    max_rows: int | None = 200,
 ) -> tuple[list[dict], list[dict]]:
     """
     Public synchronous entry point.
@@ -407,6 +435,7 @@ def scrape_suburbs(
                 use_location_search=use_location_search,
                 search_terms=search_terms,
                 fallback_terms=fallback_terms,
+                max_rows=max_rows,
             )
         )
     except KeyboardInterrupt:

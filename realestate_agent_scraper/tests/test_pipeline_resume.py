@@ -143,6 +143,29 @@ def test_deep_search_groups_team_members_under_matching_primary_agent():
     assert report[0]["status"] == "completed"
 
 
+def test_all_designations_still_respects_max_rows():
+    query = "Aspley | all | area-specific"
+    with (
+        patch.object(pipeline, "create_browser", new=lambda **_kwargs: _async_value(FakeBrowser())),
+        patch.object(pipeline, "search_suburb", new=_search_ok),
+        patch.object(pipeline, "collect_agent_profile_urls", new=_fake_collector),
+        patch.object(pipeline, "extract_agent_record", new=_fake_extract),
+        patch.object(pipeline, "_human_pause", new=_no_wait),
+    ):
+        records, report = asyncio.run(
+            pipeline._scrape_suburbs_async(
+                [query],
+                designation="all",
+                max_rows=1,
+            )
+        )
+
+    assert len(records) == 1
+    assert records[0]["_suburb_query"] == query
+    assert report[0]["status"] == "partial"
+    assert report[0]["error"] == "max_rows_reached:1"
+
+
 async def _async_value(value):
     return value
 
@@ -158,4 +181,5 @@ async def _search_location_ok(_page, _location):
 if __name__ == "__main__":
     test_resume_dedupes_within_each_suburb_only()
     test_deep_search_groups_team_members_under_matching_primary_agent()
+    test_all_designations_still_respects_max_rows()
     print("Pipeline resume test passed.")

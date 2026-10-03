@@ -5,5 +5,6 @@
   "output_folder": "C:/Users/ASUS/Desktop/scraped_output",
   "postcode_json": "../aus_postcode.json",
   "headless": false,
-  "max_agents": 0
+  "max_agents": 0,
+  "max_rows": 200
 }

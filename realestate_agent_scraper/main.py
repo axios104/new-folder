@@ -55,6 +55,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input", type=Path, help="Override the postcode JSON path")
     parser.add_argument("--headless", action="store_true", help="Override settings to run Chrome without a visible window")
     parser.add_argument("--max-agents", type=int, help="Override the configured profile cap; 0 means no cap")
+    parser.add_argument("--max-rows", type=int, help="Override the configured maximum workbook data rows; 0 means unlimited")
     args = parser.parse_args()
     settings_path = args.config.expanduser().resolve()
     try:
@@ -90,6 +91,9 @@ def parse_args() -> argparse.Namespace:
     args.output = configured_path(output_value)
     args.headless = bool(args.headless or settings.get("headless", False))
     args.max_agents = args.max_agents if args.max_agents is not None else int(settings.get("max_agents", 0))
+    args.max_rows = args.max_rows if args.max_rows is not None else int(settings.get("max_rows", 200))
+    if args.max_rows < 0:
+        parser.error("max_rows must be zero (unlimited) or a positive integer")
     return args
 
 
@@ -101,9 +105,18 @@ def _records_for(records: list[dict], query_key: str) -> list[dict]:
     return [row for row in records if row.get("_suburb_query") == query_key]
 
 
-def _save_query(store: ProgressStore, records: list[dict], query_key: str, logger: logging.Logger) -> Path:
-    path = write_output(_records_for(records, query_key), store.destination, "excel", store.filename_stem(query_key))
-    logger.info("Saved workbook with %d row(s): %s", len(_records_for(records, query_key)), path.resolve())
+def _save_query(
+    store: ProgressStore,
+    records: list[dict],
+    query_key: str,
+    logger: logging.Logger,
+    max_rows: int | None = 200,
+) -> Path:
+    subset = _records_for(records, query_key)
+    if max_rows:
+        subset = subset[:max_rows]
+    path = write_output(subset, store.destination, "excel", store.filename_stem(query_key))
+    logger.info("Saved workbook with %d row(s): %s", len(subset), path.resolve())
     return path
 
 
@@ -147,12 +160,12 @@ def main() -> int:
 
     records: list[dict] = []
     for key in pending:
-        recovered = store.load_records(key)
+        recovered = store.load_records(key, limit=args.max_rows or None)
         for row in recovered:
             row.setdefault("_suburb_query", key)
         records.extend(recovered)
         if recovered:
-            path = _save_query(store, records, key, logger)
+            path = _save_query(store, records, key, logger, args.max_rows)
             store.update(key, status="in_progress", records_scraped=len(recovered), output_file=path.name)
             logger.info("Resuming %s with %d saved row(s).", query_to_location[key], len(recovered))
 
@@ -160,7 +173,7 @@ def main() -> int:
         store.append_record(query_key, record)
         count = int(store.suburbs.get(query_key, {}).get("records_scraped", 0)) + 1
         if count % 10 == 0:
-            path = _save_query(store, records, query_key, logger)
+            path = _save_query(store, records, query_key, logger, args.max_rows)
             store.update(query_key, status="in_progress", records_scraped=count, output_file=path.name)
 
     def on_checkpoint(rows: list[dict], report: list[dict]) -> None:
@@ -169,8 +182,10 @@ def main() -> int:
             if key not in query_to_location:
                 continue
             count = len(_records_for(rows, key))
+            if args.max_rows:
+                count = min(count, args.max_rows)
             state = item.get("status") or ("failed" if item.get("error") else "completed")
-            path = _save_query(store, rows, key, logger)
+            path = _save_query(store, rows, key, logger, args.max_rows)
             store.update(
                 key, status=state, profiles_found=item.get("profiles_found", 0),
                 records_scraped=count, profiles_failed=item.get("profiles_failed", 0),
@@ -192,10 +207,13 @@ def main() -> int:
             use_location_search=True,
             search_terms={key: query_to_location[key] for key in pending},
             fallback_terms={key: fallback_location for key in pending if fallback_location},
+            max_rows=args.max_rows or None,
         )
         for key in pending:
             count = len(_records_for(records, key))
-            path = _save_query(store, records, key, logger)
+            if args.max_rows:
+                count = min(count, args.max_rows)
+            path = _save_query(store, records, key, logger, args.max_rows)
             status = store.status(key)
             if status in {"pending", "in_progress"}:
                 status = "partial"
@@ -203,8 +221,11 @@ def main() -> int:
     except KeyboardInterrupt:
         logger.info("Ctrl+C detected. Saving collected rows and checkpoints.")
         for key in pending:
-            path = _save_query(store, records, key, logger)
-            store.update(key, status="interrupted", records_scraped=len(_records_for(records, key)), output_file=path.name)
+            path = _save_query(store, records, key, logger, args.max_rows)
+            count = len(_records_for(records, key))
+            if args.max_rows:
+                count = min(count, args.max_rows)
+            store.update(key, status="interrupted", records_scraped=count, output_file=path.name)
 
     for key in pending:
         logger.info("Progress for %s: %s; workbook: %s", query_to_location[key], store.status(key), store.output_path(key).resolve())
