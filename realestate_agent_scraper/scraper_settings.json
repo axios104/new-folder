@@ -1,8 +1,8 @@
 {
-  "location": "4034",
+  "location": "3000",
   "designation": "all",
   "mode": "deep-search",
-  "output_folder": "C:/Users/ASUS/Desktop/scraped_output",
+  "output_folder": "C:/Users/ASUS/Desktop/excel_sheets",
   "postcode_json": "../aus_postcode.json",
   "headless": false,
   "max_agents": 0,

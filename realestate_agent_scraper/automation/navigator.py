@@ -95,6 +95,24 @@ def _normalise_suggestion_label(label: str) -> str:
     )
 
 
+def _suggestion_matches_location(label: str, location: str) -> bool:
+    """Accept a location recommendation, never a profile or agency result."""
+    candidate = _normalise_suggestion_label(label).casefold()
+    query = _normalise_suggestion_label(location).casefold()
+    postcode = re.search(r"\b(\d{4})\b", query)
+    state = re.search(r"\b(nsw|vic|qld|sa|wa|tas|nt|act)\b", query)
+    if postcode and postcode.group(1) not in candidate:
+        return False
+    if state and state.group(1) not in candidate:
+        return False
+    if not re.search(r"\b(?:nsw|vic|qld|sa|wa|tas|nt|act)\b\s+\d{4}\b", candidate):
+        return False
+    query_words = [word for word in re.findall(r"[a-z]+", query) if word not in {
+        "nsw", "vic", "qld", "sa", "wa", "tas", "nt", "act"
+    }]
+    return not query_words or all(word in candidate for word in query_words)
+
+
 async def search_suburb(page: nd.Tab, suburb: str) -> bool:
     """
     Navigates to the find-agent results page for a suburb.
@@ -161,31 +179,32 @@ async def search_location(page: nd.Tab, location: str) -> str | None:
             logger.warning("Could not find a visible location search input for %r (search opened=%s)", location, opened)
             return False
         selected_location = ""
+        selection_query = json.dumps(location)
         for _ in range(8):
-            selected_location = await page.evaluate("""(() => {
+            selected_location = await page.evaluate(f"""(() => {{
           const visible = el => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
-          const options = [...document.querySelectorAll('[role="option"], [role="listbox"] a, [role="listbox"] button, [class*="suggest"] a, [class*="Suggestion"] a, [class*="suggest"] button, [class*="Suggestion"] button, [class*="suggest"] li')]
+          const query = {selection_query}.toLowerCase();
+          const expectedPostcode = (query.match(/\\b\\d{{4}}\\b/) || [])[0] || '';
+          const expectedState = (query.match(/\\b(?:nsw|vic|qld|sa|wa|tas|nt|act)\\b/) || [])[0] || '';
+          const expectedWords = (query.match(/[a-z]+/g) || []).filter(word => !['nsw','vic','qld','sa','wa','tas','nt','act'].includes(word));
+          const options = [...document.querySelectorAll('[role="option"], [role="listbox"] a, [role="listbox"] button, [role="listbox"] li, [class*="suggest" i] a, [class*="suggest" i] button, [class*="suggest" i] li')]
             .filter(el => visible(el) && (el.innerText || '').trim() && !el.closest('header'));
-          const first = options[0];
-          if (first) { const label = (first.innerText || '').replace(/\\s*\\n\\s*/g, ', ').trim(); first.click(); return label; }
+          const first = options.find(el => {{
+            const label = (el.innerText || '').replace(/\\s*\\n\\s*/g, ', ').trim().toLowerCase();
+            return /\\b(?:nsw|vic|qld|sa|wa|tas|nt|act)\\b\\s+\\d{{4}}\\b/.test(label)
+              && (!expectedPostcode || label.includes(expectedPostcode))
+              && (!expectedState || label.includes(expectedState))
+              && expectedWords.every(word => label.includes(word));
+          }});
+          if (first) {{ const label = (first.innerText || '').replace(/\\s*\\n\\s*/g, ', ').trim(); first.click(); return label; }}
           return '';
-        })()""")
+        }})()""")
             if isinstance(selected_location, str) and selected_location.strip():
                 selected_location = _normalise_suggestion_label(selected_location)
                 break
             await _human_delay(400, 650)
         if not selected_location:
-            keyboard_selected = bool(await page.evaluate("""(() => {
-              const input = document.querySelector('input[role="combobox"], input[aria-autocomplete]');
-              if (!input) return false;
-              input.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowDown', bubbles:true}));
-              input.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', bubbles:true}));
-              return true;
-            })()"""))
-            if keyboard_selected:
-                selected_location = location
-        if not selected_location:
-            logger.warning("No location recommendation appeared for %r", location)
+            logger.warning("No matching location recommendation appeared for %r", location)
             return None
         await _human_delay(1800, 2800)
         if not await _page_ready(page, location, attempts=8):

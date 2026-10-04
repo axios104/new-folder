@@ -2506,3 +2506,1320 @@ arguments:
 2026-09-28 23:00:50,515 [INFO] nodriver.core.browser: terminated browser with pid 4720 successfully
 2026-09-28 23:00:50,517 [INFO] scraper.pipeline: Nodriver browser stopped.
 2026-09-28 23:00:50,670 [INFO] nodriver.core.browser: terminated browser with pid 4720 successfully
+2026-09-29 00:24:54,344 [INFO] scraper.main: Loaded 2641 Australian suburbs; completed=0, unfinished=2641. Progress: C:\Users\ASUS\Desktop\excel_sheets\_scrape_progress.json
+2026-09-29 00:24:54,346 [INFO] scraper.main: This run will process 1 suburb(s): ['Darwin City, Northern Territory 0800']
+2026-09-29 00:24:54,349 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-29 00:24:54,352 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=54434
+2026-09-29 00:24:55,349 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-09-29 00:24:57,182 [INFO] scraper.pipeline: Browser tab initialized.
+2026-09-29 00:24:57,219 [INFO] scraper.pipeline: Processing suburb: Darwin City, Northern Territory 0800 (suburb=Darwin City postcode=0800)
+2026-09-29 00:25:01,018 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-09-29 00:25:01,022 [INFO] nodriver.core.browser: terminated browser with pid 12888 successfully
+2026-09-29 00:25:01,027 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-09-29 00:25:01,305 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-09-29 00:25:01,306 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-09-29 00:25:01,309 [INFO] scraper.main: Progress: 0/2641 suburbs completed.
+2026-09-29 00:25:01,311 [INFO] scraper.main: Run ended. Completed suburbs: 0/2641; remaining: 2641. Resume postcode 0800 by running the same command again.
+2026-09-29 00:25:01,313 [INFO] scraper.main: Per-suburb workbooks and progress are in C:\Users\ASUS\Desktop\excel_sheets
+2026-09-29 00:25:01,314 [INFO] nodriver.core.browser: terminated browser with pid 12888 successfully
+2026-09-29 00:25:22,514 [INFO] scraper.main: Loaded 2641 Australian suburbs; completed=0, unfinished=2641. Progress: C:\Users\ASUS\Desktop\excel_sheets\_scrape_progress.json
+2026-09-29 00:25:22,515 [INFO] scraper.main: This run will process 1 suburb(s): ['Darwin City, Northern Territory 0800']
+2026-09-29 00:25:22,518 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-29 00:25:22,521 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=64206
+2026-09-29 00:25:23,575 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-09-29 00:25:24,699 [INFO] scraper.pipeline: Browser tab initialized.
+2026-09-29 00:25:24,707 [INFO] scraper.pipeline: Processing suburb: Darwin City, Northern Territory 0800 (suburb=Darwin City postcode=0800)
+2026-09-29 00:25:29,832 [INFO] scraper.automation: Navigating to: https://www.realestate.com.au/find-agent/darwin+city-nt-0800/
+2026-09-29 00:25:37,597 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (1158212 chars)
+2026-09-29 00:25:37,834 [INFO] scraper.automation: Pagination for 'Darwin City, Northern Territory 0800': current_page=1 last_page=5 page_size=24 total_results=113 has_pagination=True
+2026-09-29 00:25:37,858 [INFO] scraper.automation: Page 1 for 'Darwin City, Northern Territory 0800': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-09-29 00:25:37,858 [INFO] scraper.automation: Opening results page 2 for 'Darwin City, Northern Territory 0800': https://www.realestate.com.au/find-agent/darwin+city-nt-0800/?page=2
+2026-09-29 00:25:43,465 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (962959 chars)
+2026-09-29 00:25:43,744 [INFO] scraper.automation: Page 2 for 'Darwin City, Northern Territory 0800': 24 profile link(s) on page, 24 new, 48 unique so far
+2026-09-29 00:25:43,744 [INFO] scraper.automation: Opening results page 3 for 'Darwin City, Northern Territory 0800': https://www.realestate.com.au/find-agent/darwin+city-nt-0800/?page=3
+2026-09-29 00:25:48,874 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (961682 chars)
+2026-09-29 00:25:49,061 [INFO] scraper.automation: Page 3 for 'Darwin City, Northern Territory 0800': 24 profile link(s) on page, 24 new, 72 unique so far
+2026-09-29 00:25:49,061 [INFO] scraper.automation: Opening results page 4 for 'Darwin City, Northern Territory 0800': https://www.realestate.com.au/find-agent/darwin+city-nt-0800/?page=4
+2026-09-29 00:25:53,224 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (740953 chars)
+2026-09-29 00:25:53,384 [INFO] scraper.automation: Page 4 for 'Darwin City, Northern Territory 0800': 24 profile link(s) on page, 24 new, 96 unique so far
+2026-09-29 00:25:53,384 [INFO] scraper.automation: Opening results page 5 for 'Darwin City, Northern Territory 0800': https://www.realestate.com.au/find-agent/darwin+city-nt-0800/?page=5
+2026-09-29 00:25:57,218 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (459293 chars)
+2026-09-29 00:25:57,330 [INFO] scraper.automation: Page 5 for 'Darwin City, Northern Territory 0800': 17 profile link(s) on page, 17 new, 113 unique so far
+2026-09-29 00:25:57,330 [INFO] scraper.automation: Opening results page 6 for 'Darwin City, Northern Territory 0800': https://www.realestate.com.au/find-agent/darwin+city-nt-0800/?page=6
+2026-09-29 00:26:00,356 [INFO] scraper.automation: Page loaded with content for 'Darwin City, Northern Territory 0800' (170972 chars)
+2026-09-29 00:26:00,410 [INFO] scraper.automation: Page 6 for 'Darwin City, Northern Territory 0800': 0 profile link(s) on page, 0 new, 113 unique so far
+2026-09-29 00:26:00,410 [INFO] scraper.automation: No new profile URLs on page 6 for 'Darwin City, Northern Territory 0800'; ending pagination
+2026-09-29 00:26:00,410 [INFO] scraper.automation: Collected 113 unique agent profile URL(s) for suburb 'Darwin City, Northern Territory 0800' across 6 page(s)
+2026-09-29 00:26:00,410 [INFO] scraper.pipeline: Found 113 agent profile(s) for 'Darwin City, Northern Territory 0800'.
+2026-09-29 00:26:00,411 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-29 00:26:15,290 [INFO] scraper.pipeline: Scraped: Emily Sara (Darwin City / 0800) — https://www.realestate.com.au/agent/emily-sara-4005076
+2026-09-29 00:26:20,790 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-29 00:26:34,740 [INFO] scraper.pipeline: Scraped: Stephanie Otto (Darwin City / 0800) — https://www.realestate.com.au/agent/stephanie-otto-3200076
+2026-09-29 00:26:40,701 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-29 00:26:54,096 [INFO] scraper.pipeline: Scraped: Mick Smith (Darwin City / 0800) — https://www.realestate.com.au/agent/mick-smith-1129187
+2026-09-29 00:26:58,813 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-29 00:27:10,943 [INFO] scraper.pipeline: Scraped: Maria Kathopoulis (Darwin City / 0800) — https://www.realestate.com.au/agent/maria-kathopoulis-11606
+2026-09-29 00:27:17,111 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-29 00:27:33,788 [INFO] scraper.pipeline: Scraped: Daniel Harris (Darwin City / 0800) — https://www.realestate.com.au/agent/daniel-harris-2586266
+2026-09-29 00:27:37,964 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-29 00:27:49,139 [INFO] scraper.pipeline: Scraped: Jen Wardell (Darwin City / 0800) — https://www.realestate.com.au/agent/jen-wardell-2143794
+2026-09-29 00:27:54,914 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-29 00:28:09,233 [INFO] scraper.pipeline: Scraped: Joshua Pucci (Darwin City / 0800) — https://www.realestate.com.au/agent/joshua-pucci-3641820
+2026-09-29 00:28:15,776 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nicole-wheeler-2840238
+2026-09-29 00:28:29,511 [INFO] scraper.pipeline: Scraped: Nicole Wheeler (Darwin City / 0800) — https://www.realestate.com.au/agent/nicole-wheeler-2840238
+2026-09-29 00:28:35,420 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bec-wescombe-3511576
+2026-09-29 00:28:47,581 [INFO] scraper.pipeline: Scraped: Bec Wescombe (Darwin City / 0800) — https://www.realestate.com.au/agent/bec-wescombe-3511576
+2026-09-29 00:28:52,702 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/darren-hunt-3188700
+2026-09-29 00:29:07,403 [INFO] scraper.pipeline: Scraped: Darren Hunt (Darwin City / 0800) — https://www.realestate.com.au/agent/darren-hunt-3188700
+2026-09-29 00:29:10,856 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/matt-englund-1818990
+2026-09-29 00:29:22,777 [INFO] scraper.pipeline: Scraped: Matt Englund (Darwin City / 0800) — https://www.realestate.com.au/agent/matt-englund-1818990
+2026-09-29 00:29:26,210 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/elissa-riddell-3384684
+2026-09-29 00:29:39,351 [INFO] scraper.pipeline: Scraped: Elissa Riddell (Darwin City / 0800) — https://www.realestate.com.au/agent/elissa-riddell-3384684
+2026-09-29 00:29:45,694 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/khem-gurung-3641524
+2026-09-29 00:29:56,972 [INFO] scraper.pipeline: Scraped: Khem Gurung (Darwin City / 0800) — https://www.realestate.com.au/agent/khem-gurung-3641524
+2026-09-29 00:30:03,766 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rick-trippe-753443
+2026-09-29 00:30:16,565 [INFO] scraper.pipeline: Scraped: Rick Trippe (Darwin City / 0800) — https://www.realestate.com.au/agent/rick-trippe-753443
+2026-09-29 00:30:21,271 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jacob-mckenna-2770950
+2026-09-29 00:30:35,053 [INFO] scraper.pipeline: Scraped: Jacob Mckenna (Darwin City / 0800) — https://www.realestate.com.au/agent/jacob-mckenna-2770950
+2026-09-29 00:30:38,408 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/simon-watts-86446
+2026-09-29 00:30:52,406 [INFO] scraper.pipeline: Scraped: Simon Watts (Darwin City / 0800) — https://www.realestate.com.au/agent/simon-watts-86446
+2026-09-29 00:30:57,001 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bill-cooper-3820112
+2026-09-29 00:31:11,122 [INFO] scraper.pipeline: Scraped: Bill Cooper (Darwin City / 0800) — https://www.realestate.com.au/agent/bill-cooper-3820112
+2026-09-29 00:31:14,151 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/shyam-thapa-2904999
+2026-09-29 00:31:27,476 [INFO] scraper.pipeline: Scraped: Shyam Thapa (Darwin City / 0800) — https://www.realestate.com.au/agent/shyam-thapa-2904999
+2026-09-29 00:31:32,665 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/zayden-lewis-3543444
+2026-09-29 00:31:46,150 [INFO] scraper.pipeline: Scraped: Zayden Lewis (Darwin City / 0800) — https://www.realestate.com.au/agent/zayden-lewis-3543444
+2026-09-29 00:31:52,067 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tim-mackenzie-3701208
+2026-09-29 00:32:06,068 [INFO] scraper.pipeline: Scraped: Tim Mackenzie (Darwin City / 0800) — https://www.realestate.com.au/agent/tim-mackenzie-3701208
+2026-09-29 00:32:10,125 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-29 00:32:21,684 [INFO] scraper.pipeline: Scraped: Sascha Smithett (Darwin City / 0800) — https://www.realestate.com.au/agent/sascha-smithett-86442
+2026-09-29 00:32:27,415 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/akansh-batta-3767224
+2026-09-29 00:32:42,250 [INFO] scraper.pipeline: Scraped: Akansh Batta (Darwin City / 0800) — https://www.realestate.com.au/agent/akansh-batta-3767224
+2026-09-29 00:32:48,263 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nick-mousellis-2479074
+2026-09-29 00:33:02,746 [INFO] scraper.pipeline: Scraped: Nick Mousellis (Darwin City / 0800) — https://www.realestate.com.au/agent/nick-mousellis-2479074
+2026-09-29 00:33:08,092 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/wayne-smith-2952339
+2026-09-29 00:33:21,876 [INFO] scraper.pipeline: Scraped: Wayne Smith (Darwin City / 0800) — https://www.realestate.com.au/agent/wayne-smith-2952339
+2026-09-29 00:33:28,672 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/belinda-kolstad-3689636
+2026-09-29 00:33:43,521 [INFO] scraper.pipeline: Scraped: Belinda Kolstad (Darwin City / 0800) — https://www.realestate.com.au/agent/belinda-kolstad-3689636
+2026-09-29 00:33:48,278 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/maria-greensill-3916036
+2026-09-29 00:33:58,937 [INFO] scraper.pipeline: Scraped: Maria Greensill (Darwin City / 0800) — https://www.realestate.com.au/agent/maria-greensill-3916036
+2026-09-29 00:34:03,868 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tiffany-carr-1245871
+2026-09-29 00:34:17,604 [INFO] scraper.pipeline: Scraped: Tiffany Carr (Darwin City / 0800) — https://www.realestate.com.au/agent/tiffany-carr-1245871
+2026-09-29 00:34:22,854 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/colin-morrow-2324546
+2026-09-29 00:34:34,846 [INFO] scraper.pipeline: Scraped: Colin Morrow (Darwin City / 0800) — https://www.realestate.com.au/agent/colin-morrow-2324546
+2026-09-29 00:34:39,444 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nathan-cunneen-2522242
+2026-09-29 00:34:53,340 [INFO] scraper.pipeline: Scraped: Nathan Cunneen (Darwin City / 0800) — https://www.realestate.com.au/agent/nathan-cunneen-2522242
+2026-09-29 00:34:57,090 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/korgan-hucent-1198263
+2026-09-29 00:35:09,865 [INFO] scraper.pipeline: Scraped: Korgan Hucent (Darwin City / 0800) — https://www.realestate.com.au/agent/korgan-hucent-1198263
+2026-09-29 00:35:13,993 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/derek-hart-81330
+2026-09-29 00:35:29,544 [INFO] scraper.pipeline: Scraped: Derek Hart (Darwin City / 0800) — https://www.realestate.com.au/agent/derek-hart-81330
+2026-09-29 00:35:32,985 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jacob-reynolds-3331404
+2026-09-29 00:35:48,596 [INFO] scraper.pipeline: Scraped: Jacob Reynolds (Darwin City / 0800) — https://www.realestate.com.au/agent/jacob-reynolds-3331404
+2026-09-29 00:35:54,316 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/lloyd-zahra-3735796
+2026-09-29 00:36:05,392 [INFO] scraper.pipeline: Scraped: Lloyd Zahra (Darwin City / 0800) — https://www.realestate.com.au/agent/lloyd-zahra-3735796
+2026-09-29 00:36:11,451 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/riley-loy-3244540
+2026-09-29 00:36:24,589 [INFO] scraper.pipeline: Scraped: Riley Loy (Darwin City / 0800) — https://www.realestate.com.au/agent/riley-loy-3244540
+2026-09-29 00:36:29,490 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/umesh-patel-3998700
+2026-09-29 00:36:42,043 [INFO] scraper.pipeline: Scraped: Umesh Patel (Darwin City / 0800) — https://www.realestate.com.au/agent/umesh-patel-3998700
+2026-09-29 00:36:45,672 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jasmine-smith-2684322
+2026-09-29 00:36:57,996 [INFO] scraper.pipeline: Scraped: Jasmine Smith (Darwin City / 0800) — https://www.realestate.com.au/agent/jasmine-smith-2684322
+2026-09-29 00:37:01,031 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rachel-baldock-3702216
+2026-09-29 00:37:12,221 [INFO] scraper.pipeline: Scraped: Rachel Baldock (Darwin City / 0800) — https://www.realestate.com.au/agent/rachel-baldock-3702216
+2026-09-29 00:37:18,683 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rory-turner-3913532
+2026-09-29 00:37:31,010 [INFO] scraper.pipeline: Scraped: Rory Turner (Darwin City / 0800) — https://www.realestate.com.au/agent/rory-turner-3913532
+2026-09-29 00:37:36,935 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/judy-blore-2394102
+2026-09-29 00:37:48,881 [INFO] scraper.pipeline: Scraped: Judy Blore (Darwin City / 0800) — https://www.realestate.com.au/agent/judy-blore-2394102
+2026-09-29 00:37:53,707 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/susie-patton-quinn-1500854
+2026-09-29 00:38:07,112 [INFO] scraper.pipeline: Scraped: Susie Patton Quinn (Darwin City / 0800) — https://www.realestate.com.au/agent/susie-patton-quinn-1500854
+2026-09-29 00:38:11,882 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/toni-kostas-3031135
+2026-09-29 00:38:24,311 [INFO] scraper.pipeline: Scraped: Toni Kostas (Darwin City / 0800) — https://www.realestate.com.au/agent/toni-kostas-3031135
+2026-09-29 00:38:28,502 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/naomi-leong-1530626
+2026-09-29 00:38:40,802 [INFO] scraper.pipeline: Scraped: Naomi Leong (Darwin City / 0800) — https://www.realestate.com.au/agent/naomi-leong-1530626
+2026-09-29 00:38:44,724 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/frank-schembri-132506
+2026-09-29 00:38:57,889 [INFO] scraper.pipeline: Scraped: Frank Schembri (Darwin City / 0800) — https://www.realestate.com.au/agent/frank-schembri-132506
+2026-09-29 00:39:01,724 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/aja-coles-3906464
+2026-09-29 00:39:14,345 [INFO] scraper.pipeline: Scraped: Aja Coles (Darwin City / 0800) — https://www.realestate.com.au/agent/aja-coles-3906464
+2026-09-29 00:39:19,502 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/chris-clarke-4003452
+2026-09-29 00:39:32,351 [INFO] scraper.pipeline: Scraped: Chris Clarke (Darwin City / 0800) — https://www.realestate.com.au/agent/chris-clarke-4003452
+2026-09-29 00:39:37,184 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kim-johnston-3808296
+2026-09-29 00:39:50,021 [INFO] scraper.pipeline: Scraped: Kim Johnston (Darwin City / 0800) — https://www.realestate.com.au/agent/kim-johnston-3808296
+2026-09-29 00:39:56,423 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/adam-gulliford-1303061
+2026-09-29 00:40:10,496 [INFO] scraper.pipeline: Scraped: Adam Gulliford (Darwin City / 0800) — https://www.realestate.com.au/agent/adam-gulliford-1303061
+2026-09-29 00:40:15,950 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/belinda-tonkin-1823998
+2026-09-29 00:40:29,947 [INFO] scraper.pipeline: Scraped: Belinda Tonkin (Darwin City / 0800) — https://www.realestate.com.au/agent/belinda-tonkin-1823998
+2026-09-29 00:40:35,839 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/brandon-duncan-3918996
+2026-09-29 00:40:47,822 [INFO] scraper.pipeline: Scraped: Brandon Duncan (Darwin City / 0800) — https://www.realestate.com.au/agent/brandon-duncan-3918996
+2026-09-29 00:40:53,435 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/simon-connelly-3733104
+2026-09-29 00:41:04,255 [INFO] scraper.pipeline: Scraped: Simon Connelly (Darwin City / 0800) — https://www.realestate.com.au/agent/simon-connelly-3733104
+2026-09-29 00:41:09,565 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/demi-williams-2235270
+2026-09-29 00:41:19,990 [INFO] scraper.pipeline: Scraped: Demi Williams (Darwin City / 0800) — https://www.realestate.com.au/agent/demi-williams-2235270
+2026-09-29 00:41:26,607 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kerri-ann-laurence-3291292
+2026-09-29 00:41:40,382 [INFO] scraper.pipeline: Scraped: Kerri Ann Laurence (Darwin City / 0800) — https://www.realestate.com.au/agent/kerri-ann-laurence-3291292
+2026-09-29 00:41:46,505 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/georgina-roe-2234002
+2026-09-29 00:42:01,040 [INFO] scraper.pipeline: Scraped: Georgina Roe (Darwin City / 0800) — https://www.realestate.com.au/agent/georgina-roe-2234002
+2026-09-29 00:42:07,001 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/skye-kemmis-3918940
+2026-09-29 00:42:20,588 [INFO] scraper.pipeline: Scraped: Skye Kemmis (Darwin City / 0800) — https://www.realestate.com.au/agent/skye-kemmis-3918940
+2026-09-29 00:42:23,712 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/michael-van-de-graaf-229536
+2026-09-29 00:42:35,485 [INFO] scraper.pipeline: Scraped: Michael Van De Graaf (Darwin City / 0800) — https://www.realestate.com.au/agent/michael-van-de-graaf-229536
+2026-09-29 00:42:40,911 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tevy-hok-2814634
+2026-09-29 00:42:52,821 [INFO] scraper.pipeline: Scraped: Tevy Hok (Darwin City / 0800) — https://www.realestate.com.au/agent/tevy-hok-2814634
+2026-09-29 00:42:56,784 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/andrew-harding-2984775
+2026-09-29 00:43:10,215 [INFO] scraper.pipeline: Scraped: Andrew Harding (Darwin City / 0800) — https://www.realestate.com.au/agent/andrew-harding-2984775
+2026-09-29 00:43:16,356 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jutti-jeffrey-3840196
+2026-09-29 00:43:27,977 [INFO] scraper.pipeline: Scraped: Jutti Jeffrey (Darwin City / 0800) — https://www.realestate.com.au/agent/jutti-jeffrey-3840196
+2026-09-29 00:43:34,653 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/judy-truong-3391608
+2026-09-29 00:43:49,118 [INFO] scraper.pipeline: Scraped: Judy Truong (Darwin City / 0800) — https://www.realestate.com.au/agent/judy-truong-3391608
+2026-09-29 00:43:52,398 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/estiaque-hossain-3502788
+2026-09-29 00:44:05,104 [INFO] scraper.pipeline: Scraped: Estiaque Hossain (Darwin City / 0800) — https://www.realestate.com.au/agent/estiaque-hossain-3502788
+2026-09-29 00:44:11,839 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/carol-need-457156
+2026-09-29 00:44:25,012 [INFO] scraper.pipeline: Scraped: Carol Need (Darwin City / 0800) — https://www.realestate.com.au/agent/carol-need-457156
+2026-09-29 00:44:31,796 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/andrew-lamberton-1064795
+2026-09-29 00:44:44,096 [INFO] scraper.pipeline: Scraped: Andrew Lamberton (Darwin City / 0800) — https://www.realestate.com.au/agent/andrew-lamberton-1064795
+2026-09-29 00:44:51,068 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/minh-thang-3843740
+2026-09-29 00:45:04,859 [INFO] scraper.pipeline: Scraped: Minh Thang (Darwin City / 0800) — https://www.realestate.com.au/agent/minh-thang-3843740
+2026-09-29 00:45:10,526 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/lydelle-wilson-3494836
+2026-09-29 00:45:23,228 [INFO] scraper.pipeline: Scraped: Lydelle Wilson (Darwin City / 0800) — https://www.realestate.com.au/agent/lydelle-wilson-3494836
+2026-09-29 00:45:27,022 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rhett-dolphin-3514500
+2026-09-29 00:45:37,860 [INFO] scraper.pipeline: Scraped: Rhett Dolphin (Darwin City / 0800) — https://www.realestate.com.au/agent/rhett-dolphin-3514500
+2026-09-29 00:45:44,838 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kelly-pucci-3716332
+2026-09-29 00:45:58,603 [INFO] scraper.pipeline: Scraped: Kelly Pucci (Darwin City / 0800) — https://www.realestate.com.au/agent/kelly-pucci-3716332
+2026-09-29 00:46:02,903 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/stephanie-carter-3906460
+2026-09-29 00:46:16,481 [INFO] scraper.pipeline: Scraped: Stephanie Carter (Darwin City / 0800) — https://www.realestate.com.au/agent/stephanie-carter-3906460
+2026-09-29 00:46:19,713 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kylie-westbrook-2594918
+2026-09-29 00:46:32,267 [INFO] scraper.pipeline: Scraped: Kylie Westbrook (Darwin City / 0800) — https://www.realestate.com.au/agent/kylie-westbrook-2594918
+2026-09-29 00:46:38,573 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/manolis-hourdas-3663232
+2026-09-29 00:46:52,263 [INFO] scraper.pipeline: Scraped: Manolis Hourdas (Darwin City / 0800) — https://www.realestate.com.au/agent/manolis-hourdas-3663232
+2026-09-29 00:46:56,088 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/ryan-rowsell-3645984
+2026-09-29 00:47:11,393 [INFO] scraper.pipeline: Scraped: Ryan Rowsell (Darwin City / 0800) — https://www.realestate.com.au/agent/ryan-rowsell-3645984
+2026-09-29 00:47:14,878 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/paul-heron-1213775
+2026-09-29 00:47:27,963 [INFO] scraper.pipeline: Scraped: Paul Heron (Darwin City / 0800) — https://www.realestate.com.au/agent/paul-heron-1213775
+2026-09-29 00:47:34,771 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jad-damen-3483240
+2026-09-29 00:47:48,730 [INFO] scraper.pipeline: Scraped: Jad Damen (Darwin City / 0800) — https://www.realestate.com.au/agent/jad-damen-3483240
+2026-09-29 00:47:53,183 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/eliza-dale-3993916
+2026-09-29 00:48:07,260 [INFO] scraper.pipeline: Scraped: Eliza Dale (Darwin City / 0800) — https://www.realestate.com.au/agent/eliza-dale-3993916
+2026-09-29 00:48:12,349 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/anastasia-koukouvas-3749092
+2026-09-29 00:48:24,914 [INFO] scraper.pipeline: Scraped: Anastasia Koukouvas (Darwin City / 0800) — https://www.realestate.com.au/agent/anastasia-koukouvas-3749092
+2026-09-29 00:48:28,889 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tom-kiem-2038990
+2026-09-29 00:48:41,726 [INFO] scraper.pipeline: Scraped: Tom Kiem (Darwin City / 0800) — https://www.realestate.com.au/agent/tom-kiem-2038990
+2026-09-29 00:48:47,200 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nikki-vazanellis-1720882
+2026-09-29 00:49:00,353 [INFO] scraper.pipeline: Scraped: Nikki Vazanellis (Darwin City / 0800) — https://www.realestate.com.au/agent/nikki-vazanellis-1720882
+2026-09-29 00:49:03,913 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/clint-dixon-3466928
+2026-09-29 00:49:14,648 [INFO] scraper.pipeline: Scraped: Clint Dixon (Darwin City / 0800) — https://www.realestate.com.au/agent/clint-dixon-3466928
+2026-09-29 00:49:20,543 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/byron-wauchope-3149572
+2026-09-29 00:49:32,183 [INFO] scraper.pipeline: Scraped: Byron Wauchope (Darwin City / 0800) — https://www.realestate.com.au/agent/byron-wauchope-3149572
+2026-09-29 00:49:36,899 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/michelle-gunawardena-3597540
+2026-09-29 00:49:50,793 [INFO] scraper.pipeline: Scraped: Michelle Gunawardena (Darwin City / 0800) — https://www.realestate.com.au/agent/michelle-gunawardena-3597540
+2026-09-29 00:49:54,612 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sammy-ishmam-3979568
+2026-09-29 00:50:07,896 [INFO] scraper.pipeline: Scraped: Sammy Ishmam (Darwin City / 0800) — https://www.realestate.com.au/agent/sammy-ishmam-3979568
+2026-09-29 00:50:12,275 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tom-browne-3767000
+2026-09-29 00:50:25,803 [INFO] scraper.pipeline: Scraped: Tom Browne (Darwin City / 0800) — https://www.realestate.com.au/agent/tom-browne-3767000
+2026-09-29 00:50:31,608 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/andrea-moriarty-737819
+2026-09-29 00:50:43,379 [INFO] scraper.pipeline: Scraped: Andrea Moriarty (Darwin City / 0800) — https://www.realestate.com.au/agent/andrea-moriarty-737819
+2026-09-29 00:50:48,699 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/demetri-prodromou-2071546
+2026-09-29 00:51:02,381 [INFO] scraper.pipeline: Scraped: Demetri Prodromou (Darwin City / 0800) — https://www.realestate.com.au/agent/demetri-prodromou-2071546
+2026-09-29 00:51:05,497 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/merick-miglani-3934344
+2026-09-29 00:51:19,431 [INFO] scraper.pipeline: Scraped: Merick Miglani (Darwin City / 0800) — https://www.realestate.com.au/agent/merick-miglani-3934344
+2026-09-29 00:51:22,791 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jeremy-odonoghue-78944
+2026-09-29 00:51:34,658 [INFO] scraper.pipeline: Scraped: Jeremy Odonoghue (Darwin City / 0800) — https://www.realestate.com.au/agent/jeremy-odonoghue-78944
+2026-09-29 00:51:40,131 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/arjun-sharma-3427328
+2026-09-29 00:51:52,284 [INFO] scraper.pipeline: Scraped: Arjun Sharma (Darwin City / 0800) — https://www.realestate.com.au/agent/arjun-sharma-3427328
+2026-09-29 00:51:55,387 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rob-higgins-143081
+2026-09-29 00:52:08,045 [INFO] scraper.pipeline: Scraped: Rob Higgins (Darwin City / 0800) — https://www.realestate.com.au/agent/rob-higgins-143081
+2026-09-29 00:52:13,958 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tony-oneill-339396
+2026-09-29 00:52:29,209 [INFO] scraper.pipeline: Scraped: Tony Oneill (Darwin City / 0800) — https://www.realestate.com.au/agent/tony-oneill-339396
+2026-09-29 00:52:35,944 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jade-blazely-1480662
+2026-09-29 00:52:46,332 [INFO] scraper.pipeline: Scraped: Jade Blazely (Darwin City / 0800) — https://www.realestate.com.au/agent/jade-blazely-1480662
+2026-09-29 00:52:51,797 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/crystal-callaghan-2775586
+2026-09-29 00:53:04,903 [INFO] scraper.pipeline: Scraped: Crystal Callaghan (Darwin City / 0800) — https://www.realestate.com.au/agent/crystal-callaghan-2775586
+2026-09-29 00:53:10,110 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/renee-brant-2239198
+2026-09-29 00:53:24,630 [INFO] scraper.pipeline: Scraped: Renee Brant (Darwin City / 0800) — https://www.realestate.com.au/agent/renee-brant-2239198
+2026-09-29 00:53:28,013 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/seth-chin-1094219
+2026-09-29 00:53:40,766 [INFO] scraper.pipeline: Scraped: Seth Chin (Darwin City / 0800) — https://www.realestate.com.au/agent/seth-chin-1094219
+2026-09-29 00:53:46,322 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/ciara-shakes-3742436
+2026-09-29 00:53:59,921 [INFO] scraper.pipeline: Scraped: Ciara Shakes (Darwin City / 0800) — https://www.realestate.com.au/agent/ciara-shakes-3742436
+2026-09-29 00:54:05,946 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/antonia-neophytou-3325620
+2026-09-29 00:54:18,065 [INFO] scraper.pipeline: Scraped: Antonia Neophytou (Darwin City / 0800) — https://www.realestate.com.au/agent/antonia-neophytou-3325620
+2026-09-29 00:54:23,741 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/roxley-pearce-1200439
+2026-09-29 00:54:36,859 [INFO] scraper.pipeline: Scraped: Roxley Pearce (Darwin City / 0800) — https://www.realestate.com.au/agent/roxley-pearce-1200439
+2026-09-29 00:54:42,654 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/stewie-martin-3130952
+2026-09-29 00:54:55,593 [INFO] scraper.pipeline: Scraped: Stewie Martin (Darwin City / 0800) — https://www.realestate.com.au/agent/stewie-martin-3130952
+2026-09-29 00:55:00,508 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/julie-neal-2820110
+2026-09-29 00:55:10,709 [INFO] scraper.pipeline: Scraped: Julie Neal (Darwin City / 0800) — https://www.realestate.com.au/agent/julie-neal-2820110
+2026-09-29 00:55:16,504 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/fiona-tigchelaar-3258496
+2026-09-29 00:55:28,798 [INFO] scraper.pipeline: Scraped: Fiona Tigchelaar (Darwin City / 0800) — https://www.realestate.com.au/agent/fiona-tigchelaar-3258496
+2026-09-29 00:55:32,847 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jody-setterberg-3849976
+2026-09-29 00:55:45,536 [INFO] scraper.pipeline: Scraped: Jody Setterberg (Darwin City / 0800) — https://www.realestate.com.au/agent/jody-setterberg-3849976
+2026-09-29 00:55:50,089 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/stuart-rodda-301631
+2026-09-29 00:56:03,972 [INFO] scraper.pipeline: Scraped: Stuart Rodda (Darwin City / 0800) — https://www.realestate.com.au/agent/stuart-rodda-301631
+2026-09-29 00:56:10,887 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/george-vrodos-337431
+2026-09-29 00:56:21,792 [INFO] scraper.pipeline: Scraped: George Vrodos (Darwin City / 0800) — https://www.realestate.com.au/agent/george-vrodos-337431
+2026-09-29 00:56:26,407 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/hency-chen-2815230
+2026-09-29 00:56:39,319 [INFO] scraper.pipeline: Scraped: Hency Chen (Darwin City / 0800) — https://www.realestate.com.au/agent/hency-chen-2815230
+2026-09-29 00:56:45,560 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/hayley-luff-3828708
+2026-09-29 00:56:57,066 [INFO] scraper.pipeline: Scraped: Hayley Luff (Darwin City / 0800) — https://www.realestate.com.au/agent/hayley-luff-3828708
+2026-09-29 00:57:00,446 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tracy-barker-3048935
+2026-09-29 00:57:14,115 [INFO] scraper.pipeline: Scraped: Tracy Barker (Darwin City / 0800) — https://www.realestate.com.au/agent/tracy-barker-3048935
+2026-09-29 00:57:19,093 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/ben-drayton-4027896
+2026-09-29 00:57:29,566 [INFO] scraper.pipeline: Scraped: Ben Drayton (Darwin City / 0800) — https://www.realestate.com.au/agent/ben-drayton-4027896
+2026-09-29 00:57:36,141 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/caterina-albano-3786916
+2026-09-29 00:57:49,257 [INFO] scraper.pipeline: Scraped: Caterina Albano (Darwin City / 0800) — https://www.realestate.com.au/agent/caterina-albano-3786916
+2026-09-29 00:57:55,811 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sharron-durkin-2989991
+2026-09-29 00:58:06,578 [INFO] scraper.pipeline: Scraped: Sharron Durkin (Darwin City / 0800) — https://www.realestate.com.au/agent/sharron-durkin-2989991
+2026-09-29 00:58:10,190 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/dann-mallari-3652800
+2026-09-29 00:58:22,343 [INFO] scraper.pipeline: Scraped: Dann Mallari (Darwin City / 0800) — https://www.realestate.com.au/agent/dann-mallari-3652800
+2026-09-29 00:58:25,391 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/victor-harris-2405950
+2026-09-29 00:58:38,274 [INFO] scraper.pipeline: Scraped: Victor Harris (Darwin City / 0800) — https://www.realestate.com.au/agent/victor-harris-2405950
+2026-09-29 00:58:41,382 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nikki-fernandez-3254732
+2026-09-29 00:58:54,344 [INFO] scraper.pipeline: Scraped: Nikki Fernandez (Darwin City / 0800) — https://www.realestate.com.au/agent/nikki-fernandez-3254732
+2026-09-29 00:58:58,343 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rod-hass-1688370
+2026-09-29 00:59:12,077 [INFO] scraper.pipeline: Scraped: Rod Hass (Darwin City / 0800) — https://www.realestate.com.au/agent/rod-hass-1688370
+2026-09-29 00:59:17,613 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bhawani-paudyal-3106284
+2026-09-29 00:59:29,292 [INFO] scraper.pipeline: Scraped: Bhawani Paudyal (Darwin City / 0800) — https://www.realestate.com.au/agent/bhawani-paudyal-3106284
+2026-09-29 00:59:34,091 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/mark-perera-1172491
+2026-09-29 00:59:45,836 [INFO] scraper.pipeline: Scraped: Mark Perera (Darwin City / 0800) — https://www.realestate.com.au/agent/mark-perera-1172491
+2026-09-29 00:59:49,414 [INFO] scraper.pipeline: Finished suburb 'Darwin City, Northern Territory 0800': 113 profile(s) found, 113 record(s) scraped. Total records: 113
+2026-09-29 00:59:49,415 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Darwin City, 113 record(s))
+2026-09-29 00:59:49,963 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\darwin_city_0800.xlsx
+2026-09-29 00:59:49,963 [INFO] scraper.main: Saved 113 record(s) for Darwin City, Northern Territory 0800 to C:\Users\ASUS\Desktop\excel_sheets\darwin_city_0800.xlsx
+2026-09-29 00:59:49,973 [INFO] scraper.main: Progress: 1/2641 suburbs completed.
+2026-09-29 00:59:49,973 [INFO] scraper.pipeline: Checkpoint saved
+2026-09-29 00:59:56,195 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-09-29 00:59:56,197 [INFO] nodriver.core.browser: terminated browser with pid 8444 successfully
+2026-09-29 00:59:56,198 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-09-29 00:59:56,411 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\darwin_city_0800.xlsx
+2026-09-29 00:59:56,411 [INFO] scraper.main: Saved 113 record(s) for Darwin City, Northern Territory 0800 to C:\Users\ASUS\Desktop\excel_sheets\darwin_city_0800.xlsx
+2026-09-29 00:59:56,413 [INFO] scraper.main: Run ended. Completed suburbs: 1/2641; remaining: 2640. Resume postcode 0800 by running the same command again.
+2026-09-29 00:59:56,414 [INFO] scraper.main: Per-suburb workbooks and progress are in C:\Users\ASUS\Desktop\excel_sheets
+2026-09-29 00:59:56,415 [INFO] nodriver.core.browser: terminated browser with pid 8444 successfully
+2026-09-30 19:21:18,426 [INFO] scraper.main: Loaded 2641 Australian suburbs; completed=1, unfinished=2640. Progress: C:\Users\ASUS\Desktop\excel_sheets\_scrape_progress.json
+2026-09-30 19:21:18,427 [INFO] scraper.main: This run will process 1 suburb(s): ['Geebung, Queensland 4034']
+2026-09-30 19:21:18,429 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-09-30 19:21:18,432 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=64220
+2026-09-30 19:21:19,463 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-09-30 19:21:20,241 [INFO] scraper.pipeline: Browser tab initialized.
+2026-09-30 19:21:20,249 [INFO] scraper.pipeline: Processing suburb: Geebung, Queensland 4034 (suburb=Geebung postcode=4034)
+2026-09-30 19:21:25,711 [INFO] scraper.automation: Navigating to: https://www.realestate.com.au/find-agent/geebung-qld-4034/
+2026-09-30 19:21:34,496 [INFO] scraper.automation: Page loaded with content for 'Geebung, Queensland 4034' (1314536 chars)
+2026-09-30 19:21:35,001 [INFO] scraper.automation: Pagination for 'Geebung, Queensland 4034': current_page=1 last_page=2 page_size=24 total_results=38 has_pagination=True
+2026-09-30 19:21:35,035 [INFO] scraper.automation: Page 1 for 'Geebung, Queensland 4034': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-09-30 19:21:35,036 [INFO] scraper.automation: Opening results page 2 for 'Geebung, Queensland 4034': https://www.realestate.com.au/find-agent/geebung-qld-4034/?page=2
+2026-09-30 19:21:39,770 [INFO] scraper.automation: Page loaded with content for 'Geebung, Queensland 4034' (543053 chars)
+2026-09-30 19:21:39,990 [INFO] scraper.automation: Page 2 for 'Geebung, Queensland 4034': 14 profile link(s) on page, 14 new, 38 unique so far
+2026-09-30 19:21:39,991 [INFO] scraper.automation: Opening results page 3 for 'Geebung, Queensland 4034': https://www.realestate.com.au/find-agent/geebung-qld-4034/?page=3
+2026-09-30 19:21:44,052 [INFO] scraper.automation: Page loaded with content for 'Geebung, Queensland 4034' (179756 chars)
+2026-09-30 19:21:44,161 [INFO] scraper.automation: Page 3 for 'Geebung, Queensland 4034': 0 profile link(s) on page, 0 new, 38 unique so far
+2026-09-30 19:21:44,161 [INFO] scraper.automation: No new profile URLs on page 3 for 'Geebung, Queensland 4034'; ending pagination
+2026-09-30 19:21:44,162 [INFO] scraper.automation: Collected 38 unique agent profile URL(s) for suburb 'Geebung, Queensland 4034' across 3 page(s)
+2026-09-30 19:21:44,163 [INFO] scraper.pipeline: Found 38 agent profile(s) for 'Geebung, Queensland 4034'.
+2026-09-30 19:21:44,163 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nicholas-loftus-3875276
+2026-09-30 19:21:56,140 [INFO] scraper.pipeline: Scraped: Nicholas Loftus (Geebung / 4034) — https://www.realestate.com.au/agent/nicholas-loftus-3875276
+2026-09-30 19:22:02,069 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/corey-shipp-3487344
+2026-09-30 19:22:15,658 [INFO] scraper.pipeline: Scraped: Corey Shipp (Geebung / 4034) — https://www.realestate.com.au/agent/corey-shipp-3487344
+2026-09-30 19:22:21,102 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/brad-shipway-1673426
+2026-09-30 19:22:34,749 [INFO] scraper.pipeline: Scraped: Brad Shipway (Geebung / 4034) — https://www.realestate.com.au/agent/brad-shipway-1673426
+2026-09-30 19:22:40,855 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-09-30 19:22:56,457 [INFO] scraper.pipeline: Scraped: Alexandra Porter (Geebung / 4034) — https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-09-30 19:23:01,817 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sharn-sim-3511796
+2026-09-30 19:23:15,638 [INFO] scraper.pipeline: Scraped: Sharn Sim (Geebung / 4034) — https://www.realestate.com.au/agent/sharn-sim-3511796
+2026-09-30 19:23:20,732 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-09-30 19:23:37,477 [INFO] scraper.pipeline: Scraped: Cara Bergmann (Geebung / 4034) — https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-09-30 19:23:40,520 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-09-30 19:23:53,945 [INFO] scraper.pipeline: Scraped: Tristan Rowland (Geebung / 4034) — https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-09-30 19:23:58,835 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/angela-duncan-3588960
+2026-09-30 19:24:14,029 [INFO] scraper.pipeline: Scraped: Angela Duncan (Geebung / 4034) — https://www.realestate.com.au/agent/angela-duncan-3588960
+2026-09-30 19:24:19,176 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/richard-parker-3733764
+2026-09-30 19:24:33,837 [INFO] scraper.pipeline: Scraped: Richard Parker (Geebung / 4034) — https://www.realestate.com.au/agent/richard-parker-3733764
+2026-09-30 19:24:39,349 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/brooke-copping-1288575
+2026-09-30 19:24:52,737 [INFO] scraper.pipeline: Scraped: Brooke Copping (Geebung / 4034) — https://www.realestate.com.au/agent/brooke-copping-1288575
+2026-09-30 19:24:58,835 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/temika-stagg-2865374
+2026-09-30 19:25:11,552 [INFO] scraper.pipeline: Scraped: Temika Stagg (Geebung / 4034) — https://www.realestate.com.au/agent/temika-stagg-2865374
+2026-09-30 19:25:15,860 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/michael-korkou-2521598
+2026-09-30 19:25:28,961 [INFO] scraper.pipeline: Scraped: Michael Korkou (Geebung / 4034) — https://www.realestate.com.au/agent/michael-korkou-2521598
+2026-09-30 19:25:34,351 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/emily-angell-3758812
+2026-09-30 19:25:47,850 [INFO] scraper.pipeline: Scraped: Emily Angell (Geebung / 4034) — https://www.realestate.com.au/agent/emily-angell-3758812
+2026-09-30 19:25:53,339 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nick-moloney-3634420
+2026-09-30 19:26:05,782 [INFO] scraper.pipeline: Scraped: Nick Moloney (Geebung / 4034) — https://www.realestate.com.au/agent/nick-moloney-3634420
+2026-09-30 19:26:09,538 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rochelle-adgo-3267736
+2026-09-30 19:26:22,431 [INFO] scraper.pipeline: Scraped: Rochelle Adgo (Geebung / 4034) — https://www.realestate.com.au/agent/rochelle-adgo-3267736
+2026-09-30 19:26:29,045 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-hooper-2389150
+2026-09-30 19:26:41,874 [INFO] scraper.pipeline: Scraped: Daniel Hooper (Geebung / 4034) — https://www.realestate.com.au/agent/daniel-hooper-2389150
+2026-09-30 19:26:48,103 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/joel-clifford-2666142
+2026-09-30 19:27:00,594 [INFO] scraper.pipeline: Scraped: Joel Clifford (Geebung / 4034) — https://www.realestate.com.au/agent/joel-clifford-2666142
+2026-09-30 19:27:04,251 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/elliot-herford-smith-3692868
+2026-09-30 19:27:18,339 [INFO] scraper.pipeline: Scraped: Elliot Herford Smith (Geebung / 4034) — https://www.realestate.com.au/agent/elliot-herford-smith-3692868
+2026-09-30 19:27:21,795 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/drew-davies-2334722
+2026-09-30 19:27:34,932 [INFO] scraper.pipeline: Scraped: Drew Davies (Geebung / 4034) — https://www.realestate.com.au/agent/drew-davies-2334722
+2026-09-30 19:27:38,210 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nick-kouparitsas-3216848
+2026-09-30 19:27:50,153 [INFO] scraper.pipeline: Scraped: Nick Kouparitsas (Geebung / 4034) — https://www.realestate.com.au/agent/nick-kouparitsas-3216848
+2026-09-30 19:27:54,328 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tony-aspinall-3236372
+2026-09-30 19:28:06,830 [INFO] scraper.pipeline: Scraped: Tony Aspinall (Geebung / 4034) — https://www.realestate.com.au/agent/tony-aspinall-3236372
+2026-09-30 19:28:13,150 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/lolit-bumanlag-1243367
+2026-09-30 19:28:25,753 [INFO] scraper.pipeline: Scraped: Lolit Bumanlag (Geebung / 4034) — https://www.realestate.com.au/agent/lolit-bumanlag-1243367
+2026-09-30 19:28:29,325 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/luc-rance-3280884
+2026-09-30 19:28:40,788 [INFO] scraper.pipeline: Scraped: Luc Rance (Geebung / 4034) — https://www.realestate.com.au/agent/luc-rance-3280884
+2026-09-30 19:28:44,958 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/david-treloar-1410618
+2026-09-30 19:28:56,556 [INFO] scraper.pipeline: Scraped: David Treloar (Geebung / 4034) — https://www.realestate.com.au/agent/david-treloar-1410618
+2026-09-30 19:29:00,903 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/majenta-shepperson-3875280
+2026-09-30 19:29:14,040 [INFO] scraper.pipeline: Scraped: Majenta Shepperson (Geebung / 4034) — https://www.realestate.com.au/agent/majenta-shepperson-3875280
+2026-09-30 19:29:20,052 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alyssa-corbett-3727788
+2026-09-30 19:29:33,884 [INFO] scraper.pipeline: Scraped: Alyssa Corbett (Geebung / 4034) — https://www.realestate.com.au/agent/alyssa-corbett-3727788
+2026-09-30 19:29:38,340 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/charlize-sivyer-3734676
+2026-09-30 19:29:50,338 [INFO] scraper.pipeline: Scraped: Charlize Sivyer (Geebung / 4034) — https://www.realestate.com.au/agent/charlize-sivyer-3734676
+2026-09-30 19:29:57,337 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alistair-macmillan-52521
+2026-09-30 19:30:11,540 [INFO] scraper.pipeline: Scraped: Alistair Macmillan (Geebung / 4034) — https://www.realestate.com.au/agent/alistair-macmillan-52521
+2026-09-30 19:30:15,204 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/samantha-baines-3409172
+2026-09-30 19:30:27,982 [INFO] scraper.pipeline: Scraped: Samantha Baines (Geebung / 4034) — https://www.realestate.com.au/agent/samantha-baines-3409172
+2026-09-30 19:30:34,291 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nicholas-clifford-3503828
+2026-09-30 19:30:48,742 [INFO] scraper.pipeline: Scraped: Nicholas Clifford (Geebung / 4034) — https://www.realestate.com.au/agent/nicholas-clifford-3503828
+2026-09-30 19:30:53,574 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/zac-mchardy-1874754
+2026-09-30 19:31:07,733 [INFO] scraper.pipeline: Scraped: Zac Mchardy (Geebung / 4034) — https://www.realestate.com.au/agent/zac-mchardy-1874754
+2026-09-30 19:31:11,818 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/claudia-rocha-2965147
+2026-09-30 19:31:24,300 [INFO] scraper.pipeline: Scraped: Claudia Rocha (Geebung / 4034) — https://www.realestate.com.au/agent/claudia-rocha-2965147
+2026-09-30 19:31:30,185 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/carly-powell-3545392
+2026-09-30 19:31:44,861 [INFO] scraper.pipeline: Scraped: Carly Powell (Geebung / 4034) — https://www.realestate.com.au/agent/carly-powell-3545392
+2026-09-30 19:31:50,252 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alex-darby-3750532
+2026-09-30 19:32:01,056 [INFO] scraper.pipeline: Scraped: Alex Darby (Geebung / 4034) — https://www.realestate.com.au/agent/alex-darby-3750532
+2026-09-30 19:32:07,455 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/konnar-gerandonis-3922640
+2026-09-30 19:32:20,572 [INFO] scraper.pipeline: Scraped: Konnar Gerandonis (Geebung / 4034) — https://www.realestate.com.au/agent/konnar-gerandonis-3922640
+2026-09-30 19:32:26,272 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/christian-boscaini-3864876
+2026-09-30 19:32:40,169 [INFO] scraper.pipeline: Scraped: Christian Boscaini (Geebung / 4034) — https://www.realestate.com.au/agent/christian-boscaini-3864876
+2026-09-30 19:32:43,893 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/mark-bumanlag-2014134
+2026-09-30 19:32:54,760 [INFO] scraper.pipeline: Scraped: Mark Bumanlag (Geebung / 4034) — https://www.realestate.com.au/agent/mark-bumanlag-2014134
+2026-09-30 19:32:59,986 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kelsi-carroll-3110368
+2026-09-30 19:33:10,383 [INFO] scraper.pipeline: Scraped: Kelsi Carroll (Geebung / 4034) — https://www.realestate.com.au/agent/kelsi-carroll-3110368
+2026-09-30 19:33:14,630 [INFO] scraper.pipeline: Finished suburb 'Geebung, Queensland 4034': 38 profile(s) found, 38 record(s) scraped. Total records: 38
+2026-09-30 19:33:14,630 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Geebung, 38 record(s))
+2026-09-30 19:33:15,628 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\geebung_4034.xlsx
+2026-09-30 19:33:15,630 [INFO] scraper.main: Saved 38 record(s) for Geebung, Queensland 4034 to C:\Users\ASUS\Desktop\excel_sheets\geebung_4034.xlsx
+2026-09-30 19:33:15,641 [INFO] scraper.main: Progress: 2/2641 suburbs completed.
+2026-09-30 19:33:15,641 [INFO] scraper.pipeline: Checkpoint saved
+2026-09-30 19:33:19,364 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-09-30 19:33:19,366 [INFO] nodriver.core.browser: terminated browser with pid 11488 successfully
+2026-09-30 19:33:19,367 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-09-30 19:33:19,620 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\geebung_4034.xlsx
+2026-09-30 19:33:19,620 [INFO] scraper.main: Saved 38 record(s) for Geebung, Queensland 4034 to C:\Users\ASUS\Desktop\excel_sheets\geebung_4034.xlsx
+2026-09-30 19:33:19,621 [INFO] scraper.main: Run ended. Completed suburbs: 2/2641; remaining: 2639. Resume postcode 4034 by running the same command again.
+2026-09-30 19:33:19,621 [INFO] scraper.main: Per-suburb workbooks and progress are in C:\Users\ASUS\Desktop\excel_sheets
+2026-09-30 19:33:19,622 [INFO] nodriver.core.browser: terminated browser with pid 11488 successfully
+2026-10-03 16:37:05,696 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-03 16:37:05,698 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=61271
+2026-10-03 16:37:06,572 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-03 16:37:07,127 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-03 16:37:14,433 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (182432 chars)
+2026-10-03 16:37:20,800 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-03 16:37:20,802 [INFO] nodriver.core.browser: terminated browser with pid 14596 successfully
+2026-10-03 16:37:20,804 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-03 16:37:21,211 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-10-03 16:37:21,213 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-10-03 16:37:21,812 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\scraped_output\geebung_queensland_4034_all_deep_search.xlsx
+2026-10-03 16:37:21,813 [INFO] scraper.main: Saved workbook with 0 row(s): C:\Users\ASUS\Desktop\scraped_output\geebung_queensland_4034_all_deep_search.xlsx
+2026-10-03 16:37:21,816 [INFO] scraper.main: Progress for Geebung, Queensland 4034: partial; workbook: C:\Users\ASUS\Desktop\scraped_output\geebung_queensland_4034_all_deep_search.xlsx
+2026-10-03 16:37:21,816 [INFO] nodriver.core.browser: terminated browser with pid 14596 successfully
+2026-10-03 16:41:53,422 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-03 16:41:53,424 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=51048
+2026-10-03 16:41:54,375 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-03 16:41:55,119 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-03 16:41:55,168 [INFO] scraper.pipeline: Processing suburb: Albany Creek, Queensland 4035 | all | deep-search (suburb=Albany Creek postcode=4035)
+2026-10-03 16:42:03,741 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (129836 chars)
+2026-10-03 16:42:12,522 [INFO] scraper.automation: Page loaded with content for 'Albany Creek, Queensland 4035' (225196 chars)
+2026-10-03 16:42:12,599 [INFO] scraper.automation: Pagination for 'Albany Creek, Queensland 4035 | all | deep-search': current_page=1 last_page=1 page_size=None total_results=None has_pagination=False
+2026-10-03 16:42:12,604 [INFO] scraper.automation: Page 1 for 'Albany Creek, Queensland 4035 | all | deep-search': 0 profile link(s) on page, 0 new, 0 unique so far
+2026-10-03 16:42:12,604 [INFO] scraper.automation: Collected 0 unique agent profile URL(s) for suburb 'Albany Creek, Queensland 4035 | all | deep-search' across 1 page(s)
+2026-10-03 16:42:12,604 [INFO] scraper.pipeline: Found 0 agent profile(s) for 'Albany Creek, Queensland 4035 | all | deep-search'.
+2026-10-03 16:42:12,605 [INFO] scraper.pipeline: Finished suburb 'Albany Creek, Queensland 4035 | all | deep-search': 0 profile(s) found, 0 record(s) scraped. Total records: 0
+2026-10-03 16:42:12,605 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Albany Creek, 0 record(s))
+2026-10-03 16:42:13,343 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\scraped_output\albany_creek_queensland_4035_all_deep_search.xlsx
+2026-10-03 16:42:13,344 [INFO] scraper.main: Saved workbook with 0 row(s): C:\Users\ASUS\Desktop\scraped_output\albany_creek_queensland_4035_all_deep_search.xlsx
+2026-10-03 16:42:13,351 [INFO] scraper.pipeline: Checkpoint saved
+2026-10-03 16:42:20,005 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-03 16:42:20,005 [INFO] nodriver.core.browser: terminated browser with pid 13196 successfully
+2026-10-03 16:42:20,006 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-03 16:42:20,145 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\scraped_output\albany_creek_queensland_4035_all_deep_search.xlsx
+2026-10-03 16:42:20,167 [INFO] scraper.main: Saved workbook with 0 row(s): C:\Users\ASUS\Desktop\scraped_output\albany_creek_queensland_4035_all_deep_search.xlsx
+2026-10-03 16:42:20,195 [INFO] scraper.main: Progress for Albany Creek, Queensland 4035: completed; workbook: C:\Users\ASUS\Desktop\scraped_output\albany_creek_queensland_4035_all_deep_search.xlsx
+2026-10-03 16:42:20,214 [INFO] nodriver.core.browser: terminated browser with pid 13196 successfully
+2026-10-03 19:32:13,579 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-03 19:32:13,581 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=50279
+2026-10-03 19:32:14,553 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-03 19:32:16,283 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-03 19:32:27,719 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (226574 chars)
+2026-10-03 19:32:36,571 [INFO] scraper.automation: Page loaded with content for 'Aspley 4034' (224924 chars)
+2026-10-03 19:32:36,572 [INFO] scraper.pipeline: Selected first website location suggestion: Aspley 4034
+2026-10-03 19:32:36,630 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Aspley, 0 record(s))
+2026-10-03 19:32:37,186 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\scraped_output\aspley_4034_all_deep_search.xlsx
+2026-10-03 19:32:37,187 [INFO] scraper.main: Saved workbook with 0 row(s): C:\Users\ASUS\Desktop\scraped_output\aspley_4034_all_deep_search.xlsx
+2026-10-03 19:32:37,191 [INFO] scraper.pipeline: Checkpoint saved
+2026-10-03 19:32:44,007 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-03 19:32:44,010 [INFO] nodriver.core.browser: terminated browser with pid 9284 successfully
+2026-10-03 19:32:44,010 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-03 19:32:44,095 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\scraped_output\aspley_4034_all_deep_search.xlsx
+2026-10-03 19:32:44,096 [INFO] scraper.main: Saved workbook with 0 row(s): C:\Users\ASUS\Desktop\scraped_output\aspley_4034_all_deep_search.xlsx
+2026-10-03 19:32:44,099 [INFO] scraper.main: Progress for Aspley 4034: completed; workbook: C:\Users\ASUS\Desktop\scraped_output\aspley_4034_all_deep_search.xlsx
+2026-10-03 19:32:44,100 [INFO] nodriver.core.browser: terminated browser with pid 9284 successfully
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=58349
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=54518
+2026-10-04 00:34:48,331 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 00:34:48,333 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=53221
+2026-10-04 00:34:49,182 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 00:34:50,532 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 00:34:50,562 [INFO] scraper.pipeline: Processing suburb: 4034 | all | deep-search (suburb=4034 postcode=4034)
+2026-10-04 00:34:51,677 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (129860 chars)
+2026-10-04 00:34:57,977 [INFO] scraper.automation: Page loaded with content for '4034' (88486 chars)
+2026-10-04 00:34:57,978 [INFO] scraper.pipeline: Selected first website location suggestion: Aspley,, QLD 4034
+2026-10-04 00:34:58,233 [INFO] scraper.automation: Pagination for '4034 | all | deep-search': current_page=1 last_page=5 page_size=24 total_results=99 has_pagination=True
+2026-10-04 00:34:58,266 [INFO] scraper.automation: Page 1 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-10-04 00:34:58,266 [INFO] scraper.automation: Opening results page 2 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=2
+2026-10-04 00:35:02,929 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (1062472 chars)
+2026-10-04 00:35:03,257 [INFO] scraper.automation: Page 2 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 48 unique so far
+2026-10-04 00:35:03,257 [INFO] scraper.automation: Opening results page 3 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=3
+2026-10-04 00:35:07,816 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (816972 chars)
+2026-10-04 00:35:08,094 [INFO] scraper.automation: Page 3 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 72 unique so far
+2026-10-04 00:35:08,095 [INFO] scraper.automation: Opening results page 4 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=4
+2026-10-04 00:35:11,420 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (629590 chars)
+2026-10-04 00:35:11,609 [INFO] scraper.automation: Page 4 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 96 unique so far
+2026-10-04 00:35:11,609 [INFO] scraper.automation: Opening results page 5 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=5
+2026-10-04 00:35:15,119 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (245337 chars)
+2026-10-04 00:35:15,199 [INFO] scraper.automation: Page 5 for '4034 | all | deep-search': 3 profile link(s) on page, 3 new, 99 unique so far
+2026-10-04 00:35:15,201 [INFO] scraper.automation: Opening results page 6 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=6
+2026-10-04 00:35:19,215 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (179528 chars)
+2026-10-04 00:35:19,272 [INFO] scraper.automation: Page 6 for '4034 | all | deep-search': 0 profile link(s) on page, 0 new, 99 unique so far
+2026-10-04 00:35:19,272 [WARNING] scraper.automation: Page 6 for '4034 | all | deep-search' contained no new profile URLs; stopping to avoid looping
+2026-10-04 00:35:19,273 [INFO] scraper.automation: Collected 99 unique agent profile URL(s) for suburb '4034 | all | deep-search' across 6 page(s)
+2026-10-04 00:35:19,274 [INFO] scraper.pipeline: Found 99 agent profile(s) for '4034 | all | deep-search'.
+2026-10-04 00:35:19,274 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 00:35:43,553 [INFO] scraper.pipeline: Found 6 team member link(s) for Alexandra Porter
+2026-10-04 00:36:46,472 [INFO] scraper.pipeline: Scraped: Alexandra Porter (Aspley / 4034) — https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 00:36:50,749 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/luc-rance-3280884
+2026-10-04 00:37:12,124 [INFO] scraper.pipeline: Found 6 team member link(s) for Luc Rance
+2026-10-04 00:37:57,706 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:37:57,707 [INFO] scraper.main: Saved workbook with 10 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:38:10,749 [WARNING] scraper.pipeline: Skipping team profile with no reliable name: https://www.realestate.com.au/agent/4030208
+2026-10-04 00:38:26,001 [INFO] scraper.pipeline: Scraped: Luc Rance (Aspley / 4034) — https://www.realestate.com.au/agent/luc-rance-3280884
+2026-10-04 00:38:29,355 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/dan-dsilva-3733760
+2026-10-04 00:38:52,761 [INFO] scraper.pipeline: Found 6 team member link(s) for Dan D'Silva
+2026-10-04 00:40:06,736 [INFO] scraper.pipeline: Scraped: Dan D'Silva (Aspley / 4034) — https://www.realestate.com.au/agent/dan-dsilva-3733760
+2026-10-04 00:40:11,732 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/johnny-lin-1668670
+2026-10-04 00:40:31,774 [INFO] scraper.pipeline: Found 6 team member link(s) for Johnny Lin
+2026-10-04 00:41:46,037 [INFO] scraper.pipeline: Scraped: Johnny Lin (Aspley / 4034) — https://www.realestate.com.au/agent/johnny-lin-1668670
+2026-10-04 00:41:51,978 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/richard-parker-3733764
+2026-10-04 00:42:07,643 [INFO] scraper.pipeline: Scraped: Richard Parker (Aspley / 4034) — https://www.realestate.com.au/agent/richard-parker-3733764
+2026-10-04 00:42:14,144 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-10-04 00:42:38,883 [INFO] scraper.pipeline: Found 6 team member link(s) for Cara Bergmann
+2026-10-04 00:42:54,202 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:42:54,203 [INFO] scraper.main: Saved workbook with 20 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:43:44,792 [INFO] scraper.pipeline: Scraped: Cara Bergmann (Aspley / 4034) — https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-10-04 00:43:51,805 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-10-04 00:44:15,062 [INFO] scraper.pipeline: Found 6 team member link(s) for Tristan Rowland
+2026-10-04 00:45:23,383 [INFO] scraper.pipeline: Scraped: Tristan Rowland (Aspley / 4034) — https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-10-04 00:45:27,748 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-waters-207461
+2026-10-04 00:45:39,509 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:45:39,510 [INFO] scraper.main: Saved workbook with 30 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:45:46,157 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:45:46,158 [INFO] scraper.main: Saved workbook with 30 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:45:46,168 [INFO] scraper.pipeline: Found 12 team member link(s) for Daniel Waters
+2026-10-04 00:47:32,304 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 00:47:32,306 [INFO] nodriver.core.browser: terminated browser with pid 26988 successfully
+2026-10-04 00:47:32,307 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 00:47:32,423 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-10-04 00:47:32,423 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-10-04 00:47:32,484 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:47:32,485 [INFO] scraper.main: Saved workbook with 35 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:47:32,493 [INFO] scraper.main: Progress for 4034: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 00:47:32,495 [INFO] nodriver.core.browser: terminated browser with pid 26988 successfully
+2026-10-04 01:05:20,533 [ERROR] scraper.main: Cannot update C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx: the workbook may be open in Excel or locked by another program. Close it and run python main.py again; saved scrape checkpoints will be resumed. Saved checkpoint data is intact; close the workbook and rerun python main.py to resume.
+2026-10-04 01:05:34,412 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:05:34,413 [INFO] scraper.main: Saved workbook with 35 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:05:34,427 [INFO] scraper.main: Resuming 4034 with 35 saved row(s).
+2026-10-04 01:05:34,430 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 01:05:34,435 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=62336
+2026-10-04 01:05:35,493 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 01:05:37,670 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 01:05:37,696 [INFO] scraper.pipeline: Processing suburb: 4034 | all | deep-search (suburb=4034 postcode=4034)
+2026-10-04 01:05:38,776 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (129860 chars)
+2026-10-04 01:05:44,950 [INFO] scraper.automation: Page loaded with content for '4034' (198395 chars)
+2026-10-04 01:05:44,951 [INFO] scraper.pipeline: Selected first website location suggestion: Aspley,, QLD 4034
+2026-10-04 01:05:45,233 [INFO] scraper.automation: Pagination for '4034 | all | deep-search': current_page=1 last_page=5 page_size=24 total_results=99 has_pagination=True
+2026-10-04 01:05:45,245 [INFO] scraper.automation: Page 1 for '4034 | all | deep-search': 10 profile link(s) on page, 10 new, 10 unique so far
+2026-10-04 01:05:45,246 [INFO] scraper.automation: Opening results page 2 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=2
+2026-10-04 01:05:51,067 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (1062713 chars)
+2026-10-04 01:05:51,422 [INFO] scraper.automation: Page 2 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 34 unique so far
+2026-10-04 01:05:51,422 [INFO] scraper.automation: Opening results page 3 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=3
+2026-10-04 01:05:56,400 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (816720 chars)
+2026-10-04 01:05:56,716 [INFO] scraper.automation: Page 3 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 58 unique so far
+2026-10-04 01:05:56,718 [INFO] scraper.automation: Opening results page 4 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=4
+2026-10-04 01:06:01,253 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (629590 chars)
+2026-10-04 01:06:01,604 [INFO] scraper.automation: Page 4 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 82 unique so far
+2026-10-04 01:06:01,606 [INFO] scraper.automation: Opening results page 5 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=5
+2026-10-04 01:06:05,248 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (245376 chars)
+2026-10-04 01:06:05,386 [INFO] scraper.automation: Page 5 for '4034 | all | deep-search': 3 profile link(s) on page, 3 new, 85 unique so far
+2026-10-04 01:06:05,392 [INFO] scraper.automation: Opening results page 6 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=6
+2026-10-04 01:06:09,030 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (179296 chars)
+2026-10-04 01:06:09,112 [INFO] scraper.automation: Page 6 for '4034 | all | deep-search': 0 profile link(s) on page, 0 new, 85 unique so far
+2026-10-04 01:06:09,113 [WARNING] scraper.automation: Page 6 for '4034 | all | deep-search' contained no new profile URLs; stopping to avoid looping
+2026-10-04 01:06:09,113 [WARNING] scraper.automation: Pagination discrepancy for '4034 | all | deep-search': website reported 99 result(s) but 85 unique agent profile URL(s) were collected across 6 page(s).
+2026-10-04 01:06:09,114 [INFO] scraper.pipeline: Found 85 agent profile(s) for '4034 | all | deep-search'.
+2026-10-04 01:06:09,115 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 01:06:32,184 [INFO] scraper.pipeline: Found 6 team member link(s) for Alexandra Porter
+2026-10-04 01:06:32,186 [INFO] scraper.pipeline: Scraped: Alexandra Porter (Aspley / 4034) — https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 01:06:39,143 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/luc-rance-3280884
+2026-10-04 01:06:58,956 [INFO] scraper.pipeline: Found 6 team member link(s) for Luc Rance
+2026-10-04 01:07:14,252 [WARNING] scraper.pipeline: Skipping team profile with no reliable name: https://www.realestate.com.au/agent/4030208
+2026-10-04 01:07:14,255 [INFO] scraper.pipeline: Scraped: Luc Rance (Aspley / 4034) — https://www.realestate.com.au/agent/luc-rance-3280884
+2026-10-04 01:07:18,448 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/dan-dsilva-3733760
+2026-10-04 01:07:42,576 [INFO] scraper.pipeline: Found 6 team member link(s) for Dan D'Silva
+2026-10-04 01:08:42,903 [INFO] scraper.pipeline: Scraped: Dan D'Silva (Aspley / 4034) — https://www.realestate.com.au/agent/dan-dsilva-3733760
+2026-10-04 01:08:49,656 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/johnny-lin-1668670
+2026-10-04 01:09:12,481 [INFO] scraper.pipeline: Found 6 team member link(s) for Johnny Lin
+2026-10-04 01:09:29,935 [INFO] scraper.pipeline: Scraped: Johnny Lin (Aspley / 4034) — https://www.realestate.com.au/agent/johnny-lin-1668670
+2026-10-04 01:09:34,160 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/richard-parker-3733764
+2026-10-04 01:09:49,472 [INFO] scraper.pipeline: Scraped: Richard Parker (Aspley / 4034) — https://www.realestate.com.au/agent/richard-parker-3733764
+2026-10-04 01:09:52,796 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-10-04 01:10:17,519 [INFO] scraper.pipeline: Found 6 team member link(s) for Cara Bergmann
+2026-10-04 01:10:31,009 [INFO] scraper.pipeline: Scraped: Cara Bergmann (Aspley / 4034) — https://www.realestate.com.au/agent/cara-bergmann-3246588
+2026-10-04 01:10:37,507 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-10-04 01:10:59,189 [INFO] scraper.pipeline: Found 6 team member link(s) for Tristan Rowland
+2026-10-04 01:10:59,201 [INFO] scraper.pipeline: Scraped: Tristan Rowland (Aspley / 4034) — https://www.realestate.com.au/agent/tristan-rowland-1381713
+2026-10-04 01:11:03,226 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-waters-207461
+2026-10-04 01:11:22,543 [INFO] scraper.pipeline: Found 12 team member link(s) for Daniel Waters
+2026-10-04 01:12:30,666 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:12:30,668 [INFO] scraper.main: Saved workbook with 40 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:12:42,632 [INFO] scraper.pipeline: Scraped: Daniel Waters (Aspley / 4034) — https://www.realestate.com.au/agent/daniel-waters-207461
+2026-10-04 01:12:48,459 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/michael-korkou-2521598
+2026-10-04 01:13:13,680 [INFO] scraper.pipeline: Found 6 team member link(s) for Michael Korkou
+2026-10-04 01:14:48,822 [INFO] scraper.pipeline: Scraped: Michael Korkou (Aspley / 4034) — https://www.realestate.com.au/agent/michael-korkou-2521598
+2026-10-04 01:14:52,451 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/harpreet-singh-2077214
+2026-10-04 01:15:07,882 [INFO] scraper.pipeline: Scraped: Harpreet Singh (Aspley / 4034) — https://www.realestate.com.au/agent/harpreet-singh-2077214
+2026-10-04 01:15:14,411 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/chris-rhode-3566808
+2026-10-04 01:15:42,133 [INFO] scraper.pipeline: Found 6 team member link(s) for Chris Rhode
+2026-10-04 01:16:11,404 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:16:11,406 [INFO] scraper.main: Saved workbook with 50 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:17:10,338 [INFO] scraper.pipeline: Scraped: Chris Rhode (Aspley / 4034) — https://www.realestate.com.au/agent/chris-rhode-3566808
+2026-10-04 01:17:15,412 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/renee-di-maggio-3819588
+2026-10-04 01:17:36,676 [INFO] scraper.pipeline: Found 6 team member link(s) for RENEE DI MAGGIO
+2026-10-04 01:18:53,725 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:18:53,726 [INFO] scraper.main: Saved workbook with 60 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:18:53,790 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:18:53,791 [INFO] scraper.main: Saved workbook with 60 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:18:53,803 [INFO] scraper.pipeline: Scraped: RENEE DI MAGGIO (Aspley / 4034) — https://www.realestate.com.au/agent/renee-di-maggio-3819588
+2026-10-04 01:18:59,155 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/andrew-king-3382532
+2026-10-04 01:19:22,049 [INFO] scraper.pipeline: Found 6 team member link(s) for Andrew King
+2026-10-04 01:20:28,935 [INFO] scraper.pipeline: Scraped: Andrew King (Aspley / 4034) — https://www.realestate.com.au/agent/andrew-king-3382532
+2026-10-04 01:20:33,312 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/josh-micallef-2714522
+2026-10-04 01:20:45,994 [INFO] scraper.pipeline: Scraped: Josh Micallef (Aspley / 4034) — https://www.realestate.com.au/agent/josh-micallef-2714522
+2026-10-04 01:20:50,623 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kathleen-luck-2771334
+2026-10-04 01:21:12,851 [INFO] scraper.pipeline: Found 6 team member link(s) for Kathleen Luck
+2026-10-04 01:22:05,827 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:22:05,827 [INFO] scraper.main: Saved workbook with 70 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:22:20,294 [INFO] scraper.pipeline: Scraped: Kathleen Luck (Aspley / 4034) — https://www.realestate.com.au/agent/kathleen-luck-2771334
+2026-10-04 01:22:23,920 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nick-mann-2416134
+2026-10-04 01:22:44,600 [INFO] scraper.pipeline: Found 4 team member link(s) for Nick Mann
+2026-10-04 01:23:24,689 [INFO] scraper.pipeline: Scraped: Nick Mann (Aspley / 4034) — https://www.realestate.com.au/agent/nick-mann-2416134
+2026-10-04 01:23:30,279 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/danielle-hughes-brown-1869046
+2026-10-04 01:23:47,482 [INFO] scraper.pipeline: Found 7 team member link(s) for Danielle Hughes Brown
+2026-10-04 01:24:55,035 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:24:55,035 [INFO] scraper.main: Saved workbook with 80 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:25:08,723 [INFO] scraper.pipeline: Scraped: Danielle Hughes Brown (Aspley / 4034) — https://www.realestate.com.au/agent/danielle-hughes-brown-1869046
+2026-10-04 01:25:13,998 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/peter-connor-3706184
+2026-10-04 01:25:36,190 [INFO] scraper.pipeline: Found 6 team member link(s) for Peter Connor
+2026-10-04 01:27:00,754 [INFO] scraper.pipeline: Scraped: Peter Connor (Aspley / 4034) — https://www.realestate.com.au/agent/peter-connor-3706184
+2026-10-04 01:27:06,512 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/david-leeding-13164
+2026-10-04 01:27:25,390 [INFO] scraper.pipeline: Found 3 team member link(s) for David Leeding
+2026-10-04 01:27:51,979 [INFO] scraper.pipeline: Scraped: David Leeding (Aspley / 4034) — https://www.realestate.com.au/agent/david-leeding-13164
+2026-10-04 01:27:57,431 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jordan-mclennan-3847116
+2026-10-04 01:28:10,484 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:28:10,484 [INFO] scraper.main: Saved workbook with 90 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:28:21,111 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:28:21,112 [INFO] scraper.main: Saved workbook with 90 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:28:21,122 [INFO] scraper.pipeline: Found 6 team member link(s) for Jordan McLennan
+2026-10-04 01:29:30,596 [INFO] scraper.pipeline: Scraped: Jordan McLennan (Aspley / 4034) — https://www.realestate.com.au/agent/jordan-mclennan-3847116
+2026-10-04 01:29:35,070 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/wayne-cornell-1151031
+2026-10-04 01:29:56,893 [INFO] scraper.pipeline: Found 6 team member link(s) for Wayne Cornell
+2026-10-04 01:31:01,907 [INFO] scraper.pipeline: Scraped: Wayne Cornell (Aspley / 4034) — https://www.realestate.com.au/agent/wayne-cornell-1151031
+2026-10-04 01:31:06,265 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/adam-stefan-3804092
+2026-10-04 01:31:19,907 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:31:19,907 [INFO] scraper.main: Saved workbook with 100 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:31:19,969 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:31:19,969 [INFO] scraper.main: Saved workbook with 100 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:31:19,977 [INFO] scraper.pipeline: Scraped: Adam Stefan (Aspley / 4034) — https://www.realestate.com.au/agent/adam-stefan-3804092
+2026-10-04 01:31:25,947 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-hooper-2389150
+2026-10-04 01:31:45,602 [INFO] scraper.pipeline: Found 5 team member link(s) for Daniel Hooper
+2026-10-04 01:32:38,223 [INFO] scraper.pipeline: Scraped: Daniel Hooper (Aspley / 4034) — https://www.realestate.com.au/agent/daniel-hooper-2389150
+2026-10-04 01:32:41,349 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/amanda-waters-112075
+2026-10-04 01:32:55,255 [INFO] scraper.pipeline: Scraped: Amanda Waters (Aspley / 4034) — https://www.realestate.com.au/agent/amanda-waters-112075
+2026-10-04 01:33:01,737 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/troy-traynor-3152456
+2026-10-04 01:33:25,306 [INFO] scraper.pipeline: Found 6 team member link(s) for Troy Traynor
+2026-10-04 01:34:22,160 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:34:22,161 [INFO] scraper.main: Saved workbook with 110 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:34:48,906 [INFO] scraper.pipeline: Scraped: Troy Traynor (Aspley / 4034) — https://www.realestate.com.au/agent/troy-traynor-3152456
+2026-10-04 01:34:53,470 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/nicholas-loftus-3875276
+2026-10-04 01:35:13,464 [INFO] scraper.pipeline: Found 6 team member link(s) for Nicholas Loftus
+2026-10-04 01:36:18,028 [INFO] scraper.pipeline: Scraped: Nicholas Loftus (Aspley / 4034) — https://www.realestate.com.au/agent/nicholas-loftus-3875276
+2026-10-04 01:36:22,663 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/ben-ball-3408188
+2026-10-04 01:36:40,402 [INFO] scraper.pipeline: Found 4 team member link(s) for Ben Ball
+2026-10-04 01:37:22,668 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:37:22,669 [INFO] scraper.main: Saved workbook with 120 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:37:22,736 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:37:22,737 [INFO] scraper.main: Saved workbook with 120 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:37:22,745 [INFO] scraper.pipeline: Scraped: Ben Ball (Aspley / 4034) — https://www.realestate.com.au/agent/ben-ball-3408188
+2026-10-04 01:37:28,345 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jonathan-levey-3024735
+2026-10-04 01:37:51,406 [INFO] scraper.pipeline: Found 6 team member link(s) for Jonathan Levey
+2026-10-04 01:38:58,317 [INFO] scraper.pipeline: Scraped: Jonathan Levey (Aspley / 4034) — https://www.realestate.com.au/agent/jonathan-levey-3024735
+2026-10-04 01:39:04,150 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/karen-mcbryde-3838204
+2026-10-04 01:39:29,320 [INFO] scraper.pipeline: Found 6 team member link(s) for Karen McBryde
+2026-10-04 01:40:10,918 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:40:10,919 [INFO] scraper.main: Saved workbook with 130 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:40:58,002 [INFO] scraper.pipeline: Scraped: Karen McBryde (Aspley / 4034) — https://www.realestate.com.au/agent/karen-mcbryde-3838204
+2026-10-04 01:41:03,223 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/natalie-johnston-3277676
+2026-10-04 01:41:26,409 [INFO] scraper.pipeline: Found 6 team member link(s) for Natalie Johnston
+2026-10-04 01:42:36,467 [INFO] scraper.pipeline: Scraped: Natalie Johnston (Aspley / 4034) — https://www.realestate.com.au/agent/natalie-johnston-3277676
+2026-10-04 01:42:40,080 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/xander-evans-2427790
+2026-10-04 01:42:53,361 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:42:53,361 [INFO] scraper.main: Saved workbook with 140 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:43:03,480 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:43:03,481 [INFO] scraper.main: Saved workbook with 140 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:43:03,492 [INFO] scraper.pipeline: Found 6 team member link(s) for Xander Evans
+2026-10-04 01:44:28,615 [INFO] scraper.pipeline: Scraped: Xander Evans (Aspley / 4034) — https://www.realestate.com.au/agent/xander-evans-2427790
+2026-10-04 01:44:35,559 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/sandeep-jain-3544064
+2026-10-04 01:44:53,735 [INFO] scraper.pipeline: Found 1 team member link(s) for Sandeep Jain
+2026-10-04 01:44:53,737 [INFO] scraper.pipeline: Scraped: Sandeep Jain (Aspley / 4034) — https://www.realestate.com.au/agent/sandeep-jain-3544064
+2026-10-04 01:44:57,666 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/natalie-cowlrick-3505416
+2026-10-04 01:45:18,975 [INFO] scraper.pipeline: Found 6 team member link(s) for Natalie Cowlrick
+2026-10-04 01:45:44,876 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:45:44,876 [INFO] scraper.main: Saved workbook with 150 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:46:26,457 [INFO] scraper.pipeline: Scraped: Natalie Cowlrick (Aspley / 4034) — https://www.realestate.com.au/agent/natalie-cowlrick-3505416
+2026-10-04 01:46:31,006 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jason-scott-3311380
+2026-10-04 01:46:54,438 [INFO] scraper.pipeline: Found 6 team member link(s) for Jason Scott
+2026-10-04 01:48:02,655 [INFO] scraper.pipeline: Scraped: Jason Scott (Aspley / 4034) — https://www.realestate.com.au/agent/jason-scott-3311380
+2026-10-04 01:48:09,452 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/lorraine-bailey-3973936
+2026-10-04 01:48:20,483 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:48:20,484 [INFO] scraper.main: Saved workbook with 160 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:48:29,959 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:48:29,960 [INFO] scraper.main: Saved workbook with 160 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:48:29,970 [INFO] scraper.pipeline: Found 6 team member link(s) for Lorraine Bailey
+2026-10-04 01:49:55,547 [INFO] scraper.pipeline: Scraped: Lorraine Bailey (Aspley / 4034) — https://www.realestate.com.au/agent/lorraine-bailey-3973936
+2026-10-04 01:50:02,067 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/amanda-fang-3841768
+2026-10-04 01:50:20,916 [INFO] scraper.pipeline: Found 2 team member link(s) for Amanda Fang
+2026-10-04 01:50:35,573 [INFO] scraper.pipeline: Scraped: Amanda Fang (Aspley / 4034) — https://www.realestate.com.au/agent/amanda-fang-3841768
+2026-10-04 01:50:39,887 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/bonnie-worth-2853230
+2026-10-04 01:51:00,963 [INFO] scraper.pipeline: Found 5 team member link(s) for Bonnie Worth
+2026-10-04 01:51:35,098 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:51:35,100 [INFO] scraper.main: Saved workbook with 170 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:52:06,845 [INFO] scraper.pipeline: Scraped: Bonnie Worth (Aspley / 4034) — https://www.realestate.com.au/agent/bonnie-worth-2853230
+2026-10-04 01:52:11,024 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/samantha-baines-3409172
+2026-10-04 01:52:24,847 [INFO] scraper.pipeline: Scraped: Samantha Baines (Aspley / 4034) — https://www.realestate.com.au/agent/samantha-baines-3409172
+2026-10-04 01:52:28,143 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/rebecca-prosser-3619596
+2026-10-04 01:52:51,191 [INFO] scraper.pipeline: Found 8 team member link(s) for Rebecca Prosser
+2026-10-04 01:54:11,772 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:54:11,772 [INFO] scraper.main: Saved workbook with 180 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:54:23,638 [INFO] scraper.pipeline: Scraped: Rebecca Prosser (Aspley / 4034) — https://www.realestate.com.au/agent/rebecca-prosser-3619596
+2026-10-04 01:54:29,158 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/charlize-sivyer-3734676
+2026-10-04 01:54:40,578 [INFO] scraper.pipeline: Scraped: Charlize Sivyer (Aspley / 4034) — https://www.realestate.com.au/agent/charlize-sivyer-3734676
+2026-10-04 01:54:45,271 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/john-allen-3945980
+2026-10-04 01:54:59,773 [INFO] scraper.pipeline: Scraped: John Allen (Aspley / 4034) — https://www.realestate.com.au/agent/john-allen-3945980
+2026-10-04 01:55:05,171 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/brendan-tontodonati-3809396
+2026-10-04 01:55:18,025 [INFO] scraper.pipeline: Scraped: Brendan Tontodonati (Aspley / 4034) — https://www.realestate.com.au/agent/brendan-tontodonati-3809396
+2026-10-04 01:55:23,680 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/daniel-cummings-3392184
+2026-10-04 01:55:47,124 [INFO] scraper.pipeline: Found 6 team member link(s) for Daniel Cummings
+2026-10-04 01:57:00,262 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:57:00,263 [INFO] scraper.main: Saved workbook with 190 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 01:57:14,601 [INFO] scraper.pipeline: Scraped: Daniel Cummings (Aspley / 4034) — https://www.realestate.com.au/agent/daniel-cummings-3392184
+2026-10-04 01:57:20,826 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/ekam-bakshi-3097295
+2026-10-04 01:57:34,969 [INFO] scraper.pipeline: Scraped: Ekam Bakshi (Aspley / 4034) — https://www.realestate.com.au/agent/ekam-bakshi-3097295
+2026-10-04 01:57:40,073 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/natalie-cybulski-3389920
+2026-10-04 01:57:50,808 [INFO] scraper.pipeline: Scraped: Natalie Cybulski (Aspley / 4034) — https://www.realestate.com.au/agent/natalie-cybulski-3389920
+2026-10-04 01:57:55,572 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/riley-munro-3734672
+2026-10-04 01:58:09,019 [INFO] scraper.pipeline: Scraped: Riley Munro (Aspley / 4034) — https://www.realestate.com.au/agent/riley-munro-3734672
+2026-10-04 01:58:15,367 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jay-wu-3252672
+2026-10-04 01:58:35,012 [INFO] scraper.pipeline: Found 2 team member link(s) for Jay Wu
+2026-10-04 01:58:48,367 [INFO] scraper.pipeline: Scraped: Jay Wu (Aspley / 4034) — https://www.realestate.com.au/agent/jay-wu-3252672
+2026-10-04 01:58:52,155 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alyssa-corbett-3727788
+2026-10-04 01:59:03,983 [INFO] scraper.pipeline: Scraped: Alyssa Corbett (Aspley / 4034) — https://www.realestate.com.au/agent/alyssa-corbett-3727788
+2026-10-04 01:59:08,343 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/cheyne-murphy-3804932
+2026-10-04 01:59:18,919 [INFO] scraper.pipeline: Scraped: CHEYNE MURPHY (Aspley / 4034) — https://www.realestate.com.au/agent/cheyne-murphy-3804932
+2026-10-04 01:59:22,011 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/liam-brown-3313972
+2026-10-04 01:59:33,558 [INFO] scraper.pipeline: Scraped: Liam Brown (Aspley / 4034) — https://www.realestate.com.au/agent/liam-brown-3313972
+2026-10-04 01:59:38,492 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jatin-patel-2806442
+2026-10-04 01:59:59,105 [INFO] scraper.pipeline: Found 6 team member link(s) for Jatin Patel
+2026-10-04 02:00:12,954 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:12,954 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:12,963 [INFO] scraper.pipeline: Scraped: Jatin Patel (Aspley / 4034) — https://www.realestate.com.au/agent/jatin-patel-2806442
+2026-10-04 02:00:18,568 [INFO] scraper.pipeline: Finished suburb '4034 | all | deep-search': 85 profile(s) found, 165 record(s) scraped. Total records: 200
+2026-10-04 02:00:18,569 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Aspley, 200 record(s))
+2026-10-04 02:00:18,650 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:18,651 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:18,659 [INFO] scraper.pipeline: Checkpoint saved
+2026-10-04 02:00:24,121 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 02:00:24,123 [INFO] nodriver.core.browser: terminated browser with pid 12480 successfully
+2026-10-04 02:00:24,124 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 02:00:24,314 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:24,315 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:24,325 [INFO] scraper.main: Progress for 4034: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:00:24,328 [INFO] nodriver.core.browser: terminated browser with pid 12480 successfully
+2026-10-04 02:39:52,261 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:39:52,262 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:39:52,273 [INFO] scraper.main: Resuming 4034 with 200 saved row(s).
+2026-10-04 02:39:52,277 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 02:39:52,279 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=54824
+2026-10-04 02:39:53,240 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 02:39:55,581 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 02:39:55,588 [INFO] scraper.pipeline: Row limit 200 is full for 4034 | all | deep-search; resuming only saved profiles with missing contact/designation fields.
+2026-10-04 02:39:55,617 [INFO] scraper.pipeline: Processing suburb: 4034 | all | deep-search (suburb=4034 postcode=4034)
+2026-10-04 02:39:56,486 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (168604 chars)
+2026-10-04 02:40:04,210 [INFO] scraper.automation: Page loaded with content for '4034' (88486 chars)
+2026-10-04 02:40:04,210 [INFO] scraper.pipeline: Selected first website location suggestion: Aspley,, QLD 4034
+2026-10-04 02:40:04,455 [INFO] scraper.automation: Pagination for '4034 | all | deep-search': current_page=1 last_page=5 page_size=24 total_results=99 has_pagination=True
+2026-10-04 02:40:04,484 [INFO] scraper.automation: Page 1 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-10-04 02:40:04,485 [INFO] scraper.automation: Opening results page 2 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=2
+2026-10-04 02:40:09,561 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (1053060 chars)
+2026-10-04 02:40:09,755 [INFO] scraper.automation: Page 2 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 48 unique so far
+2026-10-04 02:40:09,755 [INFO] scraper.automation: Opening results page 3 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=3
+2026-10-04 02:40:13,992 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (807308 chars)
+2026-10-04 02:40:14,153 [INFO] scraper.automation: Page 3 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 72 unique so far
+2026-10-04 02:40:14,153 [INFO] scraper.automation: Opening results page 4 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=4
+2026-10-04 02:40:19,299 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (620177 chars)
+2026-10-04 02:40:19,429 [INFO] scraper.automation: Page 4 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 96 unique so far
+2026-10-04 02:40:19,429 [INFO] scraper.automation: Opening results page 5 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=5
+2026-10-04 02:40:23,387 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (235934 chars)
+2026-10-04 02:40:23,455 [INFO] scraper.automation: Page 5 for '4034 | all | deep-search': 3 profile link(s) on page, 3 new, 99 unique so far
+2026-10-04 02:40:23,455 [INFO] scraper.automation: Opening results page 6 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=6
+2026-10-04 02:40:27,971 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (169874 chars)
+2026-10-04 02:40:28,018 [INFO] scraper.automation: Page 6 for '4034 | all | deep-search': 0 profile link(s) on page, 0 new, 99 unique so far
+2026-10-04 02:40:28,019 [WARNING] scraper.automation: Page 6 for '4034 | all | deep-search' contained no new profile URLs; stopping to avoid looping
+2026-10-04 02:40:28,019 [INFO] scraper.automation: Collected 99 unique agent profile URL(s) for suburb '4034 | all | deep-search' across 6 page(s)
+2026-10-04 02:40:28,019 [INFO] scraper.pipeline: Found 99 agent profile(s) for '4034 | all | deep-search'.
+2026-10-04 02:40:28,020 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 02:40:41,244 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:40:41,245 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:40:50,984 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:40:50,985 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:40:50,996 [INFO] scraper.pipeline: Found 6 team member link(s) for Alexandra Porter
+2026-10-04 02:41:47,415 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:47,415 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:47,423 [INFO] scraper.pipeline: Scraped: Alexandra Porter (Aspley / 4034) — https://www.realestate.com.au/agent/alexandra-porter-3079355
+2026-10-04 02:41:50,507 [INFO] scraper.pipeline: Finished suburb '4034 | all | deep-search': 99 profile(s) found, 0 record(s) scraped. Total records: 200
+2026-10-04 02:41:50,507 [INFO] scraper.pipeline: Saving checkpoint... (suburb:Aspley, 200 record(s))
+2026-10-04 02:41:50,712 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:50,712 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:50,720 [INFO] scraper.pipeline: Checkpoint saved
+2026-10-04 02:41:55,120 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 02:41:55,123 [INFO] nodriver.core.browser: terminated browser with pid 3676 successfully
+2026-10-04 02:41:55,124 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 02:41:55,342 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:55,343 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:55,357 [INFO] scraper.main: Progress for 4034: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 02:41:55,358 [INFO] nodriver.core.browser: terminated browser with pid 3676 successfully
+2026-10-04 23:07:10,093 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 23:07:10,094 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 23:07:10,110 [INFO] scraper.main: Resuming 4034 with 200 saved row(s).
+2026-10-04 23:07:10,129 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 23:07:10,133 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=62834
+2026-10-04 23:07:15,042 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 23:07:16,967 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 23:07:16,977 [INFO] scraper.pipeline: Row limit 200 is full for 4034 | all | deep-search; resuming only saved profiles with missing contact/designation fields.
+2026-10-04 23:07:16,977 [INFO] scraper.pipeline: Processing suburb: 4034 | all | deep-search (suburb=4034 postcode=4034)
+2026-10-04 23:07:18,109 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (162925 chars)
+2026-10-04 23:07:28,432 [INFO] scraper.automation: Page loaded with content for '4034' (183097 chars)
+2026-10-04 23:07:28,433 [INFO] scraper.pipeline: Selected first website location suggestion: Aspley,, QLD 4034
+2026-10-04 23:07:28,748 [INFO] scraper.automation: Pagination for '4034 | all | deep-search': current_page=1 last_page=5 page_size=24 total_results=99 has_pagination=True
+2026-10-04 23:07:28,799 [INFO] scraper.automation: Page 1 for '4034 | all | deep-search': 1 profile link(s) on page, 1 new, 1 unique so far
+2026-10-04 23:07:28,817 [INFO] scraper.automation: Opening results page 2 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=2
+2026-10-04 23:07:34,362 [INFO] scraper.automation: Page loaded with content for '4034 | all | deep-search' (1053060 chars)
+2026-10-04 23:07:34,687 [INFO] scraper.automation: Page 2 for '4034 | all | deep-search': 24 profile link(s) on page, 24 new, 25 unique so far
+2026-10-04 23:07:34,687 [INFO] scraper.automation: Opening results page 3 for '4034 | all | deep-search': https://www.realestate.com.au/find-agent/aspley-qld-4034?page=3
+2026-10-04 23:07:34,766 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 23:07:34,766 [INFO] nodriver.core.browser: terminated browser with pid 23476 successfully
+2026-10-04 23:07:34,766 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 23:07:34,817 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-10-04 23:07:34,818 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-10-04 23:07:34,953 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 23:07:34,954 [INFO] scraper.main: Saved workbook with 200 row(s): C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 23:07:34,963 [INFO] scraper.main: Progress for 4034: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\4034_all_deep_search.xlsx
+2026-10-04 23:07:34,964 [INFO] nodriver.core.browser: terminated browser with pid 23476 successfully
+2026-10-04 23:08:07,123 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 23:08:07,125 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=56014
+2026-10-04 23:08:08,492 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 23:08:09,636 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 23:08:09,694 [INFO] scraper.pipeline: Processing suburb: 3000 | all | deep-search (suburb=3000 postcode=3000)
+2026-10-04 23:08:10,769 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (129860 chars)
+2026-10-04 23:08:17,784 [INFO] scraper.automation: Page loaded with content for '3000' (88504 chars)
+2026-10-04 23:08:17,785 [INFO] scraper.pipeline: Selected first website location suggestion: Melbourne,, VIC 3000
+2026-10-04 23:08:18,093 [INFO] scraper.automation: Pagination for '3000 | all | deep-search': current_page=1 last_page=24 page_size=24 total_results=574 has_pagination=True
+2026-10-04 23:08:18,118 [INFO] scraper.automation: Page 1 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-10-04 23:08:18,119 [INFO] scraper.automation: Opening results page 2 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=2
+2026-10-04 23:08:23,221 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (918818 chars)
+2026-10-04 23:08:23,468 [INFO] scraper.automation: Page 2 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 48 unique so far
+2026-10-04 23:08:23,468 [INFO] scraper.automation: Opening results page 3 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=3
+2026-10-04 23:08:28,578 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (972689 chars)
+2026-10-04 23:08:29,121 [INFO] scraper.automation: Page 3 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 72 unique so far
+2026-10-04 23:08:29,121 [INFO] scraper.automation: Opening results page 4 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=4
+2026-10-04 23:08:33,698 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (993052 chars)
+2026-10-04 23:08:33,889 [INFO] scraper.automation: Page 4 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 96 unique so far
+2026-10-04 23:08:33,889 [INFO] scraper.automation: Opening results page 5 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=5
+2026-10-04 23:08:38,551 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (952086 chars)
+2026-10-04 23:08:38,752 [INFO] scraper.automation: Page 5 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 120 unique so far
+2026-10-04 23:08:38,752 [INFO] scraper.automation: Opening results page 6 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=6
+2026-10-04 23:08:43,919 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (846476 chars)
+2026-10-04 23:08:44,094 [INFO] scraper.automation: Page 6 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 144 unique so far
+2026-10-04 23:08:44,095 [INFO] scraper.automation: Opening results page 7 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=7
+2026-10-04 23:08:48,174 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (870403 chars)
+2026-10-04 23:08:48,349 [INFO] scraper.automation: Page 7 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 168 unique so far
+2026-10-04 23:08:48,349 [INFO] scraper.automation: Opening results page 8 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=8
+2026-10-04 23:08:52,803 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (921104 chars)
+2026-10-04 23:08:52,986 [INFO] scraper.automation: Page 8 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 192 unique so far
+2026-10-04 23:08:52,986 [INFO] scraper.automation: Opening results page 9 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=9
+2026-10-04 23:08:58,054 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (814971 chars)
+2026-10-04 23:08:58,212 [INFO] scraper.automation: Page 9 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 216 unique so far
+2026-10-04 23:08:58,213 [INFO] scraper.automation: Opening results page 10 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=10
+2026-10-04 23:09:03,151 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (822096 chars)
+2026-10-04 23:09:03,319 [INFO] scraper.automation: Page 10 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 240 unique so far
+2026-10-04 23:09:03,319 [INFO] scraper.automation: Opening results page 11 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=11
+2026-10-04 23:09:08,905 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (868271 chars)
+2026-10-04 23:09:09,084 [INFO] scraper.automation: Page 11 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 264 unique so far
+2026-10-04 23:09:09,085 [INFO] scraper.automation: Opening results page 12 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=12
+2026-10-04 23:09:14,427 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (823973 chars)
+2026-10-04 23:09:14,669 [INFO] scraper.automation: Page 12 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 288 unique so far
+2026-10-04 23:09:14,669 [INFO] scraper.automation: Opening results page 13 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=13
+2026-10-04 23:09:20,173 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (878796 chars)
+2026-10-04 23:09:20,347 [INFO] scraper.automation: Page 13 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 312 unique so far
+2026-10-04 23:09:20,347 [INFO] scraper.automation: Opening results page 14 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=14
+2026-10-04 23:09:25,029 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (756580 chars)
+2026-10-04 23:09:25,218 [INFO] scraper.automation: Page 14 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 336 unique so far
+2026-10-04 23:09:25,219 [INFO] scraper.automation: Opening results page 15 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=15
+2026-10-04 23:09:30,061 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (679625 chars)
+2026-10-04 23:09:30,205 [INFO] scraper.automation: Page 15 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 360 unique so far
+2026-10-04 23:09:30,205 [INFO] scraper.automation: Opening results page 16 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=16
+2026-10-04 23:09:36,095 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (802994 chars)
+2026-10-04 23:09:36,252 [INFO] scraper.automation: Page 16 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 384 unique so far
+2026-10-04 23:09:36,252 [INFO] scraper.automation: Opening results page 17 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=17
+2026-10-04 23:09:41,773 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (643845 chars)
+2026-10-04 23:09:41,906 [INFO] scraper.automation: Page 17 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 408 unique so far
+2026-10-04 23:09:41,906 [INFO] scraper.automation: Opening results page 18 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=18
+2026-10-04 23:09:46,877 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (694553 chars)
+2026-10-04 23:09:47,019 [INFO] scraper.automation: Page 18 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 432 unique so far
+2026-10-04 23:09:47,020 [INFO] scraper.automation: Opening results page 19 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=19
+2026-10-04 23:09:51,179 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (682749 chars)
+2026-10-04 23:09:51,321 [INFO] scraper.automation: Page 19 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 456 unique so far
+2026-10-04 23:09:51,321 [INFO] scraper.automation: Opening results page 20 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=20
+2026-10-04 23:09:55,965 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (588720 chars)
+2026-10-04 23:09:56,118 [INFO] scraper.automation: Page 20 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 480 unique so far
+2026-10-04 23:09:56,118 [INFO] scraper.automation: Opening results page 21 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=21
+2026-10-04 23:10:01,361 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (674247 chars)
+2026-10-04 23:10:01,836 [INFO] scraper.automation: Page 21 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 504 unique so far
+2026-10-04 23:10:01,837 [INFO] scraper.automation: Opening results page 22 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=22
+2026-10-04 23:10:05,593 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (587005 chars)
+2026-10-04 23:10:05,865 [INFO] scraper.automation: Page 22 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 528 unique so far
+2026-10-04 23:10:05,865 [INFO] scraper.automation: Opening results page 23 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=23
+2026-10-04 23:10:10,424 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (566404 chars)
+2026-10-04 23:10:10,591 [INFO] scraper.automation: Page 23 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 552 unique so far
+2026-10-04 23:10:10,591 [INFO] scraper.automation: Opening results page 24 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=24
+2026-10-04 23:10:15,545 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (521112 chars)
+2026-10-04 23:10:15,704 [INFO] scraper.automation: Page 24 for '3000 | all | deep-search': 22 profile link(s) on page, 22 new, 574 unique so far
+2026-10-04 23:10:15,704 [INFO] scraper.automation: Opening results page 25 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=25
+2026-10-04 23:10:19,607 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (166774 chars)
+2026-10-04 23:10:19,669 [INFO] scraper.automation: Page 25 for '3000 | all | deep-search': 0 profile link(s) on page, 0 new, 574 unique so far
+2026-10-04 23:10:19,669 [WARNING] scraper.automation: Page 25 for '3000 | all | deep-search' contained no new profile URLs; stopping to avoid looping
+2026-10-04 23:10:19,669 [INFO] scraper.automation: Collected 574 unique agent profile URL(s) for suburb '3000 | all | deep-search' across 25 page(s)
+2026-10-04 23:10:19,671 [INFO] scraper.pipeline: Found 574 agent profile(s) for '3000 | all | deep-search'.
+2026-10-04 23:10:19,672 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jen-lin-lau-1608502
+2026-10-04 23:10:45,827 [INFO] scraper.pipeline: Found 6 team member link(s) for Jen Lin Lau
+2026-10-04 23:11:38,330 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 23:11:38,331 [INFO] nodriver.core.browser: terminated browser with pid 10772 successfully
+2026-10-04 23:11:38,331 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 23:11:38,374 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-10-04 23:11:38,375 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-10-04 23:11:38,721 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:11:38,722 [INFO] scraper.main: Saved workbook with 2 row(s): C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:11:38,730 [INFO] scraper.main: Progress for 3000: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:11:38,733 [INFO] nodriver.core.browser: terminated browser with pid 10772 successfully
+2026-10-04 23:13:59,497 [ERROR] scraper.main: Cannot update C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx: the workbook may be open in Excel or locked by another program. Close it and run python main.py again; saved scrape checkpoints will be resumed. Saved checkpoint data is intact; close the workbook and rerun python main.py to resume.
+2026-10-04 23:14:46,319 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:14:46,320 [INFO] scraper.main: Saved workbook with 2 row(s): C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:14:46,327 [INFO] scraper.main: Resuming 3000 with 2 saved row(s).
+2026-10-04 23:14:46,331 [INFO] scraper.pipeline: Starting nodriver browser (headless=False)...
+2026-10-04 23:14:46,332 [INFO] nodriver.core.browser: starting
+	executable :C:\Program Files\Google\Chrome\Application\chrome.exe
+
+arguments:
+--remote-allow-origins=*
+	--no-first-run
+	--no-service-autorun
+	--no-default-browser-check
+	--homepage=about:blank
+	--no-pings
+	--password-store=basic
+	--disable-infobars
+	--disable-breakpad
+	--disable-dev-shm-usage
+	--disable-session-crashed-bubble
+	--disable-search-engine-choice-screen
+	--user-data-dir=C:\Users\ASUS\Desktop\AUSWORK\new\realestate_agent_scraper\.chrome_profile_nd
+	--disable-session-crashed-bubble
+	--disable-features=IsolateOrigins,site-per-process
+	--remote-debugging-host=127.0.0.1
+	--remote-debugging-port=63046
+2026-10-04 23:14:47,267 [INFO] scraper.pipeline: Nodriver browser started successfully.
+2026-10-04 23:14:49,119 [INFO] scraper.pipeline: Browser tab initialized.
+2026-10-04 23:14:49,119 [INFO] scraper.pipeline: Processing suburb: 3000 | all | deep-search (suburb=3000 postcode=3000)
+2026-10-04 23:14:50,277 [INFO] scraper.automation: Page loaded with content for 'find-agent location search' (129860 chars)
+2026-10-04 23:14:56,077 [INFO] scraper.automation: Page loaded with content for '3000' (88504 chars)
+2026-10-04 23:14:56,077 [INFO] scraper.pipeline: Selected first website location suggestion: Melbourne,, VIC 3000
+2026-10-04 23:14:56,484 [INFO] scraper.automation: Pagination for '3000 | all | deep-search': current_page=1 last_page=24 page_size=24 total_results=574 has_pagination=True
+2026-10-04 23:14:56,505 [INFO] scraper.automation: Page 1 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 24 unique so far
+2026-10-04 23:14:56,505 [INFO] scraper.automation: Opening results page 2 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=2
+2026-10-04 23:15:01,281 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (918818 chars)
+2026-10-04 23:15:01,471 [INFO] scraper.automation: Page 2 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 48 unique so far
+2026-10-04 23:15:01,472 [INFO] scraper.automation: Opening results page 3 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=3
+2026-10-04 23:15:06,993 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (972913 chars)
+2026-10-04 23:15:07,199 [INFO] scraper.automation: Page 3 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 72 unique so far
+2026-10-04 23:15:07,200 [INFO] scraper.automation: Opening results page 4 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=4
+2026-10-04 23:15:12,116 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (1001582 chars)
+2026-10-04 23:15:12,349 [INFO] scraper.automation: Page 4 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 96 unique so far
+2026-10-04 23:15:12,349 [INFO] scraper.automation: Opening results page 5 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=5
+2026-10-04 23:15:18,402 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (961496 chars)
+2026-10-04 23:15:18,611 [INFO] scraper.automation: Page 5 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 120 unique so far
+2026-10-04 23:15:18,611 [INFO] scraper.automation: Opening results page 6 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=6
+2026-10-04 23:15:24,266 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (855267 chars)
+2026-10-04 23:15:24,471 [INFO] scraper.automation: Page 6 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 144 unique so far
+2026-10-04 23:15:24,471 [INFO] scraper.automation: Opening results page 7 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=7
+2026-10-04 23:15:29,228 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (830901 chars)
+2026-10-04 23:15:29,496 [INFO] scraper.automation: Page 7 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 168 unique so far
+2026-10-04 23:15:29,496 [INFO] scraper.automation: Opening results page 8 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=8
+2026-10-04 23:15:35,569 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (921104 chars)
+2026-10-04 23:15:35,743 [INFO] scraper.automation: Page 8 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 192 unique so far
+2026-10-04 23:15:35,744 [INFO] scraper.automation: Opening results page 9 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=9
+2026-10-04 23:15:41,101 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (814971 chars)
+2026-10-04 23:15:41,272 [INFO] scraper.automation: Page 9 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 216 unique so far
+2026-10-04 23:15:41,273 [INFO] scraper.automation: Opening results page 10 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=10
+2026-10-04 23:15:46,328 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (822096 chars)
+2026-10-04 23:15:46,509 [INFO] scraper.automation: Page 10 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 240 unique so far
+2026-10-04 23:15:46,509 [INFO] scraper.automation: Opening results page 11 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=11
+2026-10-04 23:15:51,881 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (868271 chars)
+2026-10-04 23:15:52,068 [INFO] scraper.automation: Page 11 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 264 unique so far
+2026-10-04 23:15:52,069 [INFO] scraper.automation: Opening results page 12 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=12
+2026-10-04 23:15:57,836 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (823973 chars)
+2026-10-04 23:15:57,999 [INFO] scraper.automation: Page 12 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 288 unique so far
+2026-10-04 23:15:57,999 [INFO] scraper.automation: Opening results page 13 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=13
+2026-10-04 23:16:02,398 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (878796 chars)
+2026-10-04 23:16:02,578 [INFO] scraper.automation: Page 13 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 312 unique so far
+2026-10-04 23:16:02,578 [INFO] scraper.automation: Opening results page 14 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=14
+2026-10-04 23:16:06,981 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (756580 chars)
+2026-10-04 23:16:07,137 [INFO] scraper.automation: Page 14 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 336 unique so far
+2026-10-04 23:16:07,137 [INFO] scraper.automation: Opening results page 15 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=15
+2026-10-04 23:16:12,560 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (679625 chars)
+2026-10-04 23:16:12,710 [INFO] scraper.automation: Page 15 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 360 unique so far
+2026-10-04 23:16:12,710 [INFO] scraper.automation: Opening results page 16 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=16
+2026-10-04 23:16:17,506 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (802994 chars)
+2026-10-04 23:16:17,746 [INFO] scraper.automation: Page 16 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 384 unique so far
+2026-10-04 23:16:17,746 [INFO] scraper.automation: Opening results page 17 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=17
+2026-10-04 23:16:23,319 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (643845 chars)
+2026-10-04 23:16:23,459 [INFO] scraper.automation: Page 17 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 408 unique so far
+2026-10-04 23:16:23,459 [INFO] scraper.automation: Opening results page 18 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=18
+2026-10-04 23:16:28,105 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (694553 chars)
+2026-10-04 23:16:28,279 [INFO] scraper.automation: Page 18 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 432 unique so far
+2026-10-04 23:16:28,279 [INFO] scraper.automation: Opening results page 19 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=19
+2026-10-04 23:16:33,231 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (682749 chars)
+2026-10-04 23:16:33,371 [INFO] scraper.automation: Page 19 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 456 unique so far
+2026-10-04 23:16:33,371 [INFO] scraper.automation: Opening results page 20 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=20
+2026-10-04 23:16:37,198 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (588720 chars)
+2026-10-04 23:16:37,359 [INFO] scraper.automation: Page 20 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 480 unique so far
+2026-10-04 23:16:37,359 [INFO] scraper.automation: Opening results page 21 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=21
+2026-10-04 23:16:41,643 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (674247 chars)
+2026-10-04 23:16:41,784 [INFO] scraper.automation: Page 21 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 504 unique so far
+2026-10-04 23:16:41,784 [INFO] scraper.automation: Opening results page 22 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=22
+2026-10-04 23:16:46,998 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (587005 chars)
+2026-10-04 23:16:47,133 [INFO] scraper.automation: Page 22 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 528 unique so far
+2026-10-04 23:16:47,133 [INFO] scraper.automation: Opening results page 23 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=23
+2026-10-04 23:16:51,611 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (566404 chars)
+2026-10-04 23:16:51,734 [INFO] scraper.automation: Page 23 for '3000 | all | deep-search': 24 profile link(s) on page, 24 new, 552 unique so far
+2026-10-04 23:16:51,735 [INFO] scraper.automation: Opening results page 24 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=24
+2026-10-04 23:16:56,563 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (521112 chars)
+2026-10-04 23:16:56,673 [INFO] scraper.automation: Page 24 for '3000 | all | deep-search': 22 profile link(s) on page, 22 new, 574 unique so far
+2026-10-04 23:16:56,673 [INFO] scraper.automation: Opening results page 25 for '3000 | all | deep-search': https://www.realestate.com.au/find-agent/melbourne-vic-3000?page=25
+2026-10-04 23:16:59,916 [INFO] scraper.automation: Page loaded with content for '3000 | all | deep-search' (166774 chars)
+2026-10-04 23:16:59,966 [INFO] scraper.automation: Page 25 for '3000 | all | deep-search': 0 profile link(s) on page, 0 new, 574 unique so far
+2026-10-04 23:16:59,967 [WARNING] scraper.automation: Page 25 for '3000 | all | deep-search' contained no new profile URLs; stopping to avoid looping
+2026-10-04 23:16:59,967 [INFO] scraper.automation: Collected 574 unique agent profile URL(s) for suburb '3000 | all | deep-search' across 25 page(s)
+2026-10-04 23:16:59,968 [INFO] scraper.pipeline: Found 574 agent profile(s) for '3000 | all | deep-search'.
+2026-10-04 23:16:59,969 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jen-lin-lau-1608502
+2026-10-04 23:17:23,142 [INFO] scraper.pipeline: Found 6 team member link(s) for Jen Lin Lau
+2026-10-04 23:19:01,226 [INFO] scraper.pipeline: Scraped: Jen Lin Lau (Melbourne / 3000) — https://www.realestate.com.au/agent/jen-lin-lau-1608502
+2026-10-04 23:19:07,715 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/brady-residential-sales-team-3398720
+2026-10-04 23:19:32,992 [INFO] scraper.pipeline: Found 6 team member link(s) for Brady Residential Sales Team
+2026-10-04 23:20:50,992 [INFO] scraper.pipeline: Scraped: Brady Residential Sales Team (Melbourne / 3000) — https://www.realestate.com.au/agent/brady-residential-sales-team-3398720
+2026-10-04 23:20:57,110 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jenny-huo-1730758
+2026-10-04 23:21:12,938 [INFO] scraper.pipeline: Scraped: Jenny Huo (Melbourne / 3000) — https://www.realestate.com.au/agent/jenny-huo-1730758
+2026-10-04 23:21:18,981 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/kevin-zhang-3758600
+2026-10-04 23:21:40,643 [INFO] scraper.pipeline: Found 3 team member link(s) for Kevin Zhang
+2026-10-04 23:22:07,736 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:07,737 [INFO] scraper.main: Saved workbook with 10 row(s): C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:07,778 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:07,779 [INFO] scraper.main: Saved workbook with 10 row(s): C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:07,789 [INFO] scraper.pipeline: Scraped: Kevin Zhang (Melbourne / 3000) — https://www.realestate.com.au/agent/kevin-zhang-3758600
+2026-10-04 23:22:11,585 [INFO] scraper.pipeline: Opening agent profile: https://www.realestate.com.au/agent/jake-hu-2044214
+2026-10-04 23:22:17,296 [INFO] scraper.pipeline: Stopping nodriver browser...
+2026-10-04 23:22:17,297 [INFO] nodriver.core.browser: terminated browser with pid 13104 successfully
+2026-10-04 23:22:17,297 [INFO] scraper.pipeline: Nodriver browser stopped.
+2026-10-04 23:22:17,336 [INFO] scraper.pipeline: Ctrl+C detected.
+2026-10-04 23:22:17,337 [INFO] scraper.pipeline: Stopping scraper gracefully...
+2026-10-04 23:22:17,397 [INFO] scraper.pipeline: Excel saved to: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:17,398 [INFO] scraper.main: Saved workbook with 10 row(s): C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:17,417 [INFO] scraper.main: Progress for 3000: partial; workbook: C:\Users\ASUS\Desktop\excel_sheets\3000_all_deep_search.xlsx
+2026-10-04 23:22:17,420 [INFO] nodriver.core.browser: terminated browser with pid 13104 successfully

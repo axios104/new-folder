@@ -50,6 +50,9 @@ def test_team_card_summary_is_split_into_person_title_and_stats():
     }
     assert clean_agent_name(summary, "https://www.realestate.com.au/agent/3079355") == "Alexandra Porter"
     assert clean_job_title("Sales Agent 5.0 (380 reviews) 83 Properties sold") == "Sales Agent"
+    assert clean_job_title("Director - Properties sold (as lead agent)") == "Director"
+    assert clean_job_title("Sales Agent - Properties sold (as lead agent)") == "Sales Agent"
+    assert clean_job_title("Properties sold (as lead agent)") == ""
 
 
 def test_team_card_summary_rejects_company_card_as_a_person_name():

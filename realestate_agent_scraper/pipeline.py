@@ -38,6 +38,13 @@ from automation.navigator import (
     search_suburb,
 )
 from scraper.extractor import extract_agent_record
+from scraper.contact_enrichment import (
+    extract_agency_website_url,
+    extract_external_agent_details,
+    extract_external_agent_links,
+    extract_team_directory_urls,
+    normalized_person_name,
+)
 from scraper.html_fields import (
     agent_profile_identity,
     clean_agent_name,
@@ -66,6 +73,21 @@ async def _human_pause() -> None:
 
 def _record_dedupe_key(row: dict) -> str:
     return agent_profile_identity(row.get("profile_url", ""))
+
+
+def _needs_contact_enrichment(row: dict) -> bool:
+    return not row.get("_contact_enrichment_checked") and any(
+        not str(row.get(field) or "").strip()
+        for field in ("job_title", "years_experience", "agent_email", "phone", "agency_address")
+    )
+
+
+def _merge_nonempty(existing: dict, fresh: dict) -> dict:
+    merged = dict(existing)
+    for field, value in fresh.items():
+        if value not in (None, ""):
+            merged[field] = value
+    return merged
 
 
 def _clean_record(raw: dict) -> dict:
@@ -159,18 +181,33 @@ async def _scrape_suburbs_async(
             }
             seen_urls = seen_urls_by_suburb.setdefault(suburb, set())
             agency_details: dict[str, dict[str, str]] = {}
+            agency_contact_details: dict[str, dict[str, dict[str, str]]] = {}
             visited_agencies: set[str] = set()
             completed_agencies: dict[str, bool] = {}
             query_row_count = sum(row.get("_suburb_query") == suburb for row in all_records)
             row_limit_reached = bool(max_rows and query_row_count >= max_rows)
+            incomplete_profile_ids: set[str] = set()
+            for row in all_records:
+                if row.get("_suburb_query") != suburb or not _needs_contact_enrichment(row):
+                    continue
+                incomplete_profile_ids.add(_record_dedupe_key(row))
+                parent_id = agent_profile_identity(row.get("primary_agent_url", ""))
+                if parent_id:
+                    incomplete_profile_ids.add(parent_id)
 
-            if row_limit_reached:
+            if row_limit_reached and not incomplete_profile_ids:
                 entry["status"] = "partial"
                 entry["error"] = f"max_rows_reached:{max_rows}"
                 report_rows.append(entry)
                 logger.info("Row limit %d already reached for %s; not scraping additional profiles.", max_rows, suburb)
                 checkpoint(f"row_limit_reached:{suburb}")
                 continue
+            elif row_limit_reached:
+                logger.info(
+                    "Row limit %d is full for %s; resuming only saved profiles with missing contact/designation fields.",
+                    max_rows,
+                    suburb,
+                )
 
             try:
                 logger.info("Processing suburb: %s (suburb=%s postcode=%s)", suburb, suburb_name, postcode)
@@ -219,11 +256,16 @@ async def _scrape_suburbs_async(
                     if row.get("_suburb_query") == suburb
                     and row.get("record_type") != "Team member"
                     and row.get("_deep_search_complete")
+                    and agent_profile_identity(row.get("profile_url", "")) not in incomplete_profile_ids
                 }
                 remaining_urls = [
                     url for url in profile_urls
                     if agent_profile_identity(url) not in completed_primary_ids
-                    and (deep_search or agent_profile_identity(url) not in seen_urls)
+                    and (
+                        deep_search
+                        or agent_profile_identity(url) not in seen_urls
+                        or agent_profile_identity(url) in incomplete_profile_ids
+                    )
                 ]
                 cap = _visit_cap(max_agents)
                 capped = bool(cap and len(remaining_urls) > cap)
@@ -237,10 +279,20 @@ async def _scrape_suburbs_async(
                     remaining_urls = remaining_urls[:cap]
 
                 for url in remaining_urls:
-                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
-                        row_limit_reached = True
-                        break
                     key = agent_profile_identity(url)
+                    existing_index = next(
+                        (
+                            index for index, existing in enumerate(all_records)
+                            if existing.get("_suburb_query") == suburb
+                            and _record_dedupe_key(existing) == key
+                        ),
+                        None,
+                    )
+                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows and (
+                        existing_index is None or not _needs_contact_enrichment(all_records[existing_index])
+                    ):
+                        row_limit_reached = True
+                        continue
                     try:
                         logger.info("Opening agent profile: %s", url)
                         await page.get(url)
@@ -262,6 +314,12 @@ async def _scrape_suburbs_async(
                         for field in ("agency_name", "agency_address"):
                             if not raw.get(field) and known_agency.get(field):
                                 raw[field] = known_agency[field]
+                        known_contacts = agency_contact_details.get(raw_agency_url, {}).get(
+                            normalized_person_name(raw_name), {}
+                        )
+                        for field in ("job_title", "years_experience", "agent_email", "phone", "agency_address"):
+                            if not raw.get(field) and known_contacts.get(field):
+                                raw[field] = known_contacts[field]
                         if not raw.get("suburb"):
                             raw["suburb"] = suburb_name
                         if not raw.get("postcode"):
@@ -284,14 +342,8 @@ async def _scrape_suburbs_async(
                         raw["primary_agent_url"] = url
                         raw["designation_confidence"] = "" if all_designations else confidence
                         cleaned = _clean_record(raw)
-                        existing_index = next(
-                            (
-                                index for index, existing in enumerate(all_records)
-                                if existing.get("_suburb_query") == suburb
-                                and _record_dedupe_key(existing) == key
-                            ),
-                            None,
-                        )
+                        if existing_index is not None:
+                            cleaned = _merge_nonempty(all_records[existing_index], cleaned)
                         if existing_index is None:
                             all_records.append(cleaned)
                             seen_urls.add(key)
@@ -319,7 +371,9 @@ async def _scrape_suburbs_async(
                         agency_key = agency_url.rstrip("/").lower()
                         agency_complete = deep_search and not agency_url
                         if deep_search and agency_url and agency_key not in visited_agencies and not (
-                            max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows
+                            max_rows
+                            and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows
+                            and key not in incomplete_profile_ids
                         ):
                             # Several selected agents can belong to the same
                             # office. Crawl each company team once, instead of
@@ -349,14 +403,99 @@ async def _scrape_suburbs_async(
                                         logger.warning("Could not persist agency details for %s: %s", url, exc)
                                 team_links = extract_team_member_links(agency_html)
                                 logger.info("Found %d team member link(s) for %s", len(team_links), cleaned.get("name", url))
+
+                                # realestate.com.au often omits personal email and
+                                # direct phone details. Follow only the agency's
+                                # own website link, then match exact staff names
+                                # to that site's team profiles.
+                                external_details_by_name: dict[str, dict[str, str]] = {}
+                                website_url = extract_agency_website_url(agency_html)
+                                contact_lookup_completed = not website_url
+                                if website_url:
+                                    try:
+                                        await page.get(website_url)
+                                        await _human_pause()
+                                        website_html = await page.get_content()
+                                        contact_lookup_completed = True
+                                        directory_urls = extract_team_directory_urls(website_html, website_url)
+                                        external_profile_urls = extract_external_agent_links(website_html, website_url)
+                                        for directory_url in directory_urls[1:5]:
+                                            try:
+                                                await page.get(directory_url)
+                                                await _human_pause()
+                                                directory_html = await page.get_content()
+                                                external_profile_urls.update(
+                                                    extract_external_agent_links(directory_html, website_url)
+                                                )
+                                            except Exception as directory_exc:  # noqa: BLE001
+                                                logger.debug(
+                                                    "Could not inspect agency team directory %s: %s",
+                                                    directory_url,
+                                                    directory_exc,
+                                                )
+
+                                        targets = [cleaned.get("name", ""), *(member.name for member in team_links)]
+                                        for target_name in dict.fromkeys(name for name in targets if name):
+                                            external_profile_url = external_profile_urls.get(
+                                                normalized_person_name(target_name)
+                                            )
+                                            if not external_profile_url:
+                                                continue
+                                            try:
+                                                await page.get(external_profile_url)
+                                                await _human_pause()
+                                                external_html = await page.get_content()
+                                                details = extract_external_agent_details(external_html, target_name)
+                                                if any(details.values()):
+                                                    external_details_by_name[normalized_person_name(target_name)] = details
+                                            except Exception as contact_exc:  # noqa: BLE001
+                                                logger.debug(
+                                                    "Could not read public agency contact page for %s: %s",
+                                                    target_name,
+                                                    contact_exc,
+                                                )
+                                    except Exception as website_exc:  # noqa: BLE001
+                                        logger.info("Could not enrich from agency website %s: %s", website_url, website_exc)
+
+                                primary_details = external_details_by_name.get(
+                                    normalized_person_name(str(cleaned.get("name", ""))), {}
+                                )
+                                agency_contact_details[agency_key] = external_details_by_name
+                                for field in ("job_title", "years_experience", "agent_email", "phone", "agency_address"):
+                                    if not cleaned.get(field) and primary_details.get(field):
+                                        cleaned[field] = primary_details[field]
+                                if contact_lookup_completed:
+                                    cleaned["_contact_enrichment_checked"] = True
+                                    if existing_index is not None:
+                                        all_records[existing_index] = _merge_nonempty(
+                                            all_records[existing_index], cleaned
+                                        )
+                                        cleaned = all_records[existing_index]
+                                    if on_record:
+                                        try:
+                                            on_record(suburb, cleaned)
+                                        except Exception as contact_exc:  # noqa: BLE001
+                                            logger.warning("Could not persist agency contact data for %s: %s", url, contact_exc)
                                 agency_complete = True
                                 for member in team_links:
-                                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows:
+                                    member_id = agent_profile_identity(member.profile_url)
+                                    existing_member_index = next(
+                                        (
+                                            index for index, existing in enumerate(all_records)
+                                            if existing.get("_suburb_query") == suburb
+                                            and _record_dedupe_key(existing) == member_id
+                                        ),
+                                        None,
+                                    )
+                                    refresh_member = (
+                                        existing_member_index is not None
+                                        and _needs_contact_enrichment(all_records[existing_member_index])
+                                    )
+                                    if max_rows and sum(row.get("_suburb_query") == suburb for row in all_records) >= max_rows and not refresh_member:
                                         row_limit_reached = True
                                         agency_complete = False
                                         break
-                                    member_id = agent_profile_identity(member.profile_url)
-                                    if member_id == key or member_id in seen_urls:
+                                    if member_id == key or (member_id in seen_urls and not refresh_member):
                                         continue
                                     # A company roster is represented once in
                                     # the workbook and grouped beneath the first
@@ -392,6 +531,34 @@ async def _scrape_suburbs_async(
                                         for field in ("rating", "reviews", "properties_sold", "median_sold_price"):
                                             if getattr(member, field):
                                                 team_raw[field] = getattr(member, field)
+                                        external_details = external_details_by_name.get(
+                                            normalized_person_name(member.name), {}
+                                        )
+                                        if external_details and member_id in candidate_primary_ids:
+                                            # Apply agency-site details to an agent that
+                                            # also appeared in the area search result.
+                                            primary_index = next(
+                                                (
+                                                    index for index, existing in enumerate(all_records)
+                                                    if existing.get("_suburb_query") == suburb
+                                                    and _record_dedupe_key(existing) == member_id
+                                                    and existing.get("record_type") != "Team member"
+                                                ),
+                                                None,
+                                            )
+                                            if primary_index is not None:
+                                                enriched_primary = dict(all_records[primary_index])
+                                                for field, value in external_details.items():
+                                                    if not enriched_primary.get(field) and value:
+                                                        enriched_primary[field] = value
+                                                if contact_lookup_completed:
+                                                    enriched_primary["_contact_enrichment_checked"] = True
+                                                all_records[primary_index] = enriched_primary
+                                                if on_record:
+                                                    on_record(suburb, enriched_primary)
+                                        for field in ("job_title", "years_experience", "agent_email", "phone", "agency_address"):
+                                            if not team_raw.get(field) and external_details.get(field):
+                                                team_raw[field] = external_details[field]
                                         all_designations = designation.strip().lower() in {"all", "*", "any"}
                                         if member_id in candidate_primary_ids and (
                                             all_designations
@@ -407,9 +574,17 @@ async def _scrape_suburbs_async(
                                         team_raw["primary_agent_url"] = url
                                         team_raw["designation_confidence"] = ""
                                         team_cleaned = _clean_record(team_raw)
-                                        all_records.append(team_cleaned)
-                                        seen_urls.add(member_id)
-                                        entry["records_scraped"] += 1
+                                        if external_details or contact_lookup_completed:
+                                            team_cleaned["_contact_enrichment_checked"] = True
+                                        if existing_member_index is None:
+                                            all_records.append(team_cleaned)
+                                            seen_urls.add(member_id)
+                                            entry["records_scraped"] += 1
+                                        else:
+                                            team_cleaned = _merge_nonempty(
+                                                all_records[existing_member_index], team_cleaned
+                                            )
+                                            all_records[existing_member_index] = team_cleaned
                                         if on_record:
                                             on_record(suburb, team_cleaned)
                                     except Exception as team_exc:  # noqa: BLE001
@@ -631,7 +806,14 @@ def _records_to_dataframe(records: list[dict]) -> pd.DataFrame:
         raise ValueError("The Excel output schema contains duplicate column names")
     rows = []
     for rec in records:
-        row = {output: rec.get(key, "") for key, output in columns}
+        row = {
+            output: (
+                "Not publicly listed"
+                if key in {"job_title", "years_experience"} and rec.get(key) in (None, "")
+                else rec.get(key, "")
+            )
+            for key, output in columns
+        }
         row.update({output: rec.get(key, "") for key, output in relationship_fields})
         rows.append(row)
     return pd.DataFrame(rows, columns=output_columns)

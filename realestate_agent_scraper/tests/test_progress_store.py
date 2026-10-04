@@ -23,6 +23,7 @@ def test_journal_restores_and_deduplicates_profiles():
             "name": "One",
             "record_type": "Primary agent",
             "_deep_search_complete": True,
+            "_contact_enrichment_checked": True,
         }
         store.append_record(suburb, first)
         store.append_record(suburb, first)

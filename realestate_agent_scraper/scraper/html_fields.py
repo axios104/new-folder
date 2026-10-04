@@ -27,6 +27,7 @@ _AGENCY_ANCHOR_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 _MAILTO_RE = re.compile(r'<a\b[^>]*href=["\']mailto:([^"\'?#]+)', re.IGNORECASE)
+_TEL_RE = re.compile(r'<a\b[^>]*href=["\']tel:([^"\'?#]+)', re.IGNORECASE)
 
 _REVIEW_LINK_RE = re.compile(
     r"""<a\b[^>]*href=["'][^"']*#CustomerReviews["'][^>]*>(.*?)</a>""",
@@ -76,14 +77,16 @@ class TeamMemberLink:
 
 
 _TEAM_ROLE_RE = re.compile(
-    r"\b(Investment Specialist|Sales Representative|Sales Consultant|Sales Associate|"
-    r"Property Manager|Leasing Consultant|Real Estate Agent|Sales Agent|Auctioneer|"
-    r"Lead Agent|Co[- ]Agent|Principal|Director|Agent)\b",
+    r"\b(Lead Sales Agent|Senior Sales Agent|Licensed Real Estate Agent|Real Estate Sales Agent|"
+    r"Investment Specialist|Business Development Manager|Property Consultant|Sales Representative|"
+    r"Sales Consultant|Sales Associate|Sales Manager|Property Manager|Leasing Consultant|"
+    r"Real Estate Agent|Sales Agent|Auctioneer|Operations Manager|Executive Assistant|"
+    r"Team Leader|Lead Agent|Co[- ]Agent|Licensee|Principal|Director|Associate|Agent)\b",
     re.IGNORECASE,
 )
 _TEAM_CARD_END_RE = re.compile(
-    r"\b(?:\d+(?:\.\d+)?\s*\(\s*\d+\s+reviews?\b|\d+\s+properties?\s+(?:sold|leased)\b|"
-    r"median\s+(?:sale|sold)\s+price\b|\$\s*\d)",
+    r"\b(?:\d+(?:\.\d+)?\s*\(\s*\d+\s+reviews?\b|(?:\d+\s+)?properties?\s+(?:sold|leased)\b|"
+    r"median\s+(?:sale|sold|leased)\s+price\b|\$\s*\d|20\d{2}\s+Top Agent)",
     re.IGNORECASE,
 )
 _ROLE_TRAILER_RE = re.compile(r"\b(?:20\d{2}\s+Top Agent|Top Agent|\d{4})\b", re.I)
@@ -174,15 +177,20 @@ def clean_years_experience(value) -> int | str:
 
 def clean_job_title(value: str) -> str:
     """Strip profile-card statistics from a title while preserving plain roles."""
-    text = _WS_RE.sub(" ", html_lib.unescape(value or "")).strip(" ,|—-")
+    text = _WS_RE.sub(" ", html_lib.unescape(value or "")).strip(" ,|—-()")
+    if not text:
+        return ""
+    metric = _TEAM_CARD_END_RE.search(text)
+    if metric:
+        text = text[:metric.start()].strip(" ,|—-()")
     if not text:
         return ""
     parsed = parse_team_member_summary(text)["job_title"]
     if parsed:
-        return parsed
+        text = str(parsed)
     if len(text) > 80 or re.search(r"\b(?:reviews?|properties? sold|median (?:sale|sold) price|20\d{2})\b", text, re.I):
         return ""
-    return text
+    return text.strip(" ,|—-()")
 
 
 def _visible_text(fragment: str) -> str:
@@ -282,6 +290,8 @@ def extract_profile_fields_from_html(html: str) -> dict[str, str]:
     rating, reviews = extract_rating_and_reviews(html)
     email_match = _MAILTO_RE.search(html or "")
     email = html_lib.unescape(email_match.group(1)).strip() if email_match else ""
+    phone_match = _TEL_RE.search(html or "")
+    phone = html_lib.unescape(phone_match.group(1)).strip() if phone_match else ""
     address_match = re.search(r"<address\b[^>]*>(.*?)</address\s*>", html or "", re.I | re.S)
     if not address_match:
         address_match = re.search(
@@ -298,6 +308,7 @@ def extract_profile_fields_from_html(html: str) -> dict[str, str]:
         "agency_name": agency_name,
         "agency_url": agency_url,
         "agent_email": email,
+        "phone": phone,
         "agency_address": agency_address,
         "rating": rating,
         "reviews": reviews,

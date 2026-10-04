@@ -46,6 +46,7 @@ _DOM_EXTRACT_JS = r"""
     reviews: "",
     job_title: "",
     agent_email: "",
+    phone: "",
     agency_address: ""
   };
   const bodyText = document.body ? (document.body.innerText || "") : "";
@@ -53,6 +54,8 @@ _DOM_EXTRACT_JS = r"""
   if (nameNode) result.name = (nameNode.innerText || nameNode.textContent || "").trim();
   const emailLink = document.querySelector('a[href^="mailto:"]');
   if (emailLink) result.agent_email = (emailLink.getAttribute("href") || "").replace(/^mailto:/i, "").split("?")[0];
+  const phoneLink = document.querySelector('a[href^="tel:"]');
+  if (phoneLink) result.phone = (phoneLink.getAttribute("href") || "").replace(/^tel:/i, "").split("?")[0];
   const addressNode = document.querySelector('address, [itemprop="streetAddress"], [data-testid*="agency-address" i]');
   if (addressNode) result.agency_address = (addressNode.innerText || addressNode.textContent || "").trim();
   const titleNode = document.querySelector('[data-testid*="job-title" i], [data-testid*="agent-title" i], [class*="JobTitle"], [class*="jobTitle"], [class*="AgentTitle"]');
@@ -265,11 +268,20 @@ def _walk_json_for_agent(obj, record: dict, depth: int = 0) -> None:
                     record["name"] = name
             if obj.get("jobTitle"):
                 _fill_if_empty(record, "job_title", obj.get("jobTitle"))
+            if obj.get("designation"):
+                _fill_if_empty(record, "job_title", obj.get("designation"))
             if obj.get("agencyName"):
                 _fill_if_empty(record, "agency_name", obj.get("agencyName"))
-            if obj.get("phone"):
-                _fill_if_empty(record, "phone", obj.get("phone"))
-            years = obj.get("yearsExperience") or obj.get("yearsOfExperience")
+            phone = obj.get("phone") or obj.get("phoneNumber") or obj.get("mobile") or obj.get("telephone")
+            if phone:
+                _fill_if_empty(record, "phone", phone)
+            email = obj.get("email") or obj.get("emailAddress") or obj.get("workEmail") or obj.get("agentEmail")
+            if email:
+                _fill_if_empty(record, "agent_email", email)
+            years = (
+                obj.get("yearsExperience") or obj.get("yearsOfExperience")
+                or obj.get("experienceYears") or obj.get("experienceInYears")
+            )
             if years not in (None, ""):
                 _fill_if_empty(record, "years_experience", years)
             rating = obj.get("rating") or obj.get("averageRating") or obj.get("ratingValue")

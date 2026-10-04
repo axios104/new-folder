@@ -176,18 +176,16 @@ def build_page_url(current_url: str, page_number: int) -> str:
 
 
 def extract_agent_profile_urls(html: str) -> list[str]:
-    matches = re.findall(
-        r"""href=["'](https?://(?:www\.)?realestate\.com\.au/agent/[\w-]+-\d+)["']""",
+    # Keep the link order exactly as it appears on screen. Grouping absolute
+    # links before relative links can silently change the first scraped agent.
+    urls = []
+    for match in re.finditer(
+        r"""href=["']((?:https?://(?:www\.)?realestate\.com\.au)?/agent/[\w-]+-\d+)(?:\?[^"']*)?["']""",
         html or "",
         flags=re.IGNORECASE,
-    )
-    relative = re.findall(
-        r"""href=["'](/agent/[\w-]+-\d+)["']""",
-        html or "",
-        flags=re.IGNORECASE,
-    )
-    urls = [m.split("?")[0] for m in matches]
-    urls.extend(_abs(path, BASE_URL) for path in relative)
+    ):
+        href = match.group(1)
+        urls.append(href if href.startswith("http") else _abs(href, BASE_URL))
     # Preserve order, drop duplicates and trailing slashes inconsistencies.
     normalised = []
     seen = set()

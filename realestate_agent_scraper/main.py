@@ -96,8 +96,11 @@ def parse_args() -> argparse.Namespace:
     args.headless = bool(args.headless or settings.get("headless", False))
     args.max_agents = args.max_agents if args.max_agents is not None else int(settings.get("max_agents", 0))
     args.max_rows = args.max_rows if args.max_rows is not None else int(settings.get("max_rows", 200))
+    args.row_limit_action = str(settings.get("row_limit_action", "prompt")).strip().lower()
     if args.max_rows < 0:
         parser.error("max_rows must be zero (unlimited) or a positive integer")
+    if args.row_limit_action not in {"prompt", "new-file", "append", "exit"}:
+        parser.error("row_limit_action must be 'prompt', 'new-file', 'append', or 'exit'")
     return args
 
 
@@ -117,14 +120,41 @@ def _save_query(
     max_rows: int | None = 200,
 ) -> Path:
     subset = _records_for(records, query_key)
-    if max_rows:
-        subset = subset[:max_rows]
+    chunks = [subset] if not max_rows else [subset[index:index + max_rows] for index in range(0, len(subset), max_rows)]
+    if not chunks:
+        chunks = [[]]
     try:
-        path = write_output(subset, store.destination, "excel", store.filename_stem(query_key))
+        path: Path | None = None
+        stem = store.filename_stem(query_key)
+        for index, chunk in enumerate(chunks, 1):
+            chunk_stem = stem if index == 1 else f"{stem}_part_{index:03d}"
+            path = write_output(chunk, store.destination, "excel", chunk_stem)
     except PermissionError as exc:
         raise WorkbookLockedError(str(exc)) from exc
-    logger.info("Saved workbook with %d row(s): %s", len(subset), path.resolve())
+    assert path is not None
+    logger.info("Saved %d row(s) across %d workbook(s); latest: %s", len(subset), len(chunks), path.resolve())
     return path
+
+
+def _row_limit_choice(configured: str, max_rows: int, logger: logging.Logger) -> str:
+    """Get the operator's choice only when a workbook boundary is reached."""
+    if configured != "prompt":
+        return configured
+    if not sys.stdin.isatty():
+        logger.info("Row limit reached without an interactive console; stopping safely.")
+        return "exit"
+    while True:
+        answer = input(
+            f"Reached {max_rows} rows. Choose [N]ew Excel file and continue, "
+            "[A]ppend to the current Excel file, or [E]xit: "
+        ).strip().lower()
+        if answer in {"n", "new", "new-file"}:
+            return "new-file"
+        if answer in {"a", "append"}:
+            return "append"
+        if answer in {"e", "exit", ""}:
+            return "exit"
+        print("Enter N, A, or E.")
 
 
 def _locations_for_input(location: str, input_file: Path) -> list[str]:
@@ -168,12 +198,12 @@ def main() -> int:
     records: list[dict] = []
     try:
         for key in pending:
-            recovered = store.load_records(key, limit=args.max_rows or None)
+            recovered = store.load_records(key)
             for row in recovered:
                 row.setdefault("_suburb_query", key)
             records.extend(recovered)
             if recovered:
-                path = _save_query(store, records, key, logger, args.max_rows)
+                path = _save_query(store, records, key, logger, args.max_rows or None)
                 store.update(key, status="in_progress", records_scraped=len(recovered), output_file=path.name)
                 logger.info("Resuming %s with %d saved row(s).", query_to_location[key], len(recovered))
     except WorkbookLockedError as exc:
@@ -183,10 +213,8 @@ def main() -> int:
     def on_record(query_key: str, record: dict) -> None:
         store.append_record(query_key, record)
         count = len(_records_for(records, query_key))
-        if args.max_rows:
-            count = min(count, args.max_rows)
         if count % 10 == 0:
-            path = _save_query(store, records, query_key, logger, args.max_rows)
+            path = _save_query(store, records, query_key, logger, rows_per_workbook)
             store.update(query_key, status="in_progress", records_scraped=count, output_file=path.name)
 
     def on_checkpoint(rows: list[dict], report: list[dict]) -> None:
@@ -195,10 +223,8 @@ def main() -> int:
             if key not in query_to_location:
                 continue
             count = len(_records_for(rows, key))
-            if args.max_rows:
-                count = min(count, args.max_rows)
             state = item.get("status") or ("failed" if item.get("error") else "completed")
-            path = _save_query(store, rows, key, logger, args.max_rows)
+            path = _save_query(store, rows, key, logger, rows_per_workbook)
             store.update(
                 key, status=state, profiles_found=item.get("profiles_found", 0),
                 records_scraped=count, profiles_failed=item.get("profiles_failed", 0),
@@ -206,27 +232,47 @@ def main() -> int:
                 output_file=path.name,
             )
 
+    rows_per_workbook = args.max_rows or None
+    active_row_limit = args.max_rows or None
     try:
-        scrape_suburbs(
-            pending,
-            headless=args.headless,
-            records=records,
-            report=[],
-            on_checkpoint=on_checkpoint,
-            on_record=on_record,
-            max_agents=args.max_agents or None,
-            designation=args.designation,
-            deep_search=args.mode == "deep-search",
-            use_location_search=True,
-            search_terms={key: query_to_location[key] for key in pending},
-            fallback_terms={key: fallback_location for key in pending if fallback_location},
-            max_rows=args.max_rows or None,
-        )
+        while True:
+            report: list[dict] = []
+            scrape_suburbs(
+                pending,
+                headless=args.headless,
+                records=records,
+                report=report,
+                on_checkpoint=on_checkpoint,
+                on_record=on_record,
+                max_agents=args.max_agents or None,
+                designation=args.designation,
+                deep_search=args.mode == "deep-search",
+                use_location_search=True,
+                search_terms={key: query_to_location[key] for key in pending},
+                fallback_terms={key: fallback_location for key in pending if fallback_location},
+                max_rows=active_row_limit,
+            )
+            reached_limit = bool(active_row_limit) and any(
+                item.get("error") == f"max_rows_reached:{active_row_limit}" for item in report
+            )
+            if not reached_limit:
+                break
+            choice = _row_limit_choice(args.row_limit_action, rows_per_workbook or active_row_limit, logger)
+            if choice == "exit":
+                logger.info("Stopping at the workbook boundary. Run python main.py to resume later.")
+                break
+            if choice == "append":
+                active_row_limit = None
+                rows_per_workbook = None
+                logger.info("Continuing in the existing workbook without a row cap.")
+            else:
+                active_row_limit += args.max_rows
+                logger.info("Continuing in a new workbook after row %d.", active_row_limit - args.max_rows)
+            for key in pending:
+                store.update(key, status="in_progress")
         for key in pending:
             count = len(_records_for(records, key))
-            if args.max_rows:
-                count = min(count, args.max_rows)
-            path = _save_query(store, records, key, logger, args.max_rows)
+            path = _save_query(store, records, key, logger, rows_per_workbook)
             status = store.status(key)
             if status in {"pending", "in_progress"}:
                 status = "partial"
@@ -235,10 +281,8 @@ def main() -> int:
         logger.info("Ctrl+C detected. Saving collected rows and checkpoints.")
         for key in pending:
             count = len(_records_for(records, key))
-            if args.max_rows:
-                count = min(count, args.max_rows)
             try:
-                path = _save_query(store, records, key, logger, args.max_rows)
+                path = _save_query(store, records, key, logger, rows_per_workbook)
                 store.update(key, status="interrupted", records_scraped=count, output_file=path.name)
             except WorkbookLockedError as exc:
                 logger.error(
@@ -251,8 +295,6 @@ def main() -> int:
         logger.error("%s Checkpoint data is intact; close the workbook and rerun python main.py.", exc)
         for key in pending:
             count = len(_records_for(records, key))
-            if args.max_rows:
-                count = min(count, args.max_rows)
             store.update(key, status="partial", records_scraped=count, last_error=str(exc))
         return 2
 
